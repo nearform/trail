@@ -1,0 +1,48 @@
+{
+  "name": "@nearform/trail",
+  "version": "1.0.0",
+  "description": "Audit trail log service",
+  "license": "MIT",
+  "author": "nearForm Ltd",
+  "contributors": [
+    "Paolo Insogna (https://github.com/ShogunPanda)"
+  ],
+  "homepage": "https://github.com/nearform/trail#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nearform/trail.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nearform/trail/issues"
+  },
+  "engines": {
+    "node": ">=8.9.0"
+  },
+  "main": "lib/index.js",
+  "scripts": {
+    "pg:init": "node ./database/init.js && npm run pg:migrate",
+    "pg:test:init": "NODE_ENV=test node ./database/init.js && NODE_ENV=test npm run pg:migrate",
+    "pg:migrate": "node ./database/migrate.js --version=max",
+    "test": "jest",
+    "coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "@nearform/sql": "^1.0.1",
+    "boom": "^7.2.0",
+    "config": "^1.30.0",
+    "luxon": "^1.0.0",
+    "minimist": "^1.2.0",
+    "pg": "^7.4.1",
+    "pino": "^4.16.1",
+    "postgrator": "^3.5.0",
+    "reconfig": "^3.3.0"
+  },
+  "devDependencies": {
+    "jest": "^22.4.3"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "lib/*.js"
+    ]
+  }
+}

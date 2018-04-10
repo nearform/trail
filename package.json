@@ -1,0 +1,44 @@
+{
+  "name": "@nearform/trail",
+  "version": "1.0.0",
+  "description": "Audit trail log service",
+  "license": "MIT",
+  "author": "nearForm Ltd",
+  "contributors": [
+    "Paolo Insogna (https://github.com/ShogunPanda)"
+  ],
+  "homepage": "https://github.com/nearform/trail#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nearform/trail.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nearform/trail/issues"
+  },
+  "engines": {
+    "node": ">=8.9.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "remarkConfig": {
+    "plugins": [
+      "remark-preset-lint-recommended"
+    ]
+  },
+  "standard": {
+    "ignore": [
+      "docs/*"
+    ],
+    "globals": [ "describe", "it", "skip", "test", "expect", "before", "after", "beforeAll", "afterAll", "beforeEach", "afterEach"]
+  },
+  "devDependencies": {
+    "depcheck": "^0.6.9",
+    "lerna": "^2.10.0",
+    "remark-cli": "^5.0.0",
+    "remark-lint": "^6.0.1",
+    "remark-preset-lint-recommended": "^3.0.1",
+    "standard": "^11.0.1",
+    "swagger-gen": "^1.1.3"
+  }
+}
