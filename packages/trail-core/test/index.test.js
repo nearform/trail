@@ -32,6 +32,12 @@ describe('TrailsManager', () => {
     expect(id).toBeGreaterThan(0)
   })
 
+  test('should raise an error when creating a new trail if bad data is being saved', async () => {
+    expect(() => {
+      const id = await this.subject.insert('bad data', 'who', {id: 'what', additional: true}, 'subject')
+    }).toThrow()
+  })
+
   test('should retrieve an existing trail', async () => {
     const date = DateTime.fromISO('2018-04-11T07:00:00.123-09:00', {setZone: true})
     const id = await this.subject.insert(date, 'who', {id: 'what', additional: true}, 'subject')
