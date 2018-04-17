@@ -32,10 +32,10 @@ describe('TrailsManager', () => {
     expect(id).toBeGreaterThan(0)
   })
 
-  test('should raise an error when creating a new trail if bad data is being saved', async () => {
-    expect(() => {
-      const id = await this.subject.insert('bad data', 'who', {id: 'what', additional: true}, 'subject')
-    }).toThrow()
+  test('should raise an error when db pool is empty', async () => {
+    const badSubject = new TrailsManager()
+    badSubject.dbPool = null;
+    expect(badSubject.performDatabaseOperations(client => client.query('TRUNCATE trails'))).rejects.toEqual(new Error('Cannot read property \'connect\' of null'))
   })
 
   test('should retrieve an existing trail', async () => {
