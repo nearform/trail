@@ -56,5 +56,35 @@ describe('Trail', () => {
 
       expect(subject.when).toBeSameDate('2018-01-01T12:34:56')
     })
+
+    test('should raise an error if argument "where" is neither undefined or an object', () => {
+      expect(() => {
+        new Trail('id', '2018-01-01T12:34:56', 'who', 'what', 'subject', 'invalid value')
+      }).toThrow('The where argument must be either undefined or an object.')
+    })
+
+    test('should raise an error if argument "why" is neither undefined or an object', () => {
+      expect(() => {
+        new Trail('id', '2018-01-01T12:34:56', 'who', 'what', 'subject', null, 'invalid value')
+      }).toThrow('The why argument must be either undefined or an object.')
+    })
+
+    test('should raise an error if argument "meta" is neither undefined or an object', () => {
+      expect(() => {
+        new Trail('id', '2018-01-01T12:34:56', 'who', 'what', 'subject', null, null, 'invalid value')
+      }).toThrow('The meta argument must be either undefined or an object.')
+    })
+
+    test('should raise an error if argument "date" isn\'t a string', () => {
+      expect(() => {
+        new Trail('id', {}, 'who', 'what', 'subject')
+      }).toThrow('Only Luxon DateTime, JavaScript Date or ISO8601 are supported for dates.')
+    })
+
+    test('should raise an error if argument "date" isn\'t a valid date', () => {
+      expect(() => {
+        new Trail('id', 'not a valid date', 'who', 'what', 'subject', null, null, 'invalid value')
+      }).toThrow('Invalid date "not a valid date". Please specify a valid UTC date in ISO8601 format.')
+    })
   })
 })
