@@ -70,7 +70,11 @@ describe('TrailsManager', () => {
         attributes: {}
       }
     })
+  })
 
-    expect(trail.when).toBeSameDate('2018-04-11T16:00:00.123Z')
+  test('should return null if trail doesn\'t exist', async () => {
+    const nonExistantId = '0000'
+    const trail = await this.subject.get(nonExistantId)
+    expect(trail).toEqual(null)
   })
 })
