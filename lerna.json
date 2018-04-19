@@ -1,5 +1,6 @@
 {
-  "lerna": "2.10.0",
+  "lerna": "2.10.2",
+  "npmClient": "yarn",
   "packages": [
     "packages/*"
   ],
