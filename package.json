@@ -19,7 +19,14 @@
     "node": ">=8.9.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "depcheck": "lerna run depcheck",
+    "doc:lint": "remark .",
+    "coverage": "lerna run coverage",
+    "lint": "standard",
+    "outdated:all": "yarn outdated || echo 'Outdated packages found.'; lerna exec \"yarn outdated || echo 'Outdated packages found.'\"",
+    "postinstall": "lerna bootstrap",
+    "test": "lerna run test",
+    "test:commit-check": "yarn run doc:lint && yarn run lint && yarn run depcheck && npm run test"
   },
   "remarkConfig": {
     "plugins": [
@@ -46,7 +53,7 @@
   },
   "devDependencies": {
     "depcheck": "^0.6.9",
-    "lerna": "^2.10.0",
+    "lerna": "^2.10.2",
     "remark-cli": "^5.0.0",
     "remark-lint": "^6.0.1",
     "remark-preset-lint-recommended": "^3.0.1",

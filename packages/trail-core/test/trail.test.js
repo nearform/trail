@@ -1,6 +1,7 @@
 require('./utils')
 
 const {TrailComponent, Trail} = require('../lib/trail')
+let unused // eslint-disable-line no-unused-vars
 
 describe('TrailComponent', () => {
   describe('constructor', () => {
@@ -27,23 +28,23 @@ describe('TrailComponent', () => {
 
     test('should not allow non objects and non strings as input', () => {
       expect(() => {
-        new TrailComponent(123) // eslint-disable-line no-new
+        unused = new TrailComponent(123)
       }).toThrow('A trail component must be initialized either with a string or a object.')
 
       expect(() => {
-        new TrailComponent([1, 2, 3]) // eslint-disable-line no-new
+        unused = new TrailComponent([1, 2, 3])
       }).toThrow('A trail component must be initialized either with a string or a object.')
     })
 
     test('should not allow empty strings as input', () => {
       expect(() => {
-        new TrailComponent('') // eslint-disable-line no-new
+        unused = new TrailComponent('')
       }).toThrow('The id of a trail component must be a non empty string.')
     })
 
     test('should require the id property to be defined', () => {
       expect(() => {
-        new TrailComponent({a: 1}, 'b') // eslint-disable-line no-new
+        unused = new TrailComponent({a: 1}, 'b')
       }).toThrow('The "b" property of a trail component must be defined.')
     })
   })
@@ -51,39 +52,53 @@ describe('TrailComponent', () => {
 
 describe('Trail', () => {
   describe('constructor', () => {
-    test('should parse string timestamps', () => {
-      const subject = new Trail('id', '2018-01-01T12:34:56', 'who', 'what', 'subject')
+    test('should parse string timestamps and copy arguments', () => {
+      const subject = new Trail('id', '2018-01-01T12:34:56', 'who', 'what', 'subject', {a: 1}, {b: 2}, {c: 3})
 
       expect(subject.when).toBeSameDate('2018-01-01T12:34:56')
+      expect(subject.who.id).toEqual('who')
+      expect(subject.what.id).toEqual('what')
+      expect(subject.subject.id).toEqual('subject')
+      expect(subject.where).toEqual({a: 1})
+      expect(subject.why).toEqual({b: 2})
+      expect(subject.meta).toEqual({c: 3})
+    })
+
+    test('should allow TrailComponents as arguments', () => {
+      const subject = new Trail('id', '2018-01-01T12:34:56', new TrailComponent('who'), new TrailComponent('what'), new TrailComponent('subject'))
+
+      expect(subject.who.id).toEqual('who')
+      expect(subject.what.id).toEqual('what')
+      expect(subject.subject.id).toEqual('subject')
     })
 
     test('should raise an error if argument "where" is neither undefined or an object', () => {
       expect(() => {
-        new Trail('id', '2018-01-01T12:34:56', 'who', 'what', 'subject', 'invalid value')
+        unused = new Trail('id', '2018-01-01T12:34:56', 'who', 'what', 'subject', 'invalid value')
       }).toThrow('The where argument must be either undefined or an object.')
     })
 
     test('should raise an error if argument "why" is neither undefined or an object', () => {
       expect(() => {
-        new Trail('id', '2018-01-01T12:34:56', 'who', 'what', 'subject', null, 'invalid value')
+        unused = new Trail('id', '2018-01-01T12:34:56', 'who', 'what', 'subject', null, 'invalid value')
       }).toThrow('The why argument must be either undefined or an object.')
     })
 
     test('should raise an error if argument "meta" is neither undefined or an object', () => {
       expect(() => {
-        new Trail('id', '2018-01-01T12:34:56', 'who', 'what', 'subject', null, null, 'invalid value')
+        unused = new Trail('id', '2018-01-01T12:34:56', 'who', 'what', 'subject', null, null, 'invalid value')
       }).toThrow('The meta argument must be either undefined or an object.')
     })
 
     test('should raise an error if argument "date" isn\'t a string', () => {
       expect(() => {
-        new Trail('id', {}, 'who', 'what', 'subject')
+        unused = new Trail('id', {}, 'who', 'what', 'subject')
       }).toThrow('Only Luxon DateTime, JavaScript Date or ISO8601 are supported for dates.')
     })
 
     test('should raise an error if argument "date" isn\'t a valid date', () => {
       expect(() => {
-        new Trail('id', 'not a valid date', 'who', 'what', 'subject', null, null, 'invalid value')
+        unused = new Trail('id', 'not a valid date', 'who', 'what', 'subject', null, null, 'invalid value')
       }).toThrow('Invalid date "not a valid date". Please specify a valid UTC date in ISO8601 format.')
     })
   })

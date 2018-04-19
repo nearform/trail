@@ -24,6 +24,14 @@ class TrailsManager {
     this.dbPool = new Pool(this.dbConnectionInfo)
   }
 
+  async close () {
+    try {
+      this.dbPool.end()
+    } catch (e) {
+      throw this._wrapError(e)
+    }
+  }
+
   async performDatabaseOperations (operations, useTransaction = true) {
     let client = null
 
@@ -54,11 +62,19 @@ class TrailsManager {
       const trail = trailOrWhen instanceof Trail ? trailOrWhen : new Trail(null, trailOrWhen, who, what, subject, where, why, meta)
 
       const sql = SQL`
-        INSERT INTO trails ("when", who_id, what_id, subject_id, who_data, what_data, subject_data, where_data, why_data, meta)
+        INSERT
+          INTO trails ("when", who_id, what_id, subject_id, who_data, what_data, subject_data, where_data, why_data, meta)
           VALUES (
-            ${trail.when.toISO()}, ${trail.who.id}, ${trail.what.id}, ${trail.subject.id},
-            ${trail.who.attributes}, ${trail.what.attributes}, ${trail.subject.attributes},
-            ${trail.where}, ${trail.why}, ${trail.meta}
+            ${trail.when.toISO()},
+            ${trail.who.id},
+            ${trail.what.id},
+            ${trail.subject.id},
+            ${trail.who.attributes},
+            ${trail.what.attributes},
+            ${trail.subject.attributes},
+            ${trail.where},
+            ${trail.why},
+            ${trail.meta}
           )
           RETURNING id::int;
       `
@@ -74,7 +90,17 @@ class TrailsManager {
   async get (id) {
     try {
       const sql = SQL`
-        SELECT timezone('UTC', "when") as "when", who_id, what_id, subject_id, who_data as who, what_data as what, subject_data as subject, where_data as "where", why_data as why, meta
+        SELECT
+            timezone('UTC', "when") as "when",
+            who_id,
+            what_id,
+            subject_id,
+            who_data as who,
+            what_data as what,
+            subject_data as subject,
+            where_data as "where",
+            why_data as why,
+            meta
           FROM trails
           WHERE id = ${id}
       `
@@ -96,40 +122,43 @@ class TrailsManager {
     }
   }
 
-  async delete (id) {
+  async update (id, trailOrWhen, who, what, subject, where = {}, why = {}, meta = {}) {
     try {
+      const trail = trailOrWhen instanceof Trail ? trailOrWhen : new Trail(null, trailOrWhen, who, what, subject, where, why, meta)
+
       const sql = SQL`
-        DELETE FROM trails
+        UPDATE trails
+          SET
+            "when" = ${trail.when.toISO()},
+            who_id = ${trail.who.id},
+            what_id = ${trail.what.id},
+            subject_id = ${trail.subject.id},
+            who_data = ${trail.who.attributes},
+            subject_data = ${trail.subject.attributes},
+            what_data = ${trail.what.attributes},
+            where_data = ${trail.where.attributes},
+            why_data = ${trail.why.attributes},
+            meta = ${trail.meta.attributes}
           WHERE id = ${id}
       `
-      const {rowCount} = await this.performDatabaseOperations(client => client.query(sql))
+      const res = await this.performDatabaseOperations(client => client.query(sql))
 
-      if (rowCount === 0) return null
-
-      return {rowCount}
-
+      return res.rowCount !== 0
     } catch (e) {
       throw this._wrapError(e)
     }
   }
 
-  async update (id, who, what, subject, where = {}, why = {}, meta = {}) {
+  async delete (id) {
     try {
       const sql = SQL`
-        UPDATE trails
-          SET who_data = ${who.attributes},
-          subject_data = ${subject.attributes},
-          what_data = ${what.attributes},
-          where_data = ${where.attributes},
-          why_data = ${why.attributes},
-          meta = ${meta.attributes}
+        DELETE
+          FROM trails
           WHERE id = ${id}
       `
-      const {rowCount} = await this.performDatabaseOperations(client => client.query(sql))
+      const res = await this.performDatabaseOperations(client => client.query(sql))
 
-      if (rowCount === 0) return null
-
-      return {rowCount}
+      return res.rowCount !== 0
     } catch (e) {
       throw this._wrapError(e)
     }
@@ -141,7 +170,7 @@ class TrailsManager {
     const wrapped = badImplementation(error)
     if (error && error.code) wrapped.code = error.code
 
-    return error
+    return wrapped
   }
 }
 
