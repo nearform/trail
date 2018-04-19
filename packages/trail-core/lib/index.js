@@ -71,10 +71,6 @@ class TrailsManager {
     }
   }
 
-  update (id, who, what, onWhat, when, meta) {
-
-  }
-
   async get (id) {
     try {
       const sql = SQL`
@@ -95,6 +91,45 @@ class TrailsManager {
 
       const {when, who, what, subject, where, why, meta} = data
       return new Trail(id, when, who, what, subject, where, why, meta)
+    } catch (e) {
+      throw this._wrapError(e)
+    }
+  }
+
+  async delete (id) {
+    try {
+      const sql = SQL`
+        DELETE FROM trails
+          WHERE id = ${id}
+      `
+      const {rowCount} = await this.performDatabaseOperations(client => client.query(sql))
+
+      if (rowCount === 0) return null
+
+      return {rowCount}
+
+    } catch (e) {
+      throw this._wrapError(e)
+    }
+  }
+
+  async update (id, who, what, subject, where = {}, why = {}, meta = {}) {
+    try {
+      const sql = SQL`
+        UPDATE trails
+          SET who_data = ${who.attributes},
+          subject_data = ${subject.attributes},
+          what_data = ${what.attributes},
+          where_data = ${where.attributes},
+          why_data = ${why.attributes},
+          meta = ${meta.attributes}
+          WHERE id = ${id}
+      `
+      const {rowCount} = await this.performDatabaseOperations(client => client.query(sql))
+
+      if (rowCount === 0) return null
+
+      return {rowCount}
     } catch (e) {
       throw this._wrapError(e)
     }

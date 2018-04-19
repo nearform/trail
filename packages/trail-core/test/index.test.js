@@ -72,9 +72,54 @@ describe('TrailsManager', () => {
     })
   })
 
-  test('should return null if trail doesn\'t exist', async () => {
+  test('should return null if trail doesn\'t exist when performing a get', async () => {
     const nonExistantId = '0000'
     const trail = await this.subject.get(nonExistantId)
     expect(trail).toEqual(null)
+  })
+
+  test('should be able to delete an existing trail', async () => {
+    const date = DateTime.fromISO('2018-04-11T07:00:00.123-09:00', {setZone: true})
+    const id = await this.subject.insert(date, 'who', {id: 'what', additional: true}, 'subject')
+
+    const {rowCount} = await this.subject.delete(id)
+    expect(rowCount).toEqual(1)
+  })
+
+  test('should return null if trail doesn\'t exist when performing a delete', async () => {
+    const nonExistantId = '0000'
+    const res = await this.subject.delete(nonExistantId)
+    expect(res).toEqual(null)
+  })
+
+  test('should be able to update an existing trail', async () => {
+    const date = DateTime.fromISO('2018-04-11T07:00:00.123-09:00', {setZone: true})
+    const id = await this.subject.insert(date, 'who', {id: 'what', additional: true}, 'subject')
+
+    const {rowCount} = await this.subject.update(id,
+      {attributes: {updated: true}},
+      {attributes: {updated: true}},
+      {attributes: {updated: true}},
+      {attributes: {updated: true}},
+      {attributes: {updated: true}}
+    )
+
+    expect(rowCount).toEqual(1)
+
+    const trail = await this.subject.get(id)
+    expect(trail).toMatchObject({
+      who: {
+        id: 'who',
+        attributes: {updated: true}
+      },
+      what: {
+        id: 'what',
+        attributes: {updated: true}
+      },
+      subject: {
+        id: 'subject',
+        attributes: {updated: true}
+      }
+    })
   })
 })
