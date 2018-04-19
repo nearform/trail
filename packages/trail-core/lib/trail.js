@@ -1,3 +1,5 @@
+'use strict'
+
 const {DateTime} = require('luxon')
 
 class TrailComponent {

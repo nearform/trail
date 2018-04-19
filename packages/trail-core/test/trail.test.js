@@ -1,3 +1,5 @@
+'use strict'
+
 require('./utils')
 
 const {TrailComponent, Trail} = require('../lib/trail')

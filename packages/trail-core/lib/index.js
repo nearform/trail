@@ -1,3 +1,5 @@
+'use strict'
+
 const SQL = require('@nearform/sql')
 const pino = require('pino')
 const {Pool} = require('pg')
@@ -57,10 +59,8 @@ class TrailsManager {
     }
   }
 
-  async insert (trailOrWhen, who, what, subject, where = {}, why = {}, meta = {}) {
+  async insert (trail) {
     try {
-      const trail = trailOrWhen instanceof Trail ? trailOrWhen : new Trail(null, trailOrWhen, who, what, subject, where, why, meta)
-
       const sql = SQL`
         INSERT
           INTO trails ("when", who_id, what_id, subject_id, who_data, what_data, subject_data, where_data, why_data, meta)
@@ -122,10 +122,8 @@ class TrailsManager {
     }
   }
 
-  async update (id, trailOrWhen, who, what, subject, where = {}, why = {}, meta = {}) {
+  async update (id, trail) {
     try {
-      const trail = trailOrWhen instanceof Trail ? trailOrWhen : new Trail(null, trailOrWhen, who, what, subject, where, why, meta)
-
       const sql = SQL`
         UPDATE trails
           SET
