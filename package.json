@@ -30,7 +30,19 @@
     "ignore": [
       "docs/*"
     ],
-    "globals": [ "describe", "it", "skip", "test", "expect", "before", "after", "beforeAll", "afterAll", "beforeEach", "afterEach"]
+    "globals": [
+      "describe",
+      "it",
+      "skip",
+      "test",
+      "expect",
+      "before",
+      "after",
+      "beforeAll",
+      "afterAll",
+      "beforeEach",
+      "afterEach"
+    ]
   },
   "devDependencies": {
     "depcheck": "^0.6.9",

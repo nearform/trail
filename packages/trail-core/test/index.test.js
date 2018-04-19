@@ -32,6 +32,21 @@ describe('TrailsManager', () => {
     expect(id).toBeGreaterThan(0)
   })
 
+  test('should raise an error when db pool is empty', async () => {
+    const badSubject = new TrailsManager()
+    badSubject.dbPool = null;
+    expect(badSubject.performDatabaseOperations(client => client.query('TRUNCATE trails'))).rejects.toEqual(new Error('Cannot read property \'connect\' of null'))
+  })
+
+  test('should raise an error when db pool is empty', async () => {
+    const badSubject = new TrailsManager()
+    const date = DateTime.fromISO('2018-04-11T07:00:00.123-09:00', {setZone: true})
+    const id = await this.subject.insert(date, 'who', {id: 'what', additional: true}, 'subject')
+
+    badSubject.dbPool = null;
+    expect(badSubject.get(id)).rejects.toEqual(new Error('Cannot read property \'connect\' of null'))
+  })
+
   test('should retrieve an existing trail', async () => {
     const date = DateTime.fromISO('2018-04-11T07:00:00.123-09:00', {setZone: true})
     const id = await this.subject.insert(date, 'who', {id: 'what', additional: true}, 'subject')
@@ -55,7 +70,11 @@ describe('TrailsManager', () => {
         attributes: {}
       }
     })
+  })
 
-    expect(trail.when).toBeSameDate('2018-04-11T16:00:00.123Z')
+  test('should return null if trail doesn\'t exist', async () => {
+    const nonExistantId = '0000'
+    const trail = await this.subject.get(nonExistantId)
+    expect(trail).toEqual(null)
   })
 })
