@@ -1,7 +1,6 @@
 'use strict'
 
 const SQL = require('@nearform/sql')
-const {forbidden} = require('boom')
 const {DateTime} = require('luxon')
 require('./utils')
 
@@ -78,36 +77,18 @@ describe('TrailsManager', () => {
     })
 
     test('should raise an error when db pool is empty', async () => {
-      const badSubject = new TrailsManager()
-      badSubject.dbPool = null
+      const badSubject = new TrailsManager(null, null)
+
       expect(badSubject.performDatabaseOperations(client => client.query('TRUNCATE trails')))
         .rejects.toEqual(new Error('Cannot read property \'connect\' of null'))
     })
   })
 
   describe('.close', () => {
-    test('should raise an error when something bad happens', () => {
-      const badSubject = new TrailsManager()
-      badSubject.dbPool = null
-      expect(badSubject.close()).rejects.toEqual(new TypeError("Cannot read property 'end' of null"))
-    })
-  })
+    test('should raise an error when something bad happens', async () => {
+      const badSubject = new TrailsManager(null, null)
 
-  describe('._wrapError', () => {
-    test('should return Boom error without parsing', () => {
-      const error = forbidden('FORBIDDEN')
-      expect(this.subject._wrapError(error)).toEqual(error)
-      expect(this.subject._wrapError(error)).toEqual(error)
-    })
-
-    test('should wrap as Boom 400 error, keeping the code', () => {
-      const error = new Error('ERROR')
-      error.code = 123
-
-      const wrapped = this.subject._wrapError(error)
-
-      expect(wrapped.isBoom).toEqual(true)
-      expect(wrapped.code).toEqual(123)
+      await expect(badSubject.close()).rejects.toEqual(new TypeError("Cannot read property 'end' of null"))
     })
   })
 
@@ -118,10 +99,9 @@ describe('TrailsManager', () => {
     })
 
     test('should raise an error when something bad happens', async () => {
-      const badSubject = new TrailsManager()
-      badSubject.dbPool = null
+      const badSubject = new TrailsManager(null, null)
 
-      expect(badSubject.insert(sampleTrail())).rejects.toEqual(new TypeError("Cannot read property 'connect' of null"))
+      await expect(badSubject.insert(sampleTrail())).rejects.toEqual(new TypeError("Cannot read property 'connect' of null"))
     })
   })
 
@@ -162,11 +142,9 @@ describe('TrailsManager', () => {
     test('should raise an error when something bad happens', async () => {
       const id = await this.subject.insert(sampleTrail())
 
-      const badSubject = new TrailsManager()
-      badSubject.dbPool = null
+      const badSubject = new TrailsManager(null, null)
 
-      expect(badSubject.get(id))
-        .rejects.toEqual(new TypeError("Cannot read property 'connect' of null"))
+      await expect(badSubject.get(id)).rejects.toEqual(new TypeError("Cannot read property 'connect' of null"))
     })
   })
 
@@ -203,10 +181,9 @@ describe('TrailsManager', () => {
       const date = DateTime.fromISO('2018-04-11T07:00:00.123-09:00', {setZone: true})
       const id = await this.subject.insert(sampleTrail())
 
-      const badSubject = new TrailsManager()
-      badSubject.dbPool = null
+      const badSubject = new TrailsManager(null, null)
 
-      expect(badSubject.update(
+      await expect(badSubject.update(
         id,
         {id: null, when: date, who: {id: 'who', updated: 1}, what: {id: 'what', updated: 2}, subject: {id: 'subject', updated: 3}}
       ))
@@ -231,8 +208,7 @@ describe('TrailsManager', () => {
     test('should raise an error when something bad happens', async () => {
       const id = await this.subject.insert(sampleTrail())
 
-      const badSubject = new TrailsManager()
-      badSubject.dbPool = null
+      const badSubject = new TrailsManager(null, null)
 
       expect(badSubject.delete(id))
         .rejects.toEqual(new TypeError("Cannot read property 'connect' of null"))

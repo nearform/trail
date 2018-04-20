@@ -9,7 +9,7 @@ const parseComponent = function (value, label) {
       throw new Error(`The "${label}" field when passed as a string must be non empty.`)
     }
 
-    return [value, {}]
+    return {id: value, value: {}}
   }
 
   // Valid the value format
@@ -27,7 +27,7 @@ const parseComponent = function (value, label) {
   value = Object.assign({}, value)
   Reflect.deleteProperty(value, 'id')
 
-  return [id, value]
+  return {id, value}
 }
 
 const parseWhen = function (original) {
@@ -54,9 +54,9 @@ module.exports = {
     if (id !== null && typeof id !== 'undefined' && typeof id !== 'number') throw new Error(`The trail id must be a number or null.`)
 
     when = parseWhen(when)
-    const [whoId, whoAttributes] = parseComponent(who, 'who')
-    const [whatId, whatAttributes] = parseComponent(what, 'what')
-    const [subjectId, subjectAttributes] = parseComponent(subject, 'subject')
+    const {id: whoId, value: whoAttributes} = parseComponent(who, 'who')
+    const {id: whatId, value: whatAttributes} = parseComponent(what, 'what')
+    const {id: subjectId, value: subjectAttributes} = parseComponent(subject, 'subject')
 
     // Validate optional fields
     where = validateAdditionalFields(where, 'where')
