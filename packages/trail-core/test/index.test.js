@@ -5,7 +5,7 @@ const {forbidden} = require('boom')
 const {DateTime} = require('luxon')
 require('./utils')
 
-const {TrailsManager, createTrail, convertToTrail} = require('../lib')
+const {TrailsManager} = require('../lib')
 
 expect.extend({
   toBeSameDate (received, argument) {
@@ -22,7 +22,7 @@ expect.extend({
 
 const sampleTrail = function () {
   const date = DateTime.fromISO('2018-04-11T07:00:00.123-09:00', {setZone: true})
-  return convertToTrail({id: null, when: date, who: 'who', what: {id: 'what', additional: true}, subject: 'subject'})
+  return {id: null, when: date, who: 'who', what: {id: 'what', additional: true}, subject: 'subject'}
 }
 
 describe('TrailsManager', () => {
@@ -175,7 +175,10 @@ describe('TrailsManager', () => {
       const date = DateTime.fromISO('2018-04-11T07:00:00.123-09:00', {setZone: true})
       const id = await this.subject.insert(sampleTrail())
 
-      const res = await this.subject.update(id, createTrail(null, date, {id: 'who', updated: 1}, {id: 'what', updated: 2}, {id: 'subject', updated: 3}))
+      const res = await this.subject.update(
+        id,
+        {id: null, when: date, who: {id: 'who', updated: 1}, what: {id: 'what', updated: 2}, subject: {id: 'subject', updated: 3}}
+      )
 
       expect(res).toEqual(true)
 
@@ -203,7 +206,10 @@ describe('TrailsManager', () => {
       const badSubject = new TrailsManager()
       badSubject.dbPool = null
 
-      expect(badSubject.update(id, createTrail(null, date, {id: 'who', updated: 1}, {id: 'what', updated: 2}, {id: 'subject', updated: 3})))
+      expect(badSubject.update(
+        id,
+        {id: null, when: date, who: {id: 'who', updated: 1}, what: {id: 'what', updated: 2}, subject: {id: 'subject', updated: 3}}
+      ))
         .rejects.toEqual(new TypeError("Cannot read property 'connect' of null"))
     })
   })

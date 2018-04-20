@@ -5,7 +5,7 @@ const pino = require('pino')
 const {Pool} = require('pg')
 const {badImplementation} = require('boom')
 
-const {createTrail, convertToTrail} = require('./trail')
+const {convertToTrail} = require('./trail')
 
 class TrailsManager {
   constructor () {
@@ -61,6 +61,8 @@ class TrailsManager {
 
   async insert (trail) {
     try {
+      trail = convertToTrail(trail)
+
       const sql = SQL`
         INSERT
           INTO trails ("when", who_id, what_id, subject_id, who_data, what_data, subject_data, where_data, why_data, meta)
@@ -124,6 +126,8 @@ class TrailsManager {
 
   async update (id, trail) {
     try {
+      trail = convertToTrail(trail)
+
       const sql = SQL`
         UPDATE trails
           SET
@@ -172,4 +176,4 @@ class TrailsManager {
   }
 }
 
-module.exports = {TrailsManager, createTrail, convertToTrail}
+module.exports = {TrailsManager}
