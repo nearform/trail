@@ -89,7 +89,7 @@ class TrailsManager {
     }
   }
 
-  async get (id, idKeys) {
+  async get (id) {
     try {
       const sql = SQL`
         SELECT
@@ -118,7 +118,7 @@ class TrailsManager {
       data.what.id = data.what_id
       data.subject.id = data.subject_id
 
-      return convertToTrail(data, idKeys)
+      return convertToTrail(data)
     } catch (e) {
       throw this._wrapError(e)
     }
