@@ -1,9 +1,10 @@
+'use strict'
+
 const SQL = require('@nearform/sql')
-const {forbidden} = require('boom')
 const {DateTime} = require('luxon')
 require('./utils')
 
-const {TrailsManager, Trail, TrailComponent} = require('../lib')
+const {TrailsManager} = require('../lib')
 
 expect.extend({
   toBeSameDate (received, argument) {
@@ -17,6 +18,11 @@ expect.extend({
     }
   }
 })
+
+const sampleTrail = function () {
+  const date = DateTime.fromISO('2018-04-11T07:00:00.123-09:00', {setZone: true})
+  return {id: null, when: date, who: 'who', what: {id: 'what', additional: true}, subject: 'subject'}
+}
 
 describe('TrailsManager', () => {
   beforeAll(() => {
@@ -71,73 +77,42 @@ describe('TrailsManager', () => {
     })
 
     test('should raise an error when db pool is empty', async () => {
-      const badSubject = new TrailsManager()
-      badSubject.dbPool = null
+      const badSubject = new TrailsManager(null, null)
+
       expect(badSubject.performDatabaseOperations(client => client.query('TRUNCATE trails')))
         .rejects.toEqual(new Error('Cannot read property \'connect\' of null'))
     })
   })
 
   describe('.close', () => {
-    test('should raise an error when something bad happens', () => {
-      const badSubject = new TrailsManager()
-      badSubject.dbPool = null
-      expect(badSubject.close()).rejects.toEqual(new TypeError("Cannot read property 'end' of null"))
-    })
-  })
+    test('should raise an error when something bad happens', async () => {
+      const badSubject = new TrailsManager(null, null)
 
-  describe('._wrapError', () => {
-    test('should return Boom error without parsing', () => {
-      const error = forbidden('FORBIDDEN')
-      expect(this.subject._wrapError(error)).toEqual(error)
-      expect(this.subject._wrapError(error)).toEqual(error)
-    })
-
-    test('should wrap as Boom 400 error, keeping the code', () => {
-      const error = new Error('ERROR')
-      error.code = 123
-
-      const wrapped = this.subject._wrapError(error)
-
-      expect(wrapped.isBoom).toEqual(true)
-      expect(wrapped.code).toEqual(123)
+      await expect(badSubject.close()).rejects.toEqual(new TypeError("Cannot read property 'end' of null"))
     })
   })
 
   describe('.insert', () => {
-    test('should create a new trail', async () => {
-      const date = DateTime.fromISO('2018-04-11T07:00:00.123-09:00', {setZone: true})
-
-      const id = await this.subject.insert(date, 'who', {id: 'what', additional: true}, 'subject')
-      expect(id).toBeGreaterThan(0)
-    })
-
     test('should accept a single argument', async () => {
-      const date = DateTime.fromISO('2018-04-11T07:00:00.123-09:00', {setZone: true})
-
-      const id = await this.subject.insert(new Trail(null, date, 'who', {id: 'what', additional: true}, 'subject'))
+      const id = await this.subject.insert(sampleTrail())
       expect(id).toBeGreaterThan(0)
     })
 
     test('should raise an error when something bad happens', async () => {
-      const badSubject = new TrailsManager()
-      badSubject.dbPool = null
+      const badSubject = new TrailsManager(null, null)
 
-      const date = DateTime.fromISO('2018-04-11T07:00:00.123-09:00', {setZone: true})
-      expect(badSubject.insert(date, 'who', {id: 'what', additional: true}, 'subject'))
-        .rejects.toEqual(new TypeError("Cannot read property 'connect' of null"))
+      await expect(badSubject.insert(sampleTrail())).rejects.toEqual(new TypeError("Cannot read property 'connect' of null"))
     })
   })
 
   describe('.get', () => {
     test('should retrieve an existing trail', async () => {
-      const date = DateTime.fromISO('2018-04-11T07:00:00.123-09:00', {setZone: true})
-      const id = await this.subject.insert(date, 'who', {id: 'what', additional: true}, 'subject')
+      const id = await this.subject.insert(sampleTrail())
 
       const trail = await this.subject.get(id)
-      expect(trail).toBeInstanceOf(Trail)
-      expect(trail.who).toBeInstanceOf(TrailComponent)
+      expect(trail).toBeInstanceOf(Object)
       expect(trail).toMatchObject({
+        when: DateTime.fromISO('2018-04-11T16:00:00.123', {zone: 'utc'}),
         who: {
           id: 'who',
           attributes: {}
@@ -151,7 +126,10 @@ describe('TrailsManager', () => {
         subject: {
           id: 'subject',
           attributes: {}
-        }
+        },
+        where: {},
+        why: {},
+        meta: {}
       })
     })
 
@@ -162,27 +140,22 @@ describe('TrailsManager', () => {
     })
 
     test('should raise an error when something bad happens', async () => {
-      const date = DateTime.fromISO('2018-04-11T07:00:00.123-09:00', {setZone: true})
-      const id = await this.subject.insert(date, 'who', {id: 'what', additional: true}, 'subject')
+      const id = await this.subject.insert(sampleTrail())
 
-      const badSubject = new TrailsManager()
-      badSubject.dbPool = null
+      const badSubject = new TrailsManager(null, null)
 
-      expect(badSubject.get(id))
-        .rejects.toEqual(new TypeError("Cannot read property 'connect' of null"))
+      await expect(badSubject.get(id)).rejects.toEqual(new TypeError("Cannot read property 'connect' of null"))
     })
   })
 
   describe('.update', () => {
     test('should be able to update an existing trail', async () => {
       const date = DateTime.fromISO('2018-04-11T07:00:00.123-09:00', {setZone: true})
-      const id = await this.subject.insert(date, 'who', {id: 'what', additional: true}, 'subject')
+      const id = await this.subject.insert(sampleTrail())
 
-      const res = await this.subject.update(id,
-        date,
-        {id: 'who', updated: 1},
-        {id: 'what', updated: 2},
-        {id: 'subject', updated: 3}
+      const res = await this.subject.update(
+        id,
+        {id: null, when: date, who: {id: 'who', updated: 1}, what: {id: 'what', updated: 2}, subject: {id: 'subject', updated: 3}}
       )
 
       expect(res).toEqual(true)
@@ -204,41 +177,15 @@ describe('TrailsManager', () => {
       })
     })
 
-    test('should accept a single argument', async () => {
-      const date = DateTime.fromISO('2018-04-11T07:00:00.123-09:00', {setZone: true})
-      const id = await this.subject.insert(date, 'who', {id: 'what', additional: true}, 'subject')
-
-      await this.subject.update(id, new Trail(id, date, {id: 'who', updated: 1}, {id: 'what', updated: 2}, {id: 'subject', updated: 3}))
-
-      const trail = await this.subject.get(id)
-      expect(trail).toMatchObject({
-        who: {
-          id: 'who',
-          attributes: {updated: 1}
-        },
-        what: {
-          id: 'what',
-          attributes: {updated: 2}
-        },
-        subject: {
-          id: 'subject',
-          attributes: {updated: 3}
-        }
-      })
-    })
-
     test('should raise an error when something bad happens', async () => {
       const date = DateTime.fromISO('2018-04-11T07:00:00.123-09:00', {setZone: true})
-      const id = await this.subject.insert(date, 'who', {id: 'what', additional: true}, 'subject')
+      const id = await this.subject.insert(sampleTrail())
 
-      const badSubject = new TrailsManager()
-      badSubject.dbPool = null
+      const badSubject = new TrailsManager(null, null)
 
-      expect(badSubject.update(id,
-        date,
-        {id: 'who', updated: 1},
-        {id: 'what', updated: 2},
-        {id: 'subject', updated: 3}
+      await expect(badSubject.update(
+        id,
+        {id: null, when: date, who: {id: 'who', updated: 1}, what: {id: 'what', updated: 2}, subject: {id: 'subject', updated: 3}}
       ))
         .rejects.toEqual(new TypeError("Cannot read property 'connect' of null"))
     })
@@ -246,8 +193,7 @@ describe('TrailsManager', () => {
 
   describe('.delete', () => {
     test('should be able to delete an existing trail', async () => {
-      const date = DateTime.fromISO('2018-04-11T07:00:00.123-09:00', {setZone: true})
-      const id = await this.subject.insert(date, 'who', {id: 'what', additional: true}, 'subject')
+      const id = await this.subject.insert(sampleTrail())
 
       const res = await this.subject.delete(id)
       expect(res).toEqual(true)
@@ -260,11 +206,9 @@ describe('TrailsManager', () => {
     })
 
     test('should raise an error when something bad happens', async () => {
-      const date = DateTime.fromISO('2018-04-11T07:00:00.123-09:00', {setZone: true})
-      const id = await this.subject.insert(date, 'who', {id: 'what', additional: true}, 'subject')
+      const id = await this.subject.insert(sampleTrail())
 
-      const badSubject = new TrailsManager()
-      badSubject.dbPool = null
+      const badSubject = new TrailsManager(null, null)
 
       expect(badSubject.delete(id))
         .rejects.toEqual(new TypeError("Cannot read property 'connect' of null"))
