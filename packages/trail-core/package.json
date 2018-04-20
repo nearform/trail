@@ -26,7 +26,8 @@
     "pg:migrate": "node ./database/migrate.js --version=max",
     "test": "jest -i",
     "test:watch": "jest -i --watch",
-    "coverage": "jest -i --coverage"
+    "coverage": "jest -i --coverage",
+    "coverage:watch": "jest -i --coverage --watch"
   },
   "dependencies": {
     "@nearform/sql": "^1.0.1",

@@ -5,7 +5,7 @@ const pino = require('pino')
 const {Pool} = require('pg')
 const {badImplementation} = require('boom')
 
-const {Trail, TrailComponent} = require('./trail')
+const {createTrail, convertToTrail} = require('./trail')
 
 class TrailsManager {
   constructor () {
@@ -87,7 +87,7 @@ class TrailsManager {
     }
   }
 
-  async get (id) {
+  async get (id, idKeys) {
     try {
       const sql = SQL`
         SELECT
@@ -111,12 +111,12 @@ class TrailsManager {
       const data = res.rows[0]
 
       // Merge ids on their fields
+      data.id = id
       data.who.id = data.who_id
       data.what.id = data.what_id
       data.subject.id = data.subject_id
 
-      const {when, who, what, subject, where, why, meta} = data
-      return new Trail(id, when, who, what, subject, where, why, meta)
+      return convertToTrail(data, idKeys)
     } catch (e) {
       throw this._wrapError(e)
     }
@@ -172,4 +172,4 @@ class TrailsManager {
   }
 }
 
-module.exports = {TrailsManager, TrailComponent, Trail}
+module.exports = {TrailsManager, createTrail, convertToTrail}
