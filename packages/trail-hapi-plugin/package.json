@@ -1,0 +1,34 @@
+{
+  "name": "trail-hapi-plugin",
+  "version": "1.0.0",
+  "description": "Hapi plugin for Trail Audit log",
+  "main": "index.js",
+  "scripts": {
+    "test": "lab test/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nearform/trail.git"
+  },
+  "keywords": [
+    "audit",
+    "log",
+    "logging",
+    "hapi",
+    "trail"
+  ],
+  "author": "nearForm Ltd",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nearform/trail/issues"
+  },
+  "homepage": "https://github.com/nearform/trail#readme",
+  "devDependencies": {
+    "code": "^5.2.0",
+    "lab": "^15.4.1",
+    "pg": "^7.4.1"
+  },
+  "dependencies": {
+    "hapi": "^17.3.1"
+  }
+}
