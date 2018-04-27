@@ -1,22 +1,13 @@
 'use strict'
 
-const Hapi = require('hapi')
+const serverFactory = require('../lib/index')
 
 module.exports = (function () {
   let defaultServer = null
-  let port = 8080
   const servers = []
 
   const build = async function (additionalConfig) {
-    const server = Hapi.Server({
-      host: '127.0.0.1',
-      port: port++,
-      ...additionalConfig
-    })
-
-    await server.register({plugin: require('../lib/index')})
-    await server.start()
-
+    const server = await serverFactory()
     servers.push(server)
     return server
   }

@@ -1,15 +1,14 @@
 {
-  "name": "trail-hapi-plugin",
+  "name": "@nearform/trail-hapi-plugin",
   "version": "1.0.0",
-  "description": "Hapi plugin for Trail Audit log",
-  "main": "index.js",
-  "scripts": {
-    "test": "lab test/"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/nearform/trail.git"
-  },
+  "description": "Hapi plugin for the audit trail logging service",
+  "license": "MIT",
+  "author": "nearForm Ltd",
+  "contributors": [
+    "Mehdi Avdi (https://github.com/mavdi)",
+    "Paolo Insogna (https://github.com/ShogunPanda)"
+  ],
+  "homepage": "https://github.com/nearform/trail#readme",
   "keywords": [
     "audit",
     "log",
@@ -17,18 +16,33 @@
     "hapi",
     "trail"
   ],
-  "author": "nearForm Ltd",
-  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nearform/trail.git"
+  },
   "bugs": {
     "url": "https://github.com/nearform/trail/issues"
   },
-  "homepage": "https://github.com/nearform/trail#readme",
-  "devDependencies": {
-    "code": "^5.2.0",
-    "lab": "^15.4.1",
-    "pg": "^7.4.1"
+  "engines": {
+    "node": ">=8.9.0"
+  },
+  "main": "lib/index.js",
+  "scripts": {
+    "depcheck": "../../node_modules/depcheck/bin/depcheck",
+    "test": "jest -i",
+    "test:watch": "jest -i --watch",
+    "coverage": "jest -i --coverage",
+    "coverage:watch": "jest -i --coverage --watch"
   },
   "dependencies": {
-    "hapi": "^17.3.1"
+    "@nearform/trail-core": "^1.0.0",
+    "boom": "^7.2.0",
+    "joi": "^13.2.0",
+    "hapi": "^17.3.1",
+    "lodash": "^4.17.10",
+    "luxon": "^1.2.0"
+  },
+  "devDependencies": {
+    "jest": "^22.4.3"
   }
 }

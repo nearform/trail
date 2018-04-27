@@ -7,10 +7,10 @@ const {Pool} = require('pg')
 const {convertToTrail} = require('./trail')
 
 class TrailsManager {
-  constructor (config, pool) {
+  constructor (logger, pool) {
     this.config = require('config')
 
-    this.logger = config || pino()
+    this.logger = logger || pino()
 
     if (typeof pool === 'undefined') {
       this.dbConnectionInfo = {
@@ -63,7 +63,7 @@ class TrailsManager {
 
     const sql = SQL`
       INSERT
-        INTO trails ("when", who_id, what_id, subject_id, who_data, what_data, subject_data, where_data, why_data, meta)
+        INTO trails ("when", who_id, what_id, subject_id, who_data, what_data, subject_data, "where", why, meta)
         VALUES (
           ${trail.when.toISO()},
           ${trail.who.id},
@@ -94,8 +94,8 @@ class TrailsManager {
           who_data as who,
           what_data as what,
           subject_data as subject,
-          where_data as "where",
-          why_data as why,
+          "where",
+          why,
           meta
         FROM trails
         WHERE id = ${id}
@@ -128,9 +128,9 @@ class TrailsManager {
           who_data = ${trail.who.attributes},
           subject_data = ${trail.subject.attributes},
           what_data = ${trail.what.attributes},
-          where_data = ${trail.where.attributes},
-          why_data = ${trail.why.attributes},
-          meta = ${trail.meta.attributes}
+          "where" = ${trail.where},
+          why = ${trail.why},
+          meta = ${trail.meta}
         WHERE id = ${id}
     `
     const res = await this.performDatabaseOperations(client => client.query(sql))

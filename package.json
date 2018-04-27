@@ -1,7 +1,8 @@
 {
   "name": "@nearform/trail",
+  "private": true,
   "version": "1.0.0",
-  "description": "Audit trail log service",
+  "description": "Audit trail logging service",
   "license": "MIT",
   "author": "nearForm Ltd",
   "contributors": [
@@ -23,10 +24,14 @@
     "doc:lint": "remark .",
     "coverage": "lerna run coverage",
     "lint": "standard",
-    "outdated:all": "yarn outdated || echo 'Outdated packages found.'; lerna exec \"yarn outdated || echo 'Outdated packages found.'\"",
+    "outdated:all": "npm outdated || echo 'Outdated packages found.'; lerna exec \"npm outdated || echo 'Outdated packages found.'\"",
+    "pg:init": "cd packages/trail-core && npm run pg:init",
+    "pg:test:init": "cd packages/trail-core && npm run pg:test:init",
+    "pg:migrate": "cd packages/trail-core && npm run pg:migrate",
     "postinstall": "lerna bootstrap",
+    "start": "cd packages/trail-hapi-server && npm run start",
     "test": "lerna run test",
-    "test:commit-check": "yarn run doc:lint && yarn run lint && yarn run depcheck && npm run test"
+    "test:commit-check": "npm run doc:lint && npm run lint && npm run depcheck && npm run test"
   },
   "remarkConfig": {
     "plugins": [
@@ -38,6 +43,7 @@
       "docs/*"
     ],
     "globals": [
+      "jest",
       "describe",
       "it",
       "skip",
@@ -53,11 +59,14 @@
   },
   "devDependencies": {
     "depcheck": "^0.6.9",
-    "lerna": "^2.10.2",
+    "lerna": "^2.11.0",
     "remark-cli": "^5.0.0",
     "remark-lint": "^6.0.1",
     "remark-preset-lint-recommended": "^3.0.1",
     "standard": "^11.0.1",
     "swagger-gen": "^1.1.3"
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }

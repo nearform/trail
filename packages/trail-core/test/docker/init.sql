@@ -9,7 +9,7 @@ CREATE TABLE trails (
   who_data      JSONB DEFAULT '{}',
   what_data     JSONB DEFAULT '{}',
   subject_data  JSONB DEFAULT '{}',
-  where_data    JSONB DEFAULT '{}',
-  why_data      JSONB DEFAULT '{}',
+  where    JSONB DEFAULT '{}',
+  why      JSONB DEFAULT '{}',
   meta          JSONB DEFAULT '{}'
 );

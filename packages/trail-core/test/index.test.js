@@ -42,7 +42,7 @@ describe('TrailsManager', () => {
         await this.subject.performDatabaseOperations(async client => {
           await client.query(SQL`
             INSERT
-              INTO trails ("when", who_id, what_id, subject_id, who_data, what_data, subject_data, where_data, why_data, meta)
+              INTO trails ("when", who_id, what_id, subject_id, who_data, what_data, subject_data, "where", why, meta)
               VALUES('2018-01-01T12:34:56+00:00', 'who', 'what', 'subject', ${{}}, ${{}}, ${{}}, ${{}}, ${{}}, ${{}})
           `)
           throw new Error('rollback please')
@@ -62,7 +62,7 @@ describe('TrailsManager', () => {
         await this.subject.performDatabaseOperations(async client => {
           await client.query(SQL`
             INSERT
-              INTO trails ("when", who_id, what_id, subject_id, who_data, what_data, subject_data, where_data, why_data, meta)
+              INTO trails ("when", who_id, what_id, subject_id, who_data, what_data, subject_data, "where", why, meta)
               VALUES('2018-01-01T12:34:56+00:00', 'who', 'what', 'subject', ${{}}, ${{}}, ${{}}, ${{}}, ${{}}, ${{}})
           `)
           throw new Error('rollback please')
