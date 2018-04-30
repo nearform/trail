@@ -45,6 +45,11 @@ const errorsMessages = {
   'custom.stringOrObject': 'must be either a non empty string or a object'
 }
 
+const dateTime = Joi.string()
+  .description('Trail timestamp in ISO 8601 format')
+  .example('2018-01-02T03:04:05.123Z')
+  .isoDate()
+
 const trailSchema = {
   params: {
     id: Joi.number()
@@ -54,14 +59,40 @@ const trailSchema = {
       .min(0)
       .example(12345)
   },
+  search: {
+    from: dateTime
+      .description('The minimum timestamp (inclusive)')
+      .required(),
+    to: dateTime
+      .description('The maximum timestamp (inclusive)')
+      .required(),
+    who: Joi.string()
+      .description(`A portion of the trail actor id`)
+      .example('act'),
+    what: Joi.string()
+      .description(`A portion of the trail subject id`)
+      .example('sub'),
+    subject: Joi.string()
+      .description(`A portion of the trail target id`)
+      .example('tar'),
+    page: Joi.number()
+      .description('The page of results to return')
+      .min(1)
+      .example(5),
+    pageSize: Joi.number()
+      .description('The number of results per page (default is 25)')
+      .min(1)
+      .example(25),
+    sort: Joi.string()
+      .description(`The field to use for sorting results. Default order is ascending, which can be reversed by prepending a dash. Default is "-when"`)
+      .valid(['when', 'id', 'who', 'what', 'subject', '-when', '-id', '-who', '-what', '-subject'])
+      .example('-when')
+  },
   request: Joi.object()
     .description('A audit trail')
     .meta({id: 'models/trail.request'})
     .keys({
-      when: Joi.string()
-        .description('Trail timestamp in ISO 8601 format')
-        .example('2018-01-02T03:04:05.123Z')
-        .isoDate(),
+      when: dateTime,
       who: stringOrObject('Trail actor'),
       what: stringOrObject('Trail subject'),
       subject: stringOrObject('Trail target'),

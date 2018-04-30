@@ -17,6 +17,89 @@ describe('Trails REST operations', () => {
   })
 
   describe('POST /trails', async () => {
+    test('it should search trails and return it with 200', async () => {
+      await server.trailCore.performDatabaseOperations(client => client.query('TRUNCATE trails'))
+
+      const id = await server.trailCore.insert({
+        when: '2016-01-02T18:04:05.123+03:00',
+        who: '1',
+        what: '2',
+        subject: '3'
+      })
+
+      const response = await server.inject({
+        method: 'GET',
+        url: `/trails?from=${encodeURIComponent('2014-01-02T18:04:05.123+03:00')}&to=${encodeURIComponent('2018-01-02T18:04:05.123+03:00')}`
+      })
+
+      expect(response.statusCode).toEqual(200)
+      const trails = JSON.parse(response.payload)
+
+      expect(trails[0]).toMatchObject({
+        id: id,
+        when: DateTime.fromISO('2016-01-02T15:04:05.123', {zone: 'utc'}).toISO(),
+        who: {
+          id: '1',
+          attributes: {}
+        },
+        what: {
+          id: '2',
+          attributes: {}
+        },
+        subject: {
+          id: '3',
+          attributes: {}
+        },
+        where: {},
+        why: {},
+        meta: {}
+      })
+
+      await server.trailCore.delete(id)
+    })
+
+    test('it should search trails and return no body with 204 when no records are found', async () => {
+      await server.trailCore.performDatabaseOperations(client => client.query('TRUNCATE trails'))
+
+      const id = await server.trailCore.insert({
+        when: '2016-01-02T18:04:05.123+03:00',
+        who: '1',
+        what: '2',
+        subject: '3'
+      })
+
+      const response = await server.inject({
+        method: 'GET',
+        url: `/trails?from=${encodeURIComponent('2014-01-02T18:04:05.123+03:00')}&to=${encodeURIComponent('2018-01-02T18:04:05.123+03:00')}&who=foo`
+      })
+
+      expect(response.statusCode).toEqual(204)
+      expect(response.payload).toEqual('')
+
+      await server.trailCore.delete(id)
+    })
+
+    test('it should return 422 in case of validation errors', async () => {
+      const response = await server.inject({
+        method: 'GET',
+        url: `/trails?from=bar&where=foo`
+      })
+
+      expect(response.statusCode).toEqual(422)
+      expect(JSON.parse(response.payload)).toMatchObject({
+        statusCode: 422,
+        error: 'Unprocessable Entity',
+        message: 'Invalid input data.',
+        reasons: {
+          from: 'must be a valid UTC timestamp in the format YYYY-MM-DDTHH:MM:SS.sss (example: 2018-07-06T12:34:56.123)',
+          to: 'must be present and non empty',
+          where: 'is not a valid attribute'
+        }
+      })
+    })
+  })
+
+  describe('POST /trails', async () => {
     test('it should create a new trail and return it with 201', async () => {
       const response = await server.inject({
         method: 'POST',

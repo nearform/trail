@@ -10,6 +10,37 @@ module.exports = {
   name: 'trails',
   register: (server, options) => {
     server.route({
+      method: 'GET',
+      path: '/trails',
+      async handler (request, h) {
+        const { from, to, who, what, subject, page, pageSize, sort } = request.query
+
+        const results = await request.trailCore.search({ from, to, who, what, subject, page, pageSize, sort })
+
+        return results.length ? results : h.response().code(204)
+      },
+      config: {
+        description: 'Search audit trails.',
+        tags: ['api', 'trails'],
+        validate: {
+          query: trailSchema.search,
+          failAction,
+          options: validationOptions
+        },
+        response: {
+          status: {
+            200: Joi.array()
+              .description('The search results.')
+              .items(trailSchema.response),
+            204: Joi.empty().description('No trails found.'),
+            422: errorsSchemas['422'],
+            500: errorsSchemas['500']
+          }
+        }
+      }
+    })
+
+    server.route({
       method: 'POST',
       path: '/trails',
       async handler (request, h) {

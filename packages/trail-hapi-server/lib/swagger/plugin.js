@@ -9,7 +9,9 @@ const addReference = function (spec) {
   const info = typeof spec.describe === 'function' ? spec.describe() : spec
   const id = get(info, 'meta.0.id')
 
-  return id ? {$ref: `#/components/${id}`} : joiToSchema(spec)
+  if (id) return {$ref: `#/components/${id}`}
+  else if (spec.isJoi) return joiToSchema(spec)
+  else return spec
 }
 
 const parseResponses = function (route) {
@@ -56,6 +58,21 @@ const parseParameters = function (route) {
   }))
 }
 
+const parseQuerystring = function (route) {
+  // If there is a already defined format, use it
+  let specObject = get(route, 'settings.validate.query')
+
+  if (!specObject) return null
+
+  return Object.entries(specObject.describe().children).map(([name, spec]) => ({
+    name,
+    in: 'query',
+    description: spec.description,
+    required: get(spec, 'flags.presence') === 'required',
+    schema: addReference(spec)
+  }))
+}
+
 const parseBody = function (route) {
   // If there is a already defined format, use it
   let specObject = get(route, 'settings.validate.payload')
@@ -95,7 +112,10 @@ const addRoutes = function (spec, server) {
       tags: tags.filter(t => t !== 'api'),
       responses: parseResponses(route),
       requestBody: parseBody(route),
-      parameters: parseParameters(route)
+      parameters: [
+        parseParameters(route),
+        parseQuerystring(route)
+      ].filter(l => l).reduce((a, b) => a.concat(b), [])
     }
   }
 
