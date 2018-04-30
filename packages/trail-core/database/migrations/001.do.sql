@@ -13,3 +13,8 @@ CREATE TABLE trails (
   why           JSONB DEFAULT '{}',
   meta          JSONB DEFAULT '{}'
 );
+
+CREATE INDEX trails_timestamp ON trails("when");
+CREATE INDEX trails_who_id ON trails(who_id);
+CREATE INDEX trails_what_id ON trails(what_id);
+CREATE INDEX trails_subject_id ON trails(subject_id);

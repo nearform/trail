@@ -2,35 +2,38 @@
 
 const {DateTime} = require('luxon')
 
-const parseComponent = function (value, label) {
+const parseComponent = function (attributes, id, label) {
+  // Copy an overriden id
+  if (id && typeof attributes === 'object') attributes.id = id
+
   // When the value is just a string, just make sure is non empty, then return it
-  if (typeof value === 'string') {
-    if (!value.trim().length) {
+  if (typeof attributes === 'string') {
+    if (!attributes.trim().length) {
       throw new Error(`The "${label}" field when passed as a string must be non empty.`)
     }
 
-    return {id: value, value: {}}
+    return {id: attributes, attributes: {}}
   }
 
   // Valid the value format
-  if (typeof value !== 'object' || Array.isArray(value)) {
+  if (typeof attributes !== 'object' || Array.isArray(attributes)) {
     throw new Error(`The "${label}" field must be either a string or a object.`)
-  } else if (typeof value.id !== 'string') {
+  } else if (typeof attributes.id !== 'string') {
     throw new Error(`The "id" property of the "${label}" field must be a string.`)
   }
 
   // Parse the id and make sure is non empty
-  const id = value.id.toString().trim()
+  id = attributes.id.toString().trim()
   if (!id.length) throw new Error(`The "id" property of the "${label}" field must be a non empty string.`)
 
   // Clone the object (since we're removing properties), then remove the id
-  value = Object.assign({}, value)
-  Reflect.deleteProperty(value, 'id')
+  attributes = Object.assign({}, attributes)
+  Reflect.deleteProperty(attributes, 'id')
 
-  return {id, value}
+  return {id, attributes}
 }
 
-const parseWhen = function (original) {
+const parseDate = function (original) {
   if (original instanceof DateTime) return original.setZone('utc')
   else if (original instanceof Date) return DateTime.fromMillis(original.getTime(), {zone: 'utc'})
   else if (typeof original !== 'string') throw new Error(`Only Luxon DateTime, JavaScript Date or ISO8601 are supported for dates.`)
@@ -49,30 +52,21 @@ const validateAdditionalFields = function (value, label) {
 }
 
 module.exports = {
-  convertToTrail ({id, when, who, what, subject, where, why, meta}) {
+  parseDate,
+  convertToTrail ({id, when, who, what, subject, where, why, meta, who_id: whoId, what_id: whatId, subject_id: subjectId}) {
     // Convert required fields
     if (id !== null && typeof id !== 'undefined' && typeof id !== 'number') throw new Error(`The trail id must be a number or null.`)
-
-    when = parseWhen(when)
-    const {id: whoId, value: whoAttributes} = parseComponent(who, 'who')
-    const {id: whatId, value: whatAttributes} = parseComponent(what, 'what')
-    const {id: subjectId, value: subjectAttributes} = parseComponent(subject, 'subject')
-
-    // Validate optional fields
-    where = validateAdditionalFields(where, 'where')
-    why = validateAdditionalFields(why, 'why')
-    meta = validateAdditionalFields(meta, 'meta')
 
     // Return the trail
     return {
       id,
-      when,
-      who: {id: whoId, attributes: whoAttributes},
-      what: {id: whatId, attributes: whatAttributes},
-      subject: {id: subjectId, attributes: subjectAttributes},
-      where,
-      why,
-      meta
+      when: parseDate(when),
+      who: parseComponent(who, whoId, 'who'),
+      what: parseComponent(what, whatId, 'what'),
+      subject: parseComponent(subject, subjectId, 'subject'),
+      where: validateAdditionalFields(where, 'where'),
+      why: validateAdditionalFields(why, 'why'),
+      meta: validateAdditionalFields(meta, 'meta')
     }
   }
 }
