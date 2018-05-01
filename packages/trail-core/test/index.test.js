@@ -105,7 +105,6 @@ describe('TrailsManager', () => {
       ]
 
       const ids = await Promise.all(records.map(r => this.subject.insert(r)))
-      console.log(ids)
 
       expect((await this.subject.search({from: '2018-01-01T11:00:00+00:00', to: '2018-01-04T13:34:56+00:00', who: 'dog', sort: 'when'}))
         .map(r => r.id)).toEqual([ids[0], ids[1]])

@@ -2,7 +2,8 @@
 
 const Joi = require('joi')
 const config = require('config')
-const {errorsSchemas} = require('@nearform/trail-hapi-plugin/lib/schemas')
+const {errorsSchemas} = require('@nearform/trail-hapi-plugin/lib/schemas/errors')
+const {addApiRoute} = require('@nearform/trail-hapi-plugin/lib/api')
 
 module.exports = async function () {
   // If forked as child, send output message via ipc to parent, otherwise output to console
@@ -27,7 +28,7 @@ module.exports = async function () {
         options: config.get('logger.pino')
       },
       {
-        plugin: require('./swagger/plugin')
+        plugin: require('./swagger')
       },
       {
         plugin: require('inert')
@@ -38,7 +39,7 @@ module.exports = async function () {
       }
     ])
 
-    await server.route({
+    await addApiRoute(server, 'trails', {
       method: 'GET',
       path: '/ping',
       async handler (request, h) {

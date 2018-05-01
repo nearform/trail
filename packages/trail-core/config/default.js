@@ -4,7 +4,7 @@ module.exports = {
   db: {
     host: 'localhost',
     port: 5432,
-    database: 'audit',
+    database: 'trails',
     username: 'postgres',
     password: 'postgres',
     poolSize: 10,

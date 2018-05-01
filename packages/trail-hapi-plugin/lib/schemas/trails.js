@@ -1,7 +1,13 @@
 'use strict'
 
+const config = require('config')
 const Joi = require('joi')
+const joiToSchema = require('joi-to-json-schema')
 const {get} = require('lodash')
+
+const {errorsSchemas} = require('./errors')
+const host = config.get('hapi.host')
+const port = config.get('hapi.port')
 
 const namedObject = function (name) {
   return Joi.object()
@@ -31,18 +37,6 @@ const stringOrObject = function (name) {
         return {type: 'custom.stringOrObject'}
       })
   ).example(name)
-}
-
-const errorsMessages = {
-  'json.format': 'The body payload is not a valid JSON.',
-  'json.contentType': 'Only JSON payloads are accepted. Please set the "Content-Type" header to start with "application/json".',
-  'any.required': 'must be present and non empty',
-  'any.empty': 'must a non empty string',
-  'object.allowUnknown': 'is not a valid attribute',
-  'object.base': 'must be a object',
-  'string.base': 'must be a string',
-  'string.isoDate': 'must be a valid UTC timestamp in the format YYYY-MM-DDTHH:MM:SS.sss (example: 2018-07-06T12:34:56.123)',
-  'custom.stringOrObject': 'must be either a non empty string or a object'
 }
 
 const dateTime = Joi.string()
@@ -109,7 +103,9 @@ const trailSchema = {
     .description('A audit trail')
     .meta({id: 'models/trail.response'})
     .keys({
-      id: Joi.number().example(12345),
+      id: Joi.number()
+        .description('Trail id')
+        .example(12345),
       when: Joi.any()
         .description('Trail UTC timestamp in ISO 8601 format')
         .tags('datetime')
@@ -128,62 +124,55 @@ const trailSchema = {
     .unknown(false)
 }
 
-module.exports = {
-  errorsMessages,
-  errorsSchemas: {
-    400: Joi.object()
-      .meta({id: 'errors/400'})
-      .description('Error returned when the input payload is not a valid JSON.')
-      .keys({
-        statusCode: Joi.number().valid(400).example(400),
-        error: Joi.string().valid('Bad Request').example('Bad Request'),
-        message: Joi.string()
-          .valid(errorsMessages['json.contentType'], errorsMessages['json.format'], 'Invalid request payload JSON format')
-          .example(errorsMessages['json.format'])
-      })
-      .requiredKeys('statusCode', 'error', 'message')
-      .unknown(false),
-    404: Joi.object()
-      .meta({id: 'errors/404'})
-      .description('Error returned when a requested resource could not be found.')
-      .keys({
-        statusCode: Joi.number().valid(404).example(404),
-        error: Joi.string().valid('Not Found').example('Not Found'),
-        message: Joi.string().example('Not Found')
-      })
-      .requiredKeys('statusCode', 'error', 'message')
-      .unknown(false),
-    409: Joi.object()
-      .meta({id: 'errors/404'})
-      .description('Error returned when a requested resource already exists.')
-      .keys({
-        statusCode: Joi.number().valid(409).example(409),
-        error: Joi.string().valid('Conflict').example('Conflict'),
-        message: Joi.string().example('Conflict.')
-      })
-      .requiredKeys('statusCode', 'error', 'message')
-      .unknown(false),
-    422: Joi.object()
-      .meta({id: 'errors/422'})
-      .description('Error returned when the input payload is not a valid trail.')
-      .keys({
-        statusCode: Joi.number().valid(422).example(422),
-        error: Joi.string().valid('Unprocessable Entity').example('Unprocessable Entity'),
-        message: Joi.string().valid('Invalid input data.').example('Invalid input data.')
-      })
-      .requiredKeys('statusCode', 'error', 'message')
-      .unknown(false),
-    500: Joi.object()
-      .meta({id: 'errors/500'})
-      .description('Error returned when a unexpected error was thrown by the server.')
-      .keys({
-        statusCode: Joi.number().valid(500).example(500),
-        error: Joi.string().valid('Internal Server Error').example('Internal Server Error'),
-        message: Joi.string(),
-        stack: Joi.array().items(Joi.string())
-      })
-      .requiredKeys('statusCode', 'error', 'message')
-      .unknown(false)
+const spec = {
+  openapi: '3.0.1',
+  info: {
+    title: 'Trail API Documentation',
+    description: 'This page documents Trail\'s API endpoints, along with their various inputs and outputs. For more information about Trail please see the <a href="https://nearform.github.io/trail">Documentation Site.</a>',
+    contact: {
+      name: 'nearForm',
+      url: 'https://github.com/nearform/trail',
+      email: 'ireland@nearform.com'
+    },
+    license: {
+      name: 'MIT',
+      url: 'https://choosealicense.com/licenses/mit/'
+    },
+    version: require('../../package').version
   },
-  trailSchema
+  servers: [
+    {
+      url: `http://${[host, port].join(':')}/`,
+      description: 'Current API server'
+    }
+  ],
+  tags: [
+    {
+      name: 'trails',
+      description: 'Manage audit trails'
+    },
+    {
+      name: 'monitoring',
+      description: 'Endpoints for monitoring and uptime'
+    }
+  ],
+  components: {
+    models: {
+      'trail.params.id': joiToSchema(trailSchema.params.id),
+      'trail.request': joiToSchema(trailSchema.request),
+      'trail.response': joiToSchema(trailSchema.response)
+    },
+    errors: {
+      400: joiToSchema(errorsSchemas['400']),
+      404: joiToSchema(errorsSchemas['404']),
+      422: joiToSchema(errorsSchemas['422']),
+      500: joiToSchema(errorsSchemas['500'])
+    }
+  },
+  paths: {}
+}
+
+module.exports = {
+  trailSchema,
+  spec
 }

@@ -3,7 +3,7 @@
 const {TrailsManager} = require('@nearform/trail-core')
 const {get} = require('lodash')
 
-const {errorsMessages} = require('./schemas')
+const {errorsMessages} = require('./schemas/errors')
 
 const environment = get(process, 'env.NODE_ENV', 'development')
 

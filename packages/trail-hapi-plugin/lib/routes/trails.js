@@ -3,13 +3,25 @@
 const { notFound } = require('boom')
 const Joi = require('joi')
 
-const {trailSchema, errorsSchemas} = require('../schemas')
+const {errorsSchemas} = require('../schemas/errors')
+const {spec, trailSchema} = require('../schemas/trails')
 const {failAction, validationOptions} = require('../validation')
+const {addApiRoute, generateSpec} = require('../api')
 
 module.exports = {
   name: 'trails',
   register: (server, options) => {
-    server.route({
+    for (const path of ['/trails/openapi.json', '/trails/swagger.json']) {
+      server.route({
+        method: 'GET',
+        path,
+        handler (request, h) {
+          return spec
+        }
+      })
+    }
+
+    addApiRoute(server, 'trails', {
       method: 'GET',
       path: '/trails',
       async handler (request, h) {
@@ -40,7 +52,7 @@ module.exports = {
       }
     })
 
-    server.route({
+    addApiRoute(server, 'trails', {
       method: 'POST',
       path: '/trails',
       async handler (request, h) {
@@ -73,7 +85,7 @@ module.exports = {
       }
     })
 
-    server.route({
+    addApiRoute(server, 'trails', {
       method: 'GET',
       path: '/trails/{id}',
       async handler (request) {
@@ -104,7 +116,7 @@ module.exports = {
       }
     })
 
-    server.route({
+    addApiRoute(server, 'trails', {
       method: 'PUT',
       path: '/trails/{id}',
       async handler (request, h) {
@@ -143,7 +155,7 @@ module.exports = {
       }
     })
 
-    server.route({
+    addApiRoute(server, 'trails', {
       method: 'DELETE',
       path: '/trails/{id}',
       async handler (request, h) {
@@ -172,6 +184,11 @@ module.exports = {
           }
         }
       }
+    })
+
+    // Add tagged routes to the swagger.json
+    server.ext('onPostStart', server => {
+      generateSpec(spec, 'trails')
     })
   }
 }

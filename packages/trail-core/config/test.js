@@ -2,6 +2,6 @@
 
 module.exports = {
   db: {
-    database: 'audit_test'
+    database: 'trails_test'
   }
 }

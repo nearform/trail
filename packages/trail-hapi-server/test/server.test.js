@@ -44,26 +44,6 @@ describe('Server', () => {
   })
 
   describe('Swagger', () => {
-    describe('JSON spec', () => {
-      for (const url of ['/openapi.json', '/swagger.json']) {
-        describe(`GET ${url}`, async () => {
-          test('it should server the API spec file', async () => {
-            const response = await server.inject({
-              method: 'GET',
-              url
-            })
-
-            expect(response.statusCode).toEqual(200)
-            const payload = JSON.parse(response.payload)
-
-            expect(payload).toMatchObject({
-              openapi: '3.0.1'
-            })
-          })
-        })
-      }
-    })
-
     describe(`UI`, async () => {
       test('it should correctly serve the index.html with the right spec URL', async () => {
         const response = await server.inject({
@@ -72,7 +52,7 @@ describe('Server', () => {
         })
 
         expect(response.statusCode).toEqual(200)
-        expect(response.payload).toEqual(expect.stringContaining('url: "/openapi.json"'))
+        expect(response.payload).toEqual(expect.stringContaining('url: "/trails/openapi.json"'))
       })
 
       test('it should correctly serve other files', async () => {

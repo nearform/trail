@@ -1,7 +1,7 @@
 'use strict'
 
 const {DateTime} = require('luxon')
-const {errorsMessages} = require('../../lib/schemas')
+const {errorsMessages} = require('../../lib/schemas/errors')
 const testServer = require('../test-server')
 
 describe('Trails REST operations', () => {
@@ -14,6 +14,26 @@ describe('Trails REST operations', () => {
   afterAll(async () => {
     await testServer.stopAll()
     await server.stop()
+  })
+
+  describe('JSON spec', () => {
+    for (const url of ['/trails/openapi.json', '/trails/swagger.json']) {
+      describe(`GET ${url}`, async () => {
+        test('it should server the API spec file', async () => {
+          const response = await server.inject({
+            method: 'GET',
+            url
+          })
+
+          expect(response.statusCode).toEqual(200)
+          const payload = JSON.parse(response.payload)
+
+          expect(payload).toMatchObject({
+            openapi: '3.0.1'
+          })
+        })
+      })
+    }
   })
 
   describe('POST /trails', async () => {

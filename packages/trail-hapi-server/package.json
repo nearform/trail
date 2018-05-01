@@ -45,9 +45,7 @@
     "hapi": "^17.3.1",
     "hapi-pino": "^4.0.4",
     "joi": "^13.2.0",
-    "joi-to-json-schema": "^3.3.0",
     "inert": "^5.1.0",
-    "lodash": "^4.17.10",
     "swagger-ui-dist": "^3.13.6"
   },
   "devDependencies": {
