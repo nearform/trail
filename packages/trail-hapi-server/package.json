@@ -28,6 +28,9 @@
     "node": ">=8.9.0"
   },
   "main": "lib/index.js",
+  "bin": {
+    "trail-hapi-server": "start.js"
+  },
   "scripts": {
     "depcheck": "../../node_modules/depcheck/bin/depcheck",
     "start": "node start.js",
