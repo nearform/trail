@@ -99,7 +99,7 @@ module.exports = (function () {
   const routes = []
 
   return {
-    async addApiRoute (server, collection, routeSpec) {
+    addApiRoute (server, collection, routeSpec) {
       if (!routes[collection]) routes[collection] = []
 
       routes[collection].push(routeSpec)
