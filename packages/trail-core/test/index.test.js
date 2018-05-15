@@ -42,7 +42,7 @@ describe('TrailsManager', () => {
         await this.subject.performDatabaseOperations(async client => {
           await client.query(SQL`
             INSERT
-              INTO trails ("when", who_id, what_id, subject_id, who_data, what_data, subject_data, where_data, why_data, meta)
+              INTO trails ("when", who_id, what_id, subject_id, who_data, what_data, subject_data, "where", why, meta)
               VALUES('2018-01-01T12:34:56+00:00', 'who', 'what', 'subject', ${{}}, ${{}}, ${{}}, ${{}}, ${{}}, ${{}})
           `)
           throw new Error('rollback please')
@@ -62,7 +62,7 @@ describe('TrailsManager', () => {
         await this.subject.performDatabaseOperations(async client => {
           await client.query(SQL`
             INSERT
-              INTO trails ("when", who_id, what_id, subject_id, who_data, what_data, subject_data, where_data, why_data, meta)
+              INTO trails ("when", who_id, what_id, subject_id, who_data, what_data, subject_data, "where", why, meta)
               VALUES('2018-01-01T12:34:56+00:00', 'who', 'what', 'subject', ${{}}, ${{}}, ${{}}, ${{}}, ${{}}, ${{}})
           `)
           throw new Error('rollback please')
@@ -89,6 +89,78 @@ describe('TrailsManager', () => {
       const badSubject = new TrailsManager(null, null)
 
       await expect(badSubject.close()).rejects.toEqual(new TypeError("Cannot read property 'end' of null"))
+    })
+  })
+
+  describe('.search', () => {
+    test('should return the right records', async () => {
+      await this.subject.performDatabaseOperations(client => client.query('TRUNCATE trails'))
+
+      const records = [
+        {when: '2018-01-01T12:34:56+00:00', who: 'dog cat fish', what: 'open morning', subject: 'window'},
+        {when: '2018-01-02T12:34:56+00:00', who: 'dog cat shark', what: 'open evening', subject: 'window'},
+        {when: '2018-01-03T12:34:56+00:00', who: 'wolf cat whale', what: 'open morning', subject: 'door'},
+        {when: '2018-01-04T12:34:56+00:00', who: 'hyena lion fish', what: 'close evening', subject: 'door'},
+        {when: '2018-01-05T12:34:56+00:00', who: 'hyena tiger whal', what: 'close night', subject: 'world'}
+      ]
+
+      const ids = await Promise.all(records.map(r => this.subject.insert(r)))
+
+      expect((await this.subject.search({from: '2018-01-01T11:00:00+00:00', to: '2018-01-04T13:34:56+00:00', who: 'dog', sort: 'when'}))
+        .map(r => r.id)).toEqual([ids[0], ids[1]])
+
+      expect((await this.subject.search({from: '2018-01-01T15:00:00+00:00', to: '2018-01-04T13:34:56+00:00', what: 'evening', sort: 'id'}))
+        .map(r => r.id)).toEqual([ids[1], ids[3]].sort())
+
+      expect((await this.subject.search({from: '2018-01-01T15:00:00+00:00', to: '2018-01-04T13:34:56+00:00', what: 'evening', sort: '-subject'}))
+        .map(r => r.id)).toEqual([ids[1], ids[3]])
+
+      expect((await this.subject.search({from: '2018-01-01T15:00:00+00:00', to: '2018-01-05T13:34:56+00:00', subject: 'world'}))
+        .map(r => r.id)).toEqual([ids[4]])
+
+      expect((await this.subject.search({from: '2018-01-01T15:00:00+00:00', to: '2018-01-05T13:34:56+00:00', what: 'world'}))
+        .map(r => r.id)).toEqual([])
+
+      expect((await this.subject.search({from: '2018-01-01T00:00:00+00:00', to: '2018-01-05T13:34:56+00:00', sort: 'when', page: 2, pageSize: 2}))
+        .map(r => r.id)).toEqual([ids[2], ids[3]])
+
+      await Promise.all(ids.map(i => this.subject.delete(i)))
+    })
+
+    test('should validate parameters', async () => {
+      await expect(this.subject.search()).rejects.toEqual(new Error('You must specify a starting date ("from" attribute) when querying trails.'))
+      await expect(this.subject.search({from: DateTime.local()}))
+        .rejects.toEqual(new Error('You must specify a ending date ("to" attribute) when querying trails.'))
+
+      await expect(this.subject.search({from: 'whatever', to: DateTime.local()}))
+        .rejects.toEqual(new Error('Invalid date "whatever". Please specify a valid UTC date in ISO8601 format.'))
+      await expect(this.subject.search({from: DateTime.local(), to: DateTime.local(), who: 1}))
+        .rejects.toEqual(new Error('Only strings are supporting for searching in the id of the "who" field.'))
+      await expect(this.subject.search({from: DateTime.local(), to: DateTime.local(), what: 1}))
+        .rejects.toEqual(new Error('Only strings are supporting for searching in the id of the "what" field.'))
+      await expect(this.subject.search({from: DateTime.local(), to: DateTime.local(), subject: 1}))
+        .rejects.toEqual(new Error('Only strings are supporting for searching in the id of the "subject" field.'))
+      await expect(this.subject.search({from: DateTime.local(), to: DateTime.local(), sort: '-metadata'}))
+        .rejects.toEqual(new Error('Only "id", "when", "who", "what" and "subject" are supported for sorting.'))
+    })
+
+    test('should sanitize pagination parameters', async () => {
+      const spy = jest.spyOn(this.subject, 'performDatabaseOperations')
+
+      await this.subject.search({from: DateTime.local(), to: DateTime.local(), page: 12})
+      expect(spy.mock.calls[0][0].text).toEqual(expect.stringContaining('LIMIT 25 OFFSET 275'))
+
+      await this.subject.search({from: DateTime.local(), to: DateTime.local(), pageSize: 12})
+      expect(spy.mock.calls[1][0].text).toEqual(expect.stringContaining('LIMIT 12 OFFSET 0'))
+
+      await this.subject.search({from: DateTime.local(), to: DateTime.local(), page: 3, pageSize: 12})
+      expect(spy.mock.calls[2][0].text).toEqual(expect.stringContaining('LIMIT 12 OFFSET 24'))
+
+      await this.subject.search({from: DateTime.local(), to: DateTime.local(), page: '12', pageSize: NaN})
+      expect(spy.mock.calls[3][0].text).toEqual(expect.stringContaining('LIMIT 25 OFFSET 275'))
+
+      await this.subject.search({from: DateTime.local(), to: DateTime.local(), page: NaN, pageSize: 2})
+      expect(spy.mock.calls[4][0].text).toEqual(expect.stringContaining('LIMIT 2 OFFSET 0'))
     })
   })
 

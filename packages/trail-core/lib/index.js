@@ -4,13 +4,14 @@ const SQL = require('@nearform/sql')
 const pino = require('pino')
 const {Pool} = require('pg')
 
-const {convertToTrail} = require('./trail')
+const defaultPageSize = 25
+const {parseDate, convertToTrail} = require('./trail')
 
 class TrailsManager {
-  constructor (config, pool) {
+  constructor (logger, pool) {
     this.config = require('config')
 
-    this.logger = config || pino()
+    this.logger = logger || pino()
 
     if (typeof pool === 'undefined') {
       this.dbConnectionInfo = {
@@ -40,7 +41,8 @@ class TrailsManager {
       // Connect to the pool, then perform the operations
       client = await this.dbPool.connect()
       if (useTransaction) await client.query('BEGIN')
-      const result = await operations(client)
+
+      const result = typeof operations === 'function' ? await operations(client) : await client.query(operations)
 
       // Release the client, the return the result
       if (useTransaction) await client.query('COMMIT')
@@ -58,12 +60,52 @@ class TrailsManager {
     }
   }
 
+  async search ({from, to, who, what, subject, page, pageSize, sort} = {}) {
+    // Validate parameters
+    if (!from) throw new Error(`You must specify a starting date ("from" attribute) when querying trails.`)
+    if (!to) throw new Error(`You must specify a ending date ("to" attribute) when querying trails.`)
+    if (who && typeof who !== 'string') throw new TypeError(`Only strings are supporting for searching in the id of the "who" field.`)
+    if (what && typeof what !== 'string') throw new TypeError(`Only strings are supporting for searching in the id of the "what" field.`)
+    if (subject && typeof subject !== 'string') throw new TypeError(`Only strings are supporting for searching in the id of the "subject" field.`)
+
+    from = parseDate(from)
+    to = parseDate(to)
+
+    // Sanitize pagination parameters
+    ;({page, pageSize} = this._sanitizePagination(page, pageSize))
+
+    // Sanitize ordering
+    const {sortKey, sortAsc} = this._sanitizeSorting(sort)
+
+    // Perform the query
+    const sql = SQL`
+      SELECT
+          id::int, timezone('UTC', "when") as "when",
+          who_id, what_id, subject_id,
+          who_data as who, what_data as what, subject_data as subject,
+          "where", why, meta
+        FROM trails
+        WHERE
+          ("when" >= ${from.toISO()} AND "when" <= ${to.toISO()})
+    `
+
+    if (who) sql.append(SQL` AND who_id LIKE ${'%' + who + '%'}`)
+    if (what) sql.append(SQL` AND what_id LIKE ${'%' + what + '%'}`)
+    if (subject) sql.append(SQL` AND subject_id LIKE ${'%' + subject + '%'}`)
+
+    const footer = ` ORDER BY ${sortKey} ${sortAsc ? 'ASC' : 'DESC'} LIMIT ${pageSize} OFFSET ${(page - 1) * pageSize}`
+    sql.append(SQL([footer]))
+
+    const res = await this.performDatabaseOperations(sql)
+    return res.rows.map(convertToTrail)
+  }
+
   async insert (trail) {
     trail = convertToTrail(trail)
 
     const sql = SQL`
       INSERT
-        INTO trails ("when", who_id, what_id, subject_id, who_data, what_data, subject_data, where_data, why_data, meta)
+        INTO trails ("when", who_id, what_id, subject_id, who_data, what_data, subject_data, "where", why, meta)
         VALUES (
           ${trail.when.toISO()},
           ${trail.who.id},
@@ -79,7 +121,7 @@ class TrailsManager {
         RETURNING id::int;
     `
 
-    const res = await this.performDatabaseOperations(client => client.query(sql))
+    const res = await this.performDatabaseOperations(sql)
 
     return res.rows[0].id
   }
@@ -88,31 +130,15 @@ class TrailsManager {
     const sql = SQL`
       SELECT
           timezone('UTC', "when") as "when",
-          who_id,
-          what_id,
-          subject_id,
-          who_data as who,
-          what_data as what,
-          subject_data as subject,
-          where_data as "where",
-          why_data as why,
-          meta
+          who_id, what_id, subject_id,
+          who_data as who, what_data as what, subject_data as subject,
+          "where", why, meta
         FROM trails
         WHERE id = ${id}
     `
-    const res = await this.performDatabaseOperations(client => client.query(sql))
+    const res = await this.performDatabaseOperations(sql)
 
-    if (res.rowCount === 0) return null
-
-    const data = res.rows[0]
-
-    // Merge ids on their fields
-    data.id = id
-    data.who.id = data.who_id
-    data.what.id = data.what_id
-    data.subject.id = data.subject_id
-
-    return convertToTrail(data)
+    return res.rowCount > 0 ? convertToTrail(res.rows[0]) : null
   }
 
   async update (id, trail) {
@@ -128,12 +154,12 @@ class TrailsManager {
           who_data = ${trail.who.attributes},
           subject_data = ${trail.subject.attributes},
           what_data = ${trail.what.attributes},
-          where_data = ${trail.where.attributes},
-          why_data = ${trail.why.attributes},
-          meta = ${trail.meta.attributes}
+          "where" = ${trail.where},
+          why = ${trail.why},
+          meta = ${trail.meta}
         WHERE id = ${id}
     `
-    const res = await this.performDatabaseOperations(client => client.query(sql))
+    const res = await this.performDatabaseOperations(sql)
 
     return res.rowCount !== 0
   }
@@ -144,9 +170,40 @@ class TrailsManager {
         FROM trails
         WHERE id = ${id}
     `
-    const res = await this.performDatabaseOperations(client => client.query(sql))
+    const res = await this.performDatabaseOperations(sql)
 
     return res.rowCount !== 0
+  }
+
+  _sanitizeSorting (sortKey) {
+    let sortAsc = true
+
+    if (!sortKey) return {sortKey: '"when"', sortAsc: false} // Default is -when
+
+    if (sortKey.startsWith('-')) {
+      sortAsc = false
+      sortKey = sortKey.substring(1)
+    }
+
+    if (!['id', 'when', 'who', 'what', 'subject'].includes(sortKey)) {
+      throw new TypeError(`Only "id", "when", "who", "what" and "subject" are supported for sorting.`)
+    }
+
+    // Perform some sanitization
+    if (sortKey === 'when') sortKey = '"when"'
+    else if (sortKey !== 'id') sortKey += '_id'
+
+    return {sortKey: `${sortKey}`, sortAsc}
+  }
+
+  _sanitizePagination (page, pageSize) {
+    page = typeof page === 'number' ? page : parseInt(page, 0)
+    pageSize = typeof pageSize !== 'number' ? pageSize : parseInt(pageSize, 0)
+
+    if (isNaN(page) || page < 1) { page = 1 }
+    if (isNaN(pageSize) || pageSize < 1) { pageSize = defaultPageSize }
+
+    return { page, pageSize }
   }
 }
 

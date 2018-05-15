@@ -1,7 +1,7 @@
 {
-  "name": "@nearform/trail-core",
+  "name": "@nearform/trail-hapi-plugin",
   "version": "1.0.0",
-  "description": "Audit trail logging service",
+  "description": "Hapi plugin for the audit trail logging service",
   "license": "MIT",
   "author": "nearForm Ltd",
   "contributors": [
@@ -13,6 +13,7 @@
     "audit",
     "log",
     "logging",
+    "hapi",
     "trail"
   ],
   "repository": {
@@ -28,22 +29,20 @@
   "main": "lib/index.js",
   "scripts": {
     "depcheck": "../../node_modules/depcheck/bin/depcheck",
-    "pg:init": "node ./database/init.js && npm run pg:migrate",
-    "pg:test:init": "NODE_ENV=test node ./database/init.js && NODE_ENV=test npm run pg:migrate",
-    "pg:migrate": "node ./database/migrate.js --version=max",
     "test": "jest -i",
     "test:watch": "jest -i --watch",
     "coverage": "jest -i --coverage",
     "coverage:watch": "jest -i --coverage --watch"
   },
   "dependencies": {
-    "@nearform/sql": "^1.0.1",
+    "@nearform/trail-core": "^1.0.0",
+    "boom": "^7.2.0",
     "config": "^1.30.0",
-    "luxon": "^1.2.0",
-    "minimist": "^1.2.0",
-    "pg": "^7.4.1",
-    "pino": "^4.16.1",
-    "postgrator": "^3.6.0"
+    "joi": "^13.2.0",
+    "joi-to-json-schema": "^3.3.0",
+    "hapi": "^17.3.1",
+    "lodash": "^4.17.10",
+    "luxon": "^1.2.0"
   },
   "devDependencies": {
     "jest": "^22.4.3"
