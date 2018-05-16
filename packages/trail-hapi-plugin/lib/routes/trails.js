@@ -27,9 +27,7 @@ module.exports = {
       async handler (request, h) {
         const { from, to, who, what, subject, page, pageSize, sort } = request.query
 
-        const results = await request.trailCore.search({ from, to, who, what, subject, page, pageSize, sort })
-
-        return results.length ? results : h.response().code(204)
+        return request.trailCore.search({ from, to, who, what, subject, page, pageSize, sort })
       },
       config: {
         description: 'Search audit trails.',
@@ -44,7 +42,6 @@ module.exports = {
             200: Joi.array()
               .description('The search results.')
               .items(trailSchema.response),
-            204: Joi.empty().description('No trails found.'),
             422: errorsSchemas['422'],
             500: errorsSchemas['500']
           }
@@ -58,9 +55,7 @@ module.exports = {
       async handler (request, h) {
         const { from, to, type, page, pageSize, desc } = request.query
 
-        const results = await request.trailCore.enumerate({ from, to, type, page, pageSize, desc })
-
-        return results.length ? results : h.response().code(204)
+        return request.trailCore.enumerate({ from, to, type, page, pageSize, desc })
       },
       config: {
         description: 'Enumerate audit trails ids.',
@@ -75,7 +70,6 @@ module.exports = {
             200: Joi.array()
               .description('The enumeration results.')
               .items(Joi.string().description('A trail who, what or subject id')),
-            204: Joi.empty().description('No ids found.'),
             422: errorsSchemas['422'],
             500: errorsSchemas['500']
           }

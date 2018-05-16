@@ -78,7 +78,7 @@ describe('Trails REST operations', () => {
       await server.trailCore.delete(id)
     })
 
-    test('it should search trails and return no body with 204 when no records are found', async () => {
+    test('it should search trails and return a empty array when no records are found', async () => {
       await server.trailCore.performDatabaseOperations(client => client.query('TRUNCATE trails'))
 
       const id = await server.trailCore.insert({
@@ -93,8 +93,10 @@ describe('Trails REST operations', () => {
         url: `/trails?from=${encodeURIComponent('2014-01-02T18:04:05.123+03:00')}&to=${encodeURIComponent('2018-01-02T18:04:05.123+03:00')}&who=foo`
       })
 
-      expect(response.statusCode).toEqual(204)
-      expect(response.payload).toEqual('')
+      expect(response.statusCode).toEqual(200)
+      const trails = JSON.parse(response.payload)
+
+      expect(trails).toEqual([])
 
       await server.trailCore.delete(id)
     })
@@ -136,14 +138,14 @@ describe('Trails REST operations', () => {
       })
 
       expect(response.statusCode).toEqual(200)
-      const trails = JSON.parse(response.payload)
+      const enumeration = JSON.parse(response.payload)
 
-      expect(trails).toEqual(['1'])
+      expect(enumeration).toEqual(['1'])
 
       await server.trailCore.delete(id)
     })
 
-    test('it should enumerate trails and return no body with 204 when no records are found', async () => {
+    test('it should enumerate trails and return a empty array when no records are found', async () => {
       await server.trailCore.performDatabaseOperations(client => client.query('TRUNCATE trails'))
 
       const id = await server.trailCore.insert({
@@ -158,8 +160,10 @@ describe('Trails REST operations', () => {
         url: `/trails/enumerate?from=${encodeURIComponent('2014-01-02T18:04:05.123+03:00')}&to=${encodeURIComponent('2015-01-02T18:04:05.123+03:00')}&type=who`
       })
 
-      expect(response.statusCode).toEqual(204)
-      expect(response.payload).toEqual('')
+      expect(response.statusCode).toEqual(200)
+      const enumeration = JSON.parse(response.payload)
+
+      expect(enumeration).toEqual([])
 
       await server.trailCore.delete(id)
     })
