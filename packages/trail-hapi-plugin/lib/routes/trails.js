@@ -53,6 +53,37 @@ module.exports = {
     })
 
     addApiRoute(server, 'trails', {
+      method: 'GET',
+      path: '/trails/enumerate',
+      async handler (request, h) {
+        const { from, to, type, page, pageSize, desc } = request.query
+
+        const results = await request.trailCore.enumerate({ from, to, type, page, pageSize, desc })
+
+        return results.length ? results : h.response().code(204)
+      },
+      config: {
+        description: 'Enumerate audit trails ids.',
+        tags: ['api', 'trails'],
+        validate: {
+          query: trailSchema.enumerate,
+          failAction,
+          options: validationOptions
+        },
+        response: {
+          status: {
+            200: Joi.array()
+              .description('The enumeration results.')
+              .items(Joi.string().description('A trail who, what or subject id')),
+            204: Joi.empty().description('No ids found.'),
+            422: errorsSchemas['422'],
+            500: errorsSchemas['500']
+          }
+        }
+      }
+    })
+
+    addApiRoute(server, 'trails', {
       method: 'POST',
       path: '/trails',
       async handler (request, h) {

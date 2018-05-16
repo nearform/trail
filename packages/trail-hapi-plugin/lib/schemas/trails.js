@@ -82,6 +82,30 @@ const trailSchema = {
       .valid(['when', 'id', 'who', 'what', 'subject', '-when', '-id', '-who', '-what', '-subject'])
       .example('-when')
   },
+  enumerate: {
+    from: dateTime
+      .description('The minimum timestamp (inclusive)')
+      .required(),
+    to: dateTime
+      .description('The maximum timestamp (inclusive)')
+      .required(),
+    type: Joi.string()
+      .description(`The type of id to search`)
+      .required()
+      .valid(['who', 'what', 'subject'])
+      .example('who'),
+    page: Joi.number()
+      .description('The page of results to return')
+      .min(1)
+      .example(5),
+    pageSize: Joi.number()
+      .description('The number of results per page (default is 25)')
+      .min(1)
+      .example(25),
+    desc: Joi.boolean()
+      .description(`If to sort alphabetically by descending order`)
+      .example(true)
+  },
   request: Joi.object()
     .description('A audit trail')
     .meta({id: 'models/trail.request'})

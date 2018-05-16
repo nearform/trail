@@ -36,7 +36,7 @@ describe('Trails REST operations', () => {
     }
   })
 
-  describe('POST /trails', async () => {
+  describe('GET /trails', async () => {
     test('it should search trails and return it with 200', async () => {
       await server.trailCore.performDatabaseOperations(client => client.query('TRUNCATE trails'))
 
@@ -114,6 +114,70 @@ describe('Trails REST operations', () => {
           from: 'must be a valid UTC timestamp in the format YYYY-MM-DDTHH:MM:SS.sss (example: 2018-07-06T12:34:56.123)',
           to: 'must be present and non empty',
           where: 'is not a valid attribute'
+        }
+      })
+    })
+  })
+
+  describe('GET /trails/enumerate', async () => {
+    test('it should enumerate trails and return it with 200', async () => {
+      await server.trailCore.performDatabaseOperations(client => client.query('TRUNCATE trails'))
+
+      const id = await server.trailCore.insert({
+        when: '2016-01-02T18:04:05.123+03:00',
+        who: '1',
+        what: '2',
+        subject: '3'
+      })
+
+      const response = await server.inject({
+        method: 'GET',
+        url: `/trails/enumerate?from=${encodeURIComponent('2014-01-02T18:04:05.123+03:00')}&to=${encodeURIComponent('2018-01-02T18:04:05.123+03:00')}&type=who`
+      })
+
+      expect(response.statusCode).toEqual(200)
+      const trails = JSON.parse(response.payload)
+
+      expect(trails).toEqual(['1'])
+
+      await server.trailCore.delete(id)
+    })
+
+    test('it should enumerate trails and return no body with 204 when no records are found', async () => {
+      await server.trailCore.performDatabaseOperations(client => client.query('TRUNCATE trails'))
+
+      const id = await server.trailCore.insert({
+        when: '2016-01-02T18:04:05.123+03:00',
+        who: '1',
+        what: '2',
+        subject: '3'
+      })
+
+      const response = await server.inject({
+        method: 'GET',
+        url: `/trails/enumerate?from=${encodeURIComponent('2014-01-02T18:04:05.123+03:00')}&to=${encodeURIComponent('2015-01-02T18:04:05.123+03:00')}&type=who`
+      })
+
+      expect(response.statusCode).toEqual(204)
+      expect(response.payload).toEqual('')
+
+      await server.trailCore.delete(id)
+    })
+
+    test('it should return 422 in case of validation errors', async () => {
+      const response = await server.inject({
+        method: 'GET',
+        url: `/trails/enumerate?from=bar`
+      })
+
+      expect(response.statusCode).toEqual(422)
+      expect(JSON.parse(response.payload)).toMatchObject({
+        statusCode: 422,
+        error: 'Unprocessable Entity',
+        message: 'Invalid input data.',
+        reasons: {
+          from: 'must be a valid UTC timestamp in the format YYYY-MM-DDTHH:MM:SS.sss (example: 2018-07-06T12:34:56.123)',
+          to: 'must be present and non empty'
         }
       })
     })
