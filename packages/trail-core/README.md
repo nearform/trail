@@ -88,6 +88,20 @@ The default sort direction is ascending, but it can be reversed by prepending a 
 
 Returns an array of found trail objects.
 
+### `async TrailsManager.enumerate({from, to, type, page, pageSize, desc})`
+
+Searchs for distinct ids in the database.
+
+The `from` and `to` attributes follow the same rule of the `when` trail attributes and are inclusive.
+
+The `type` must be one of the following values: `who`, `what` or `subject`.
+
+The `page` and `pageSize` attributes can be used to control pagination. They must be positive numbers. The default pageSize is 25.
+
+The `desc` can be set to `true` to sort results by descending order.
+
+Returns an array of found id (depending on the `type` attribute), ordered alphabetically.
+
 ## License
 
 Copyright nearForm Ltd 2018. Licensed under [MIT][license].

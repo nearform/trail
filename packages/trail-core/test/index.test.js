@@ -164,6 +164,74 @@ describe('TrailsManager', () => {
     })
   })
 
+  describe('.enumerate', () => {
+    test('should return the right records', async () => {
+      await this.subject.performDatabaseOperations(client => client.query('TRUNCATE trails'))
+
+      const records = [
+        {when: '2018-01-01T12:34:56+00:00', who: 'dog', what: 'open', subject: 'window'},
+        {when: '2018-01-02T12:34:56+00:00', who: 'cat', what: 'open', subject: 'window'},
+        {when: '2018-01-03T12:34:56+00:00', who: 'whale', what: 'close', subject: 'door'},
+        {when: '2018-01-04T12:34:56+00:00', who: 'cat', what: 'close', subject: 'door'},
+        {when: '2018-01-05T12:34:56+00:00', who: 'shark', what: 'check', subject: 'world'}
+      ]
+
+      const ids = await Promise.all(records.map(r => this.subject.insert(r)))
+
+      expect((await this.subject.enumerate({from: '2018-01-01T11:00:00+00:00', to: '2018-01-04T13:34:56+00:00', type: 'who'})))
+        .toEqual(['cat', 'dog', 'whale'])
+
+      expect((await this.subject.enumerate({from: '2018-01-01T15:00:00+00:00', to: '2018-01-04T13:34:56+00:00', type: 'what'})))
+        .toEqual(['close', 'open'])
+
+      expect((await this.subject.enumerate({from: '2018-01-01T11:00:00+00:00', to: '2018-01-04T13:34:56+00:00', type: 'who', desc: true})))
+        .toEqual(['whale', 'dog', 'cat'])
+
+      expect((await this.subject.enumerate({from: '2018-01-01T15:00:00+00:00', to: '2018-01-05T13:34:56+00:00', type: 'who'})))
+        .toEqual(['cat', 'shark', 'whale'])
+
+      expect((await this.subject.enumerate({from: '2018-01-01T15:00:00+00:00', to: '2018-01-05T13:34:56+00:00', type: 'what'})))
+        .toEqual(['check', 'close', 'open'])
+
+      expect((await this.subject.enumerate({from: '2018-01-01T00:00:00+00:00', to: '2018-01-05T13:34:56+00:00', type: 'who', page: 2, pageSize: 1})))
+        .toEqual(['dog'])
+
+      expect((await this.subject.enumerate({from: '2018-02-01T11:00:00+00:00', to: '2018-02-04T13:34:56+00:00', type: 'who'}))).toEqual([])
+
+      await Promise.all(ids.map(i => this.subject.delete(i)))
+    })
+
+    test('should validate parameters', async () => {
+      await expect(this.subject.enumerate()).rejects.toEqual(new Error('You must specify a starting date ("from" attribute) when enumerating.'))
+      await expect(this.subject.enumerate({from: DateTime.local()}))
+        .rejects.toEqual(new Error('You must specify a ending date ("to" attribute) when enumerating.'))
+
+      await expect(this.subject.enumerate({from: 'whatever', to: DateTime.local()}))
+        .rejects.toEqual(new Error('Invalid date "whatever". Please specify a valid UTC date in ISO8601 format.'))
+      await expect(this.subject.enumerate({from: DateTime.local(), to: DateTime.local(), type: 'foo'}))
+        .rejects.toEqual(new Error('You must select between "who", "what" or "subject" type ("type" attribute) when enumerating.'))
+    })
+
+    test('should sanitize pagination parameters', async () => {
+      const spy = jest.spyOn(this.subject, 'performDatabaseOperations')
+
+      await this.subject.enumerate({from: DateTime.local(), to: DateTime.local(), type: 'who', page: 12})
+      expect(spy.mock.calls[0][0].text).toEqual(expect.stringContaining('LIMIT 25 OFFSET 275'))
+
+      await this.subject.enumerate({from: DateTime.local(), to: DateTime.local(), type: 'who', pageSize: 12})
+      expect(spy.mock.calls[1][0].text).toEqual(expect.stringContaining('LIMIT 12 OFFSET 0'))
+
+      await this.subject.enumerate({from: DateTime.local(), to: DateTime.local(), type: 'who', page: 3, pageSize: 12})
+      expect(spy.mock.calls[2][0].text).toEqual(expect.stringContaining('LIMIT 12 OFFSET 24'))
+
+      await this.subject.enumerate({from: DateTime.local(), to: DateTime.local(), type: 'who', page: '12', pageSize: NaN})
+      expect(spy.mock.calls[3][0].text).toEqual(expect.stringContaining('LIMIT 25 OFFSET 275'))
+
+      await this.subject.enumerate({from: DateTime.local(), to: DateTime.local(), type: 'who', page: NaN, pageSize: 2})
+      expect(spy.mock.calls[4][0].text).toEqual(expect.stringContaining('LIMIT 2 OFFSET 0'))
+    })
+  })
+
   describe('.insert', () => {
     test('should accept a single argument', async () => {
       const id = await this.subject.insert(sampleTrail())
