@@ -108,6 +108,13 @@ class TrailsManager {
     from = parseDate(from)
     to = parseDate(to)
 
+    /*
+      WARNING - @paolo on 2018-05-17
+
+      The type parameter is used below to build the SELECT query. Due to its dynamic nature
+      it is inserted without the @nearform/sql SQL injection protection.
+      If you change the logic here make sure you don't create a security vulnerability.
+    */
     if (!['who', 'what', 'subject'].includes(type)) throw new TypeError('You must select between "who", "what" or "subject" type ("type" attribute) when enumerating.')
 
     // Sanitize pagination parameters
