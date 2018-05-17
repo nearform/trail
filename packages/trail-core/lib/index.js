@@ -116,12 +116,16 @@ class TrailsManager {
     // Perform the query
     const sql = SQL`
       SELECT
-        DISTINCT ON(${{__raw: type}}_id) ${{__raw: type}}_id AS entry
+        DISTINCT ON($type$_id) $type$_id AS entry
         FROM trails
         WHERE
           ("when" >= ${from.toISO()} AND "when" <= ${to.toISO()})
 
     `
+
+    const strings = Array.from(sql.strings)
+    strings.splice(0, 1, strings[0].replace(/\$type\$/g, type))
+    sql.strings = strings
 
     const footer = ` ORDER BY entry ${desc ? 'DESC' : 'ASC'} LIMIT ${pageSize} OFFSET ${(page - 1) * pageSize}`
     sql.append(SQL([footer]))
