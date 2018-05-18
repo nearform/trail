@@ -71,7 +71,7 @@ const trailSchema = {
       .example('tar'),
     page: Joi.number()
       .description('The page of results to return')
-      .min(1)
+      .min(0)
       .example(5),
     pageSize: Joi.number()
       .description('The number of results per page (default is 25)')
@@ -96,7 +96,7 @@ const trailSchema = {
       .example('who'),
     page: Joi.number()
       .description('The page of results to return')
-      .min(1)
+      .min(0)
       .example(5),
     pageSize: Joi.number()
       .description('The number of results per page (default is 25)')
