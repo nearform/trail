@@ -70,7 +70,7 @@ const trailSchema = {
       .description(`A portion of the trail target id`)
       .example('tar'),
     page: Joi.number()
-      .description('The page of results to return')
+      .description('The page of results to return (first page is 1)')
       .min(0)
       .example(5),
     pageSize: Joi.number()
@@ -95,7 +95,7 @@ const trailSchema = {
       .valid(['who', 'what', 'subject'])
       .example('who'),
     page: Joi.number()
-      .description('The page of results to return')
+      .description('The page of results to return (first page is 1)')
       .min(0)
       .example(5),
     pageSize: Joi.number()
