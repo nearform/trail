@@ -36,7 +36,7 @@ const parseComponent = function (attributes, id, label) {
 const parseDate = function (original) {
   if (original instanceof DateTime) return original.setZone('utc')
   else if (original instanceof Date) return DateTime.fromMillis(original.getTime(), {zone: 'utc'})
-  else if (typeof original !== 'string') throw new Error(`Only Luxon DateTime, JavaScript Date or ISO8601 are supported for dates.`)
+  else if (typeof original !== 'string') throw new Error('Only Luxon DateTime, JavaScript Date or ISO8601 are supported for dates.')
 
   const when = DateTime.fromISO(original)
   if (!when.isValid) throw new Error(`Invalid date "${original}". Please specify a valid UTC date in ISO8601 format.`)
@@ -55,7 +55,7 @@ module.exports = {
   parseDate,
   convertToTrail ({id, when, who, what, subject, where, why, meta, who_id: whoId, what_id: whatId, subject_id: subjectId}) {
     // Convert required fields
-    if (id !== null && typeof id !== 'undefined' && typeof id !== 'number') throw new Error(`The trail id must be a number or null.`)
+    if (id !== null && typeof id !== 'undefined' && typeof id !== 'number') throw new Error('The trail id must be a number or null.')
 
     // Return the trail
     return {

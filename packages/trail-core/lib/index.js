@@ -62,11 +62,11 @@ class TrailsManager {
 
   async search ({from, to, who, what, subject, page, pageSize, sort} = {}) {
     // Validate parameters
-    if (!from) throw new Error(`You must specify a starting date ("from" attribute) when querying trails.`)
-    if (!to) throw new Error(`You must specify a ending date ("to" attribute) when querying trails.`)
-    if (who && typeof who !== 'string') throw new TypeError(`Only strings are supporting for searching in the id of the "who" field.`)
-    if (what && typeof what !== 'string') throw new TypeError(`Only strings are supporting for searching in the id of the "what" field.`)
-    if (subject && typeof subject !== 'string') throw new TypeError(`Only strings are supporting for searching in the id of the "subject" field.`)
+    if (!from) throw new Error('You must specify a starting date ("from" attribute) when querying trails.')
+    if (!to) throw new Error('You must specify a ending date ("to" attribute) when querying trails.')
+    if (who && typeof who !== 'string') throw new TypeError('Only strings are supporting for searching in the id of the "who" field.')
+    if (what && typeof what !== 'string') throw new TypeError('Only strings are supporting for searching in the id of the "what" field.')
+    if (subject && typeof subject !== 'string') throw new TypeError('Only strings are supporting for searching in the id of the "subject" field.')
 
     from = parseDate(from)
     to = parseDate(to)
@@ -98,6 +98,48 @@ class TrailsManager {
 
     const res = await this.performDatabaseOperations(sql)
     return res.rows.map(convertToTrail)
+  }
+
+  async enumerate ({from, to, type, page, pageSize, desc} = {}) {
+    // Validate parameters
+    if (!from) throw new Error('You must specify a starting date ("from" attribute) when enumerating.')
+    if (!to) throw new Error('You must specify a ending date ("to" attribute) when enumerating.')
+
+    from = parseDate(from)
+    to = parseDate(to)
+
+    /*
+      WARNING - @paolo on 2018-05-17
+
+      The type parameter is used below to build the SELECT query. Due to its dynamic nature
+      it is inserted without the @nearform/sql SQL injection protection.
+      If you change the logic here make sure you don't create a security vulnerability.
+    */
+    if (!['who', 'what', 'subject'].includes(type)) throw new TypeError('You must select between "who", "what" or "subject" type ("type" attribute) when enumerating.')
+
+    // Sanitize pagination parameters
+    ;({page, pageSize} = this._sanitizePagination(page, pageSize))
+
+    // Perform the query
+    const sql = SQL`
+      SELECT
+        DISTINCT ON($type$_id) $type$_id AS entry
+        FROM trails
+        WHERE
+          ("when" >= ${from.toISO()} AND "when" <= ${to.toISO()})
+
+    `
+
+    const strings = Array.from(sql.strings)
+    strings.splice(0, 1, strings[0].replace(/\$type\$/g, type))
+    sql.strings = strings
+
+    const footer = ` ORDER BY entry ${desc ? 'DESC' : 'ASC'} LIMIT ${pageSize} OFFSET ${(page - 1) * pageSize}`
+    sql.append(SQL([footer]))
+
+    const res = await this.performDatabaseOperations(sql)
+
+    return res.rows.map(r => r.entry)
   }
 
   async insert (trail) {
@@ -186,7 +228,7 @@ class TrailsManager {
     }
 
     if (!['id', 'when', 'who', 'what', 'subject'].includes(sortKey)) {
-      throw new TypeError(`Only "id", "when", "who", "what" and "subject" are supported for sorting.`)
+      throw new TypeError('Only "id", "when", "who", "what" and "subject" are supported for sorting.')
     }
 
     // Perform some sanitization
