@@ -1,0 +1,25 @@
+language: node_js
+
+node_js:
+  - '8'
+  - '10'
+
+dist: trusty
+sudo: required
+
+env:
+  global:
+  - NODE_ENV=test
+
+addons:
+  postgresql: "9.5"
+
+services:
+  - postgresql
+
+before_script:
+  - psql -c 'create database "trails_test";' -U postgres
+  - lerna bootstrap
+
+script:
+  - lerna run coveralls

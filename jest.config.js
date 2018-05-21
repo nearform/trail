@@ -7,6 +7,7 @@ module.exports = {
   ],
   'coverageReporters': [
     'text',
+    'text-lcov',
     'html'
   ],
   'testMatch': [

@@ -23,6 +23,7 @@
     "depcheck": "lerna run depcheck",
     "doc:lint": "remark .",
     "coverage": "lerna run coverage",
+    "coveralls": "lerna run coveralls",
     "lint": "standard",
     "outdated:all": "npm outdated || echo 'Outdated packages found.'; lerna exec \"npm outdated || echo 'Outdated packages found.'\"",
     "pg:init": "cd packages/trail-core && npm run pg:init",

@@ -32,12 +32,13 @@
     "trail-hapi-server": "start.js"
   },
   "scripts": {
+    "coveralls": "jest -i --coverage | coveralls",
+    "coverage": "jest -i --coverage",
+    "coverage:watch": "jest -i --coverage --watch",
     "depcheck": "../../node_modules/depcheck/bin/depcheck",
     "start": "node start.js",
     "test": "jest -i",
-    "test:watch": "jest -i --watch",
-    "coverage": "jest -i --coverage",
-    "coverage:watch": "jest -i --coverage --watch"
+    "test:watch": "jest -i --watch"
   },
   "dependencies": {
     "@nearform/trail-hapi-plugin": "^1.0.0",
@@ -49,6 +50,7 @@
     "swagger-ui-dist": "^3.13.6"
   },
   "devDependencies": {
+    "coveralls": "^3.0.1",
     "jest": "^22.4.3"
   }
 }
