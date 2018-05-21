@@ -1,6 +1,6 @@
 {
   "name": "@nearform/trail-core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Audit trail logging service",
   "license": "MIT",
   "author": "nearForm Ltd",

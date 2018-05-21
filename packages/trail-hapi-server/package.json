@@ -1,6 +1,6 @@
 {
   "name": "@nearform/trail-hapi-server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Server running Hapi plugin for the audit trail logging service",
   "license": "MIT",
   "author": "nearForm Ltd",
@@ -43,8 +43,8 @@
     "test:watch": "jest -i --watch"
   },
   "dependencies": {
-    "@nearform/trail-core": "^1.0.0",
-    "@nearform/trail-hapi-plugin": "^1.0.0",
+    "@nearform/trail-core": "^1.0.1",
+    "@nearform/trail-hapi-plugin": "^1.0.1",
     "config": "^1.30.0",
     "hapi": "^17.3.1",
     "hapi-pino": "^4.0.4",
