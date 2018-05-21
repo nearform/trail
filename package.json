@@ -22,7 +22,6 @@
     "depcheck": "lerna run depcheck",
     "doc:lint": "remark .",
     "coverage": "lerna run coverage",
-    "coveralls": "lerna run coveralls",
     "lint": "standard",
     "outdated:all": "npm outdated || echo 'Outdated packages found.'; lerna exec \"npm outdated || echo 'Outdated packages found.'\"",
     "pg:init": "cd packages/trail-core && npm run pg:init",
@@ -30,7 +29,8 @@
     "pg:travis:init": "cd packages/trail-core && npm run pg:travis:init",
     "pg:migrate": "cd packages/trail-core && npm run pg:migrate",
     "postinstall": "lerna bootstrap",
-    "sanity": "npm run doc:lint && npm run lint && npm run depcheck && npm run test",
+    "sanity:environment": "npm run doc:lint && npm run lint && npm run depcheck",
+    "sanity": "npm run sanity:environment && npm run test",
     "start": "cd packages/trail-hapi-server && npm run start",
     "test": "lerna run test"
   },

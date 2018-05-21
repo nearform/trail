@@ -27,7 +27,6 @@
   },
   "main": "lib/index.js",
   "scripts": {
-    "coveralls": "jest -i --coverage | coveralls",
     "coverage": "jest -i --coverage",
     "coverage:watch": "jest -i --coverage --watch",
     "depcheck": "../../node_modules/depcheck/bin/depcheck",
@@ -48,7 +47,6 @@
     "postgrator": "^3.6.0"
   },
   "devDependencies": {
-    "coveralls": "^3.0.1",
     "jest": "^22.4.3"
   }
 }

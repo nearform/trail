@@ -1,7 +1,6 @@
 # Trail
 
 [![travis][travis-badge]][travis-url]
-[![coveralls][coveralls-badge]][coveralls-url]
 
 Trail is a audit trail log service. It supports logging all kind of actions with a flexible model scheme.
 
@@ -117,8 +116,6 @@ Copyright nearForm Ltd 2018. Licensed under [MIT][license].
 
 [travis-badge]: https://travis-ci.org/nearform/trail.svg?branch=master
 [travis-url]: https://travis-ci.org/nearform/trail
-[coveralls-badge]: https://coveralls.io/repos/nearform/trail/badge.svg?branch=master&service=github
-[coveralls-url]: https://coveralls.io/github/nearform/trail?branch=master
 [trail-core]: https://www.npmjs.com/package/@nearform/trail-core
 [trail-hapi-plugin]: https://www.npmjs.com/package/trail/@nearform/trail-hapi-plugin
 [trail-hapi-server]: https://www.npmjs.com/package/trail/@nearform/trail-hapi-server

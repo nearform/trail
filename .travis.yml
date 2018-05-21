@@ -22,7 +22,4 @@ before_script:
   - npm run pg:travis:init
 
 script:
-  - lerna run coveralls
-
-after_script:
   - lerna run sanity
