@@ -11,6 +11,8 @@ env:
   global:
   - NODE_ENV=travis
 
+addons:
+  postgresql: "9.6"
 services:
   - postgresql
 
