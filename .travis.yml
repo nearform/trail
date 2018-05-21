@@ -22,4 +22,4 @@ before_script:
   - lerna bootstrap
 
 script:
-  - lerna run coveralls
+  - lerna run coverage

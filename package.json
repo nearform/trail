@@ -1,6 +1,5 @@
 {
   "name": "@nearform/trail",
-  "private": true,
   "version": "1.0.0",
   "description": "Audit trail logging service",
   "license": "MIT",

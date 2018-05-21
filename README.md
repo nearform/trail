@@ -115,10 +115,10 @@ npm run coverage
 
 Copyright nearForm Ltd 2018. Licensed under [MIT][license].
 
-[travis-badge]: https://travis-ci.org/nearform/trail-hapi-plugin.svg?branch=master
-[travis-url]: https://travis-ci.org/nearform/trail-hapi-plugin
-[coveralls-badge]: https://coveralls.io/repos/nearform/trail-hapi-plugin/badge.svg?branch=master&service=github
-[coveralls-url]: https://coveralls.io/github/nearform/trail-hapi-plugin?branch=master
+[travis-badge]: https://travis-ci.org/nearform/trail.svg?branch=master
+[travis-url]: https://travis-ci.org/nearform/trail
+[coveralls-badge]: https://coveralls.io/repos/nearform/trail/badge.svg?branch=master&service=github
+[coveralls-url]: https://coveralls.io/github/nearform/trail?branch=master
 [trail-core]: https://www.npmjs.com/package/@nearform/trail-core
 [trail-hapi-plugin]: https://www.npmjs.com/package/trail/@nearform/trail-hapi-plugin
 [trail-hapi-server]: https://www.npmjs.com/package/trail/@nearform/trail-hapi-server
