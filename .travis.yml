@@ -11,15 +11,16 @@ env:
   global:
   - NODE_ENV=travis
 
-addons:
-  postgresql: "9.5"
-
 services:
   - postgresql
 
 before_script:
   - psql -c 'create database "trails_test";' -U postgres
   - lerna bootstrap
+  - npm run pg:travis:init
 
 script:
   - lerna run coveralls
+
+after_script:
+  - lerna run sanity

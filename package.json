@@ -27,6 +27,7 @@
     "outdated:all": "npm outdated || echo 'Outdated packages found.'; lerna exec \"npm outdated || echo 'Outdated packages found.'\"",
     "pg:init": "cd packages/trail-core && npm run pg:init",
     "pg:test:init": "cd packages/trail-core && npm run pg:test:init",
+    "pg:travis:init": "cd packages/trail-core && npm run pg:travis:init",
     "pg:migrate": "cd packages/trail-core && npm run pg:migrate",
     "postinstall": "lerna bootstrap",
     "sanity": "npm run doc:lint && npm run lint && npm run depcheck && npm run test",
