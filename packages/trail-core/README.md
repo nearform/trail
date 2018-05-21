@@ -107,7 +107,7 @@ Returns an array of found id (depending on the `type` attribute), ordered alphab
 Copyright nearForm Ltd 2018. Licensed under [MIT][license].
 
 [npm-url]: https://npmjs.org/package/@nearform/trail-core
-[npm-badge]: https://badge.fury.io/js/@nearform/trail-core.svg
+[npm-badge]: https://img.shields.io/npm/v/@nearform/trail-core.svg
 [luxon]: https://moment.github.io/luxon/
 [rfc3339]: https://tools.ietf.org/html/rfc3339
 [license]: ./LICENSE.md

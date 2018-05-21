@@ -40,6 +40,6 @@ For more information on the REST API, you can check the generated OpenAPI / Swag
 Copyright nearForm Ltd 2018. Licensed under [MIT][license].
 
 [npm-url]: https://npmjs.org/package/@nearform/trail-hapi-plugin
-[npm-badge]: https://badge.fury.io/js/@nearform/trail-hapi-plugin.svg
+[npm-badge]: https://img.shields.io/npm/v/@nearform/trail-hapi-plugin.svg
 [hapi]: https://hapijs.com/
 [license]: ./LICENSE.md

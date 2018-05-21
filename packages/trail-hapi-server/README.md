@@ -27,7 +27,7 @@ This will start a server on `localhost:8080`. Swagger UI documentation is access
 Copyright nearForm Ltd 2018. Licensed under [MIT][license].
 
 [npm-url]: https://npmjs.org/package/@nearform/trail-hapi-server
-[npm-badge]: https://badge.fury.io/js/@nearform/trail-hapi-server.svg
+[npm-badge]: https://img.shields.io/npm/v/@nearform/trail-hapi-server.svg
 [hapi]: https://hapijs.com/
 [swagger-ui]: https://swagger.io/swagger-ui/
 [license]: ./LICENSE.md
