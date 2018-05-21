@@ -9,7 +9,7 @@ sudo: required
 
 env:
   global:
-  - NODE_ENV=test
+  - NODE_ENV=travis
 
 addons:
   postgresql: "9.5"
@@ -22,4 +22,4 @@ before_script:
   - lerna bootstrap
 
 script:
-  - lerna run coverage
+  - lerna run coveralls

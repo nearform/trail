@@ -33,6 +33,7 @@
     "depcheck": "../../node_modules/depcheck/bin/depcheck",
     "pg:init": "node ./database/init.js && npm run pg:migrate",
     "pg:test:init": "NODE_ENV=test node ./database/init.js && NODE_ENV=test npm run pg:migrate",
+    "pg:travis:init": "NODE_ENV=travis node ./database/init.js && NODE_ENV=travis npm run pg:migrate",
     "pg:migrate": "node ./database/migrate.js --version=max",
     "test": "jest -i",
     "test:watch": "jest -i --watch"
