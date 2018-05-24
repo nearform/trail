@@ -30,15 +30,13 @@
   },
   "main": "lib/index.js",
   "scripts": {
-    "coverage": "jest -i --coverage",
-    "coverage:watch": "jest -i --coverage --watch",
+    "coverage": "lab -c test",
     "depcheck": "../../node_modules/depcheck/bin/depcheck",
     "pg:init": "node ./database/init.js && npm run pg:migrate",
     "pg:test:init": "NODE_ENV=test node ./database/init.js && NODE_ENV=test npm run pg:migrate",
     "pg:travis:init": "NODE_ENV=travis node ./database/init.js && NODE_ENV=travis npm run pg:migrate",
     "pg:migrate": "node ./database/migrate.js --version=max",
-    "test": "jest -i",
-    "test:watch": "jest -i --watch"
+    "test": "lab test"
   },
   "dependencies": {
     "@nearform/sql": "^1.0.1",
@@ -50,6 +48,8 @@
     "postgrator": "^3.6.0"
   },
   "devDependencies": {
-    "jest": "^22.4.3"
+    "code": "^5.2.0",
+    "lab": "^15.4.5",
+    "sinon": "^5.0.10"
   }
 }

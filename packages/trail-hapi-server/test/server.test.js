@@ -1,31 +1,38 @@
 'use strict'
 
+const { expect } = require('code')
+const Lab = require('lab')
+const sinon = require('sinon')
+
+module.exports.lab = Lab.script()
+const { describe, it: test, before, after } = module.exports.lab
+
 const testServer = require('./test-server')
 
 describe('Server', () => {
   let server = null
-  const mocks = []
+  const stubs = []
 
-  beforeAll(async () => {
-    mocks.push(jest.spyOn(process, 'exit').mockImplementation(code => {
+  before(async () => {
+    stubs.push(sinon.stub(process, 'exit').callsFake(code => {
       throw new Error(`EXITED - ${code}`)
     }))
-    mocks.push(jest.spyOn(global.console, 'log').mockImplementation(() => null))
-    mocks.push(jest.spyOn(global.console, 'error').mockImplementation(() => null))
+    stubs.push(sinon.stub(global.console, 'log'))
+    stubs.push(sinon.stub(global.console, 'error'))
 
     server = await testServer.buildDefault()
   })
 
-  afterAll(async () => {
+  after(async () => {
     await testServer.stopAll()
-    mocks.map(c => c.mockRestore())
+    stubs.map(c => c.restore())
   })
 
   describe('generic', () => {
     test('should log in case of listen errors', async () => {
       process.send = console.log
-      await expect(testServer.build()).rejects.toThrow(new Error('EXITED - 1'))
-      expect(mocks[1]).toHaveBeenCalled()
+      await expect(testServer.build()).to.reject(Error, 'EXITED - 1')
+      expect(stubs[1].called).to.be.true()
     })
 
     describe('GET /ping', async () => {
@@ -35,10 +42,10 @@ describe('Server', () => {
           url: '/ping'
         })
 
-        expect(response.statusCode).toEqual(200)
+        expect(response.statusCode).to.equal(200)
         const payload = JSON.parse(response.payload)
 
-        expect(payload).toMatchObject({uptime: expect.stringMatching(/^(\d+.\d{3} s)$/)})
+        expect(payload.uptime).to.match(/^(\d+.\d{3} s)$/)
       })
     })
   })
@@ -51,8 +58,8 @@ describe('Server', () => {
           url: '/documentation/'
         })
 
-        expect(response.statusCode).toEqual(200)
-        expect(response.payload).toEqual(expect.stringContaining('url: "/trails/openapi.json"'))
+        expect(response.statusCode).to.equal(200)
+        expect(response.payload).to.include('url: "/trails/openapi.json"')
       })
 
       test('it should correctly serve other files', async () => {
@@ -61,8 +68,8 @@ describe('Server', () => {
           url: '/documentation/swagger-ui-standalone-preset.js'
         })
 
-        expect(response.statusCode).toEqual(200)
-        expect(response.headers['content-type']).toEqual(expect.stringContaining('application/javascript'))
+        expect(response.statusCode).to.equal(200)
+        expect(response.headers['content-type']).to.include('application/javascript')
       })
     })
   })

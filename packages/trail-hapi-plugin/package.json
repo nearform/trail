@@ -31,11 +31,10 @@
   },
   "main": "lib/index.js",
   "scripts": {
-    "coverage": "jest -i --coverage",
+    "coverage": "lab -c test",
     "coverage:watch": "jest -i --coverage --watch",
     "depcheck": "../../node_modules/depcheck/bin/depcheck",
-    "test": "jest -i",
-    "test:watch": "jest -i --watch"
+    "test": "lab test"
   },
   "dependencies": {
     "@nearform/trail-core": "^1.0.1",
@@ -48,6 +47,8 @@
     "luxon": "^1.2.0"
   },
   "devDependencies": {
-    "jest": "^22.4.3"
+    "code": "^5.2.0",
+    "lab": "^15.4.5",
+    "sinon": "^5.0.10"
   }
 }
