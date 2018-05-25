@@ -36,7 +36,7 @@
   },
   "scripts": {
     "coverage": "lab -l -c test",
-    "depcheck": "../../node_modules/depcheck/bin/depcheck",
+    "depcheck": "../../node_modules/depcheck/bin/depcheck --ignores=config",
     "start": "node start.js",
     "test": "lab -l test"
   },

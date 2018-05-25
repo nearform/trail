@@ -33,7 +33,7 @@
   "scripts": {
     "coverage": "lab -c test",
     "coverage:watch": "jest -i --coverage --watch",
-    "depcheck": "../../node_modules/depcheck/bin/depcheck",
+    "depcheck": "../../node_modules/depcheck/bin/depcheck --ignores=config",
     "test": "lab test"
   },
   "dependencies": {
