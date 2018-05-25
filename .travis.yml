@@ -22,4 +22,4 @@ before_script:
   - npm run pg:travis:init
 
 script:
-  - lerna run sanity
+  - npm run sanity
