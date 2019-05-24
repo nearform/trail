@@ -7,7 +7,7 @@ const minimist = require('minimist')
 
 module.exports = function () {
   const argv = minimist(process.argv.slice(2))
-  const version = argv.version
+  const version = '' + argv.version
   const host = argv.host || config.get('db.host')
   const port = argv.port || config.get('db.port')
   const database = argv.database || config.get('db.database')

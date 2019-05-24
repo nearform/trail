@@ -9,19 +9,19 @@ const {parseDate, convertToTrail} = require('./trail')
 
 class TrailsManager {
   constructor (logger, pool) {
-    this.config = require('config')
-
     this.logger = logger || pino()
 
     if (typeof pool === 'undefined') {
+      const config = require('config')
+
       this.dbConnectionInfo = {
-        host: this.config.get('db.host'),
-        port: this.config.get('db.port'),
-        database: this.config.get('db.database'),
-        user: this.config.get('db.username'),
-        password: this.config.get('db.password'),
-        max: this.config.get('db.poolSize'),
-        idleTimeoutMillis: this.config.get('db.idleTimeoutMillis')
+        host: config.get('db.host'),
+        port: config.get('db.port'),
+        database: config.get('db.database'),
+        user: config.get('db.username'),
+        password: config.get('db.password'),
+        max: config.get('db.poolSize'),
+        idleTimeoutMillis: config.get('db.idleTimeoutMillis')
       }
 
       this.dbPool = new Pool(this.dbConnectionInfo)
@@ -60,7 +60,7 @@ class TrailsManager {
     }
   }
 
-  async search ({from, to, who, what, subject, page, pageSize, sort} = {}) {
+  async search ({from, to, who, what, subject, page, pageSize, sort, exactMatch = false} = {}) {
     // Validate parameters
     if (!from) throw new Error('You must specify a starting date ("from" attribute) when querying trails.')
     if (!to) throw new Error('You must specify a ending date ("to" attribute) when querying trails.')
@@ -89,9 +89,9 @@ class TrailsManager {
           ("when" >= ${from.toISO()} AND "when" <= ${to.toISO()})
     `
 
-    if (who) sql.append(SQL` AND who_id LIKE ${'%' + who + '%'}`)
-    if (what) sql.append(SQL` AND what_id LIKE ${'%' + what + '%'}`)
-    if (subject) sql.append(SQL` AND subject_id LIKE ${'%' + subject + '%'}`)
+    if (who) sql.append(SQL` AND who_id LIKE ${exactMatch ? who : '%' + who + '%'}`)
+    if (what) sql.append(SQL` AND what_id LIKE ${exactMatch ? what : '%' + what + '%'}`)
+    if (subject) sql.append(SQL` AND subject_id LIKE ${exactMatch ? subject : '%' + subject + '%'}`)
 
     const footer = ` ORDER BY ${sortKey} ${sortAsc ? 'ASC' : 'DESC'} LIMIT ${pageSize} OFFSET ${(page - 1) * pageSize}`
     sql.append(SQL([footer]))
