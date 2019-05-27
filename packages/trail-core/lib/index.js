@@ -171,6 +171,7 @@ class TrailsManager {
   async get (id) {
     const sql = SQL`
       SELECT
+          id::int,
           timezone('UTC', "when") as "when",
           who_id, what_id, subject_id,
           who_data as who, what_data as what, subject_data as subject,
