@@ -119,6 +119,31 @@ describe('TrailsManager', () => {
       await Promise.all(ids.map(i => this.subject.delete(i)))
     })
 
+    test('should return the records with exact match', async () => {
+      await this.subject.performDatabaseOperations(client => client.query('TRUNCATE trails'))
+
+      const records = [
+        {when: '2018-01-01T12:34:56+00:00', who: 'dog cat fish', what: 'open morning', subject: 'window'},
+        {when: '2018-01-02T12:34:56+00:00', who: 'dog cat shark', what: 'evening', subject: 'window'},
+        {when: '2018-01-03T12:34:56+00:00', who: 'wolf cat whale', what: 'open morning', subject: 'door'},
+        {when: '2018-01-04T12:34:56+00:00', who: 'hyena lion fish', what: 'evening', subject: 'door'},
+        {when: '2018-01-05T12:34:56+00:00', who: 'hyena tiger whal', what: 'close night', subject: 'world'}
+      ]
+
+      const ids = await Promise.all(records.map(r => this.subject.insert(r)))
+
+      expect((await this.subject.search({from: '2018-01-01T11:00:00+00:00', to: '2018-01-04T13:34:56+00:00', who: 'dog cat fish', sort: 'when', exactMatch: true}))
+        .map(r => r.id)).to.equal([ids[0]])
+
+      expect((await this.subject.search({from: '2018-01-01T15:00:00+00:00', to: '2018-01-04T13:34:56+00:00', what: 'evening', sort: 'when', exactMatch: true}))
+        .map(r => r.id)).to.equal([ids[1], ids[3]])
+
+      expect((await this.subject.search({from: '2018-01-01T15:00:00+00:00', to: '2018-01-05T13:34:56+00:00', subject: 'door', sort: 'when', exactMatch: true}))
+        .map(r => r.id)).to.equal([ids[2], ids[3]])
+
+      await Promise.all(ids.map(i => this.subject.delete(i)))
+    })
+
     test('should validate parameters', async () => {
       await expect(this.subject.search()).to.reject(Error, 'You must specify a starting date ("from" attribute) when querying trails.')
       await expect(this.subject.search({from: DateTime.local()}))

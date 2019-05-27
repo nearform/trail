@@ -78,6 +78,7 @@ Before running tests, ensure a valid Postgres database is running. The simplest 
 
 ```
 docker-compose up -d
+npm run pg:test:init
 ```
 
 This will start a Postgres database. Running test or coverage runs will automatically populate the database with the information it needs.
