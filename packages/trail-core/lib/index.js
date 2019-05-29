@@ -60,7 +60,7 @@ class TrailsManager {
     }
   }
 
-  async search ({from, to, who, what, subject, page, pageSize, sort, exactMatch = false} = {}) {
+  async search ({from, to, who, what, subject, page, pageSize, sort, exactMatch = false, caseInsensitive = false} = {}) {
     // Validate parameters
     if (!from) throw new Error('You must specify a starting date ("from" attribute) when querying trails.')
     if (!to) throw new Error('You must specify a ending date ("to" attribute) when querying trails.')
@@ -89,9 +89,10 @@ class TrailsManager {
           ("when" >= ${from.toISO()} AND "when" <= ${to.toISO()})
     `
 
-    if (who) sql.append(SQL` AND who_id LIKE ${exactMatch ? who : '%' + who + '%'}`)
-    if (what) sql.append(SQL` AND what_id LIKE ${exactMatch ? what : '%' + what + '%'}`)
-    if (subject) sql.append(SQL` AND subject_id LIKE ${exactMatch ? subject : '%' + subject + '%'}`)
+    const op = caseInsensitive ? 'ILIKE' : 'LIKE'
+    if (who) sql.append(SQL([` AND who_id ${op} `])).append(SQL`${exactMatch ? who : '%' + who + '%'}`)
+    if (what) sql.append(SQL([` AND what_id ${op} `])).append(SQL`${exactMatch ? what : '%' + what + '%'}`)
+    if (subject) sql.append(SQL([` AND subject_id ${op} `])).append(SQL`${exactMatch ? subject : '%' + subject + '%'}`)
 
     const footer = ` ORDER BY ${sortKey} ${sortAsc ? 'ASC' : 'DESC'} LIMIT ${pageSize} OFFSET ${(page - 1) * pageSize}`
     sql.append(SQL([footer]))
