@@ -73,13 +73,15 @@ Deletes a trail from the database.
 
 Returns `true` if the record was found and deleted, `false` otherwise.
 
-### `async TrailsManager.search({from, to, who, what, subject, page, pageSize, sort})`
+### `async TrailsManager.search({from, to, who, what, subject, page, pageSize, sort, exactMatch})`
 
 Searchs for trails in the database.
 
 The `from` and `to` attributes follow the same rule of the `when` trail attributes and are inclusive.
 
 The `who`, `what` and `subject` attributes must be string and can be used to search inside the `id` attributes of the respective trail attributes.
+You can use `exactMatch` (default to `false`) to match only trails which `id` is exactly the searched value.
+You can use `caseInsensitive` (default to `false`) to ignore case when matching values.
 
 The `page` and `pageSize` attributes can be used to control pagination. They must be positive numbers. The default pageSize is 25.
 
