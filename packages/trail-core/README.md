@@ -73,7 +73,7 @@ Deletes a trail from the database.
 
 Returns `true` if the record was found and deleted, `false` otherwise.
 
-### `async TrailsManager.search({from, to, who, what, subject, page, pageSize, sort, exactMatch})`
+### `async TrailsManager.search({from, to, who, what, subject, page, pageSize, sort, exactMatch, caseInsensitive})`
 
 Searchs for trails in the database.
 
