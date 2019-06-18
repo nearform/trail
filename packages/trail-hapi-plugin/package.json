@@ -1,6 +1,6 @@
 {
   "name": "@nearform/trail-hapi-plugin",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Hapi plugin for the audit trail logging service",
   "license": "MIT",
   "author": "nearForm Ltd",
@@ -37,7 +37,7 @@
     "test": "lab test"
   },
   "dependencies": {
-    "@nearform/trail-core": "^1.0.1",
+    "@nearform/trail-core": "^2.0.0",
     "boom": "^7.2.0",
     "config": "^1.30.0",
     "hapi": "^17.3.1",
