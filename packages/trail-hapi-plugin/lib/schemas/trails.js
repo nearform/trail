@@ -146,7 +146,7 @@ const trailSchema = {
     })
     .unknown(false)
 }
-console.log('+++',trailSchema.params.id.toString())
+
 const spec = {
   openapi: '3.0.1',
   info: {
