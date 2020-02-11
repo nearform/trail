@@ -1,6 +1,6 @@
 'use strict'
 
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 const config = require('config')
 const {errorsSchemas} = require('@nearform/trail-hapi-plugin/lib/schemas/errors')
 const {addApiRoute} = require('@nearform/trail-hapi-plugin/lib/api')
@@ -9,7 +9,7 @@ module.exports = async function () {
   // If forked as child, send output message via ipc to parent, otherwise output to console
   const logMessage = process.send ? process.send : console.log
 
-  const server = require('hapi').Server({
+    const server = require('@hapi/hapi').Server({
     host: config.get('hapi.host'),
     port: parseInt(config.get('hapi.port'), 0),
     routes: {

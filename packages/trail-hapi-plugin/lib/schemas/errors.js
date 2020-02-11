@@ -1,6 +1,6 @@
 'use strict'
 
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 
 const errorsMessages = {
   'json.format': 'The body payload is not a valid JSON.',
@@ -21,54 +21,50 @@ module.exports = {
       .meta({id: 'errors/400'})
       .description('Error returned when the input payload is not a valid JSON.')
       .keys({
-        statusCode: Joi.number().valid(400).example(400),
-        error: Joi.string().valid('Bad Request').example('Bad Request'),
+        statusCode: Joi.number().valid(400).example(400).required(),
+        error: Joi.string().valid('Bad Request').example('Bad Request').required(),
         message: Joi.string()
           .valid(errorsMessages['json.contentType'], errorsMessages['json.format'], 'Invalid request payload JSON format')
           .example(errorsMessages['json.format'])
+          .required()
       })
-      .requiredKeys('statusCode', 'error', 'message')
       .unknown(false),
     404: Joi.object()
       .meta({id: 'errors/404'})
       .description('Error returned when a requested resource could not be found.')
       .keys({
-        statusCode: Joi.number().valid(404).example(404),
-        error: Joi.string().valid('Not Found').example('Not Found'),
-        message: Joi.string().example('Not Found')
+        statusCode: Joi.number().valid(404).example(404).required(),
+        error: Joi.string().valid('Not Found').example('Not Found').required(),
+        message: Joi.string().example('Not Found').required()
       })
-      .requiredKeys('statusCode', 'error', 'message')
       .unknown(false),
     409: Joi.object()
       .meta({id: 'errors/404'})
       .description('Error returned when a requested resource already exists.')
       .keys({
-        statusCode: Joi.number().valid(409).example(409),
-        error: Joi.string().valid('Conflict').example('Conflict'),
-        message: Joi.string().example('Conflict.')
+        statusCode: Joi.number().valid(409).example(409).required(),
+        error: Joi.string().valid('Conflict').example('Conflict').required(),
+        message: Joi.string().example('Conflict.').required()
       })
-      .requiredKeys('statusCode', 'error', 'message')
       .unknown(false),
     422: Joi.object()
       .meta({id: 'errors/422'})
       .description('Error returned when the input payload is not a valid trail.')
       .keys({
-        statusCode: Joi.number().valid(422).example(422),
-        error: Joi.string().valid('Unprocessable Entity').example('Unprocessable Entity'),
-        message: Joi.string().valid('Invalid input data.').example('Invalid input data.')
+        statusCode: Joi.number().valid(422).example(422).required(),
+        error: Joi.string().valid('Unprocessable Entity').example('Unprocessable Entity').required(),
+        message: Joi.string().valid('Invalid input data.').example('Invalid input data.').required()
       })
-      .requiredKeys('statusCode', 'error', 'message')
       .unknown(false),
     500: Joi.object()
       .meta({id: 'errors/500'})
       .description('Error returned when a unexpected error was thrown by the server.')
       .keys({
-        statusCode: Joi.number().valid(500).example(500),
-        error: Joi.string().valid('Internal Server Error').example('Internal Server Error'),
-        message: Joi.string(),
+        statusCode: Joi.number().valid(500).example(500).required(),
+        error: Joi.string().valid('Internal Server Error').example('Internal Server Error').required(),
+        message: Joi.string().required(),
         stack: Joi.array().items(Joi.string())
       })
-      .requiredKeys('statusCode', 'error', 'message')
       .unknown(false)
   }
 }

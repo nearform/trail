@@ -1,7 +1,7 @@
 'use strict'
 
 const config = require('config')
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 const joiToSchema = require('joi-to-json-schema')
 const {get} = require('lodash')
 
@@ -16,8 +16,8 @@ const namedObject = function (name) {
       id: Joi.string()
         .description(`${name} id`)
         .example(name)
+        .required()
     })
-    .requiredKeys('id')
     .unknown(true)
 }
 
@@ -79,7 +79,7 @@ const trailSchema = {
       .example(25),
     sort: Joi.string()
       .description(`The field to use for sorting results. Default order is ascending, which can be reversed by prepending a dash. Default is "-when"`)
-      .valid(['when', 'id', 'who', 'what', 'subject', '-when', '-id', '-who', '-what', '-subject'])
+      .valid('when', 'id', 'who', 'what', 'subject', '-when', '-id', '-who', '-what', '-subject')
       .example('-when')
   },
   enumerate: {
@@ -92,7 +92,7 @@ const trailSchema = {
     type: Joi.string()
       .description(`The type of id to search`)
       .required()
-      .valid(['who', 'what', 'subject'])
+      .valid('who', 'what', 'subject')
       .example('who'),
     page: Joi.number()
       .description('The page of results to return (first page is 1)')
@@ -110,10 +110,10 @@ const trailSchema = {
     .description('A audit trail')
     .meta({id: 'models/trail.request'})
     .keys({
-      when: dateTime,
-      who: stringOrObject('Trail actor'),
-      what: stringOrObject('Trail subject'),
-      subject: stringOrObject('Trail target'),
+      when: dateTime.required(),
+      who: stringOrObject('Trail actor').required(),
+      what: stringOrObject('Trail subject').required(),
+      subject: stringOrObject('Trail target').required(),
       where: Joi.object()
         .description('Trail where'),
       why: Joi.object()
@@ -121,7 +121,6 @@ const trailSchema = {
       meta: Joi.object()
         .description('Trail meta')
     })
-    .requiredKeys('when', 'who', 'what', 'subject')
     .unknown(false),
   response: Joi.object()
     .description('A audit trail')
@@ -132,11 +131,12 @@ const trailSchema = {
         .example(12345),
       when: Joi.any()
         .description('Trail UTC timestamp in ISO 8601 format')
-        .tags('datetime')
-        .example('2018-01-02T03:04:05.123Z'),
-      who: namedObject('Trail actor'),
-      what: namedObject('Trail subject'),
-      subject: namedObject('Trail target'),
+        .tag('datetime')
+        .example('2018-01-02T03:04:05.123Z')
+        .required(),
+      who: namedObject('Trail actor').required(),
+      what: namedObject('Trail subject').required(),
+      subject: namedObject('Trail target').required(),
       where: Joi.object()
         .description('Trail where'),
       why: Joi.object()
@@ -144,10 +144,9 @@ const trailSchema = {
       meta: Joi.object()
         .description('Trail meta')
     })
-    .requiredKeys('when', 'who', 'what', 'subject')
     .unknown(false)
 }
-
+console.log('+++',trailSchema.params.id.toString())
 const spec = {
   openapi: '3.0.1',
   info: {

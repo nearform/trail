@@ -41,13 +41,13 @@
     "test": "lab -l test"
   },
   "dependencies": {
+    "@hapi/hapi": "^19.1.0",
+    "@hapi/joi": "^17.1.0",
     "@nearform/trail-core": "^2.0.0",
     "@nearform/trail-hapi-plugin": "^2.0.0",
     "config": "^1.30.0",
-    "hapi": "^17.3.1",
-    "hapi-pino": "^4.0.4",
+    "hapi-pino": "^6.5.0",
     "inert": "^5.1.0",
-    "joi": "^13.2.0",
     "swagger-ui-dist": "^3.13.6"
   },
   "devDependencies": {

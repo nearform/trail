@@ -1,6 +1,6 @@
 'use strict'
 
-const Hapi = require('hapi')
+const Hapi = require('@hapi/hapi')
 
 module.exports = (function () {
   let defaultServer = null
@@ -13,6 +13,8 @@ module.exports = (function () {
       port: port++,
       ...additionalConfig
     })
+
+    server.validator(require('@hapi/joi'))
 
     await server.register({plugin: require('../lib/index')})
     await server.start()
