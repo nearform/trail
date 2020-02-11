@@ -48,8 +48,8 @@
     "postgrator": "^3.6.0"
   },
   "devDependencies": {
+    "@hapi/lab": "^22.0.3",
     "code": "^5.2.0",
-    "lab": "^15.4.5",
-    "sinon": "^5.0.10"
+    "sinon": "^8.1.1"
   }
 }

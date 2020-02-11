@@ -1,7 +1,7 @@
 'use strict'
 
 const { expect } = require('code')
-const Lab = require('lab')
+const Lab = require('@hapi/lab')
 
 module.exports.lab = Lab.script()
 const { describe, it: test } = module.exports.lab
