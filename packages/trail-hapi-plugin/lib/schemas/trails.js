@@ -23,7 +23,7 @@ const namedObject = function (name) {
 }
 
 const stringOrObject = function (name) {
-  return Joi.alternatives(
+  return Joi.alternatives().try(
     namedObject(name),
     Joi.string()
       .description(`${name} id`)
@@ -117,10 +117,10 @@ const trailSchema = {
     .description('A audit trail')
     .meta({id: 'models/trail.request'})
     .keys({
-      when: dateTime.required(),
-      who: stringOrObject('Trail actor').required(),
-      what: stringOrObject('Trail subject').required(),
-      subject: stringOrObject('Trail target').required(),
+        when: dateTime,
+      who: stringOrObject('Trail actor'),
+      what: stringOrObject('Trail subject'),
+      subject: stringOrObject('Trail target'),
       where: Joi.object()
         .description('Trail where'),
       why: Joi.object()
