@@ -202,7 +202,7 @@ module.exports = {
         },
         response: {
           status: {
-            204: Joi.empty().description('The trail has been deleted successfully.'),
+            204: Joi.any().empty().description('The trail has been deleted successfully.'),
             400: errorsSchemas['400'],
             404: errorsSchemas['404'],
             500: errorsSchemas['500']

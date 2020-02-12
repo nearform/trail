@@ -7,7 +7,7 @@ const errorsMessages = {
   'json.contentType': 'Only JSON payloads are accepted. Please set the "Content-Type" header to start with "application/json".',
   'any.required': 'must be present and non empty',
   'any.empty': 'must a non empty string',
-  'object.allowUnknown': 'is not a valid attribute',
+  'object.unknown': 'is not a valid attribute',
   'object.base': 'must be a object',
   'string.base': 'must be a string',
   'string.isoDate': 'must be a valid UTC timestamp in the format YYYY-MM-DDTHH:MM:SS.sss (example: 2018-07-06T12:34:56.123)',

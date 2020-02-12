@@ -1,14 +1,13 @@
 'use strict'
 
-const joiToSchema = require('joi-to-json-schema')
 const {get} = require('lodash')
 
 const addReference = function (spec) {
   const info = typeof spec.describe === 'function' ? spec.describe() : spec
-  const id = get(info, 'meta.0.id')
+  const id = get(info, 'metas.0.id')
 
   if (id) return {$ref: `#/components/${id}`}
-  else if (spec.isJoi) return joiToSchema(spec)
+  else if (spec.isJoi) return JSON.stringify(info)
   else return spec
 }
 
@@ -62,12 +61,12 @@ const parseParameters = function (route) {
 
 const parseQuerystring = function (route) {
   // If there is a already defined format, use it
-  let specObject = get(route, 'config.validate.query')
+  const specObject = get(route, 'config.validate.query')
 
   if (!specObject) return null
 
-  return Object.entries(specObject).map(([name, spec]) => {
-    const info = spec.describe()
+  const spec = specObject.describe().keys
+  return Object.entries(spec).map(([name, info]) => {
 
     return {
       name,

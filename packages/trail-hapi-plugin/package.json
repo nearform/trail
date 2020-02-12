@@ -42,7 +42,6 @@
     "@nearform/trail-core": "^2.0.0",
     "boom": "^7.2.0",
     "config": "^1.30.0",
-    "joi-to-json-schema": "^5.1.0",
     "lodash": "^4.17.10",
     "luxon": "^1.2.0"
   },
