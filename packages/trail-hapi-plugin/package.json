@@ -33,7 +33,7 @@
   "scripts": {
     "coverage": "lab -c test",
     "coverage:watch": "jest -i --coverage --watch",
-    "depcheck": "../../node_modules/depcheck/bin/depcheck --ignores=config",
+    "depcheck": "npx depcheck --ignores=config",
     "test": "lab test"
   },
   "dependencies": {
@@ -42,7 +42,7 @@
     "@nearform/trail-core": "^3.0.0",
     "boom": "^7.2.0",
     "config": "^3.2.5",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.15",
     "luxon": "^1.2.0"
   },
   "devDependencies": {
