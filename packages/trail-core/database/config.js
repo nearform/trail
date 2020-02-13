@@ -15,5 +15,5 @@ module.exports = function () {
   const password = argv.password || config.get('db.password')
   const idleTimeoutMillis = argv.idleTimeoutMillis || config.get('db.idleTimeoutMillis')
 
-  return {config, version, host, port, database, username, password, idleTimeoutMillis}
+  return { config, version, host, port, database, username, password, idleTimeoutMillis }
 }

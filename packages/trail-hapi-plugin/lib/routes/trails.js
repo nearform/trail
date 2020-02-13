@@ -3,10 +3,10 @@
 const { notFound } = require('boom')
 const Joi = require('@hapi/joi')
 
-const {errorsSchemas} = require('../schemas/errors')
-const {spec, trailSchema} = require('../schemas/trails')
-const {failAction, validationOptions} = require('../validation')
-const {addApiRoute, generateSpec} = require('../api')
+const { errorsSchemas } = require('../schemas/errors')
+const { spec, trailSchema } = require('../schemas/trails')
+const { failAction, validationOptions } = require('../validation')
+const { addApiRoute, generateSpec } = require('../api')
 
 module.exports = {
   name: 'trails',

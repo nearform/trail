@@ -18,7 +18,7 @@ module.exports = {
   errorsMessages,
   errorsSchemas: {
     400: Joi.object()
-      .meta({id: 'errors/400'})
+      .meta({ id: 'errors/400' })
       .description('Error returned when the input payload is not a valid JSON.')
       .keys({
         statusCode: Joi.number().valid(400).example(400).required(),
@@ -30,7 +30,7 @@ module.exports = {
       })
       .unknown(false),
     404: Joi.object()
-      .meta({id: 'errors/404'})
+      .meta({ id: 'errors/404' })
       .description('Error returned when a requested resource could not be found.')
       .keys({
         statusCode: Joi.number().valid(404).example(404).required(),
@@ -39,7 +39,7 @@ module.exports = {
       })
       .unknown(false),
     409: Joi.object()
-      .meta({id: 'errors/404'})
+      .meta({ id: 'errors/404' })
       .description('Error returned when a requested resource already exists.')
       .keys({
         statusCode: Joi.number().valid(409).example(409).required(),
@@ -48,7 +48,7 @@ module.exports = {
       })
       .unknown(false),
     422: Joi.object()
-      .meta({id: 'errors/422'})
+      .meta({ id: 'errors/422' })
       .description('Error returned when the input payload is not a valid trail.')
       .keys({
         statusCode: Joi.number().valid(422).example(422).required(),
@@ -57,7 +57,7 @@ module.exports = {
       })
       .unknown(false),
     500: Joi.object()
-      .meta({id: 'errors/500'})
+      .meta({ id: 'errors/500' })
       .description('Error returned when a unexpected error was thrown by the server.')
       .keys({
         statusCode: Joi.number().valid(500).example(500).required(),

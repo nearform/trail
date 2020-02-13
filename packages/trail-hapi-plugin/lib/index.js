@@ -1,9 +1,9 @@
 'use strict'
 
-const {TrailsManager} = require('@nearform/trail-core')
-const {get} = require('lodash')
+const { TrailsManager } = require('@nearform/trail-core')
+const { get } = require('lodash')
 
-const {errorsMessages} = require('./schemas/errors')
+const { errorsMessages } = require('./schemas/errors')
 
 const environment = get(process, 'env.NODE_ENV', 'development')
 
@@ -20,8 +20,7 @@ const formatReasons = function (error) {
     if (reason.type === 'alternatives.match') {
       const type = get(reason, 'context.details.1.context.error.type')
       message = errorsMessages[type]
-    }
-    else {
+    } else {
       message = errorsMessages[reason.type]
     }
 

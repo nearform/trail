@@ -2,8 +2,8 @@
 
 const Joi = require('@hapi/joi')
 const config = require('config')
-const {errorsSchemas} = require('@nearform/trail-hapi-plugin/lib/schemas/errors')
-const {addApiRoute} = require('@nearform/trail-hapi-plugin/lib/api')
+const { errorsSchemas } = require('@nearform/trail-hapi-plugin/lib/schemas/errors')
+const { addApiRoute } = require('@nearform/trail-hapi-plugin/lib/api')
 
 module.exports = async function () {
   // If forked as child, send output message via ipc to parent, otherwise output to console
@@ -36,7 +36,7 @@ module.exports = async function () {
       },
       {
         plugin: require('@nearform/trail-hapi-plugin'),
-        options: {config}
+        options: { config }
       }
     ])
 
@@ -45,7 +45,7 @@ module.exports = async function () {
       path: '/ping',
       async handler (request, h) {
         const uptime = process.hrtime(startTime)
-        return {uptime: `${uptime[0]}.${(uptime[1] / 1E6).toFixed(0)} s`}
+        return { uptime: `${uptime[0]}.${(uptime[1] / 1E6).toFixed(0)} s` }
       },
       config: {
         auth: false,
@@ -55,8 +55,8 @@ module.exports = async function () {
         response: {
           status: {
             200: Joi.object({
-                uptime: Joi.string().description('uptime in seconds').regex(/^(\d+\.\d{3} s)$/).required()
-              })
+              uptime: Joi.string().description('uptime in seconds').regex(/^(\d+\.\d{3} s)$/).required()
+            })
               .description('Successful uptime reply.')
               .unknown(false),
             500: errorsSchemas['500']

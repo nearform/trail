@@ -2,9 +2,8 @@
 
 const config = require('config')
 const Joi = require('@hapi/joi')
-const {get} = require('lodash')
 
-const {errorsSchemas} = require('./errors')
+const { errorsSchemas } = require('./errors')
 const host = config.get('hapi.host')
 const port = config.get('hapi.port')
 
@@ -35,8 +34,8 @@ const stringOrObject = function (name) {
         return err
       })
   )
-  .required()
-  .example(name)
+    .required()
+    .example(name)
 }
 
 const dateTime = Joi.string()
@@ -48,7 +47,7 @@ const trailSchema = {
   params: {
     id: Joi.number()
       .description('Trail id')
-      .meta({id: 'models/trail.params.id'})
+      .meta({ id: 'models/trail.params.id' })
       .required()
       .min(0)
       .example(12345)
@@ -63,13 +62,13 @@ const trailSchema = {
         .description('The maximum timestamp (inclusive)')
         .required(),
       who: Joi.string()
-        .description(`A portion of the trail actor id`)
+        .description('A portion of the trail actor id')
         .example('act'),
       what: Joi.string()
-        .description(`A portion of the trail subject id`)
+        .description('A portion of the trail subject id')
         .example('sub'),
       subject: Joi.string()
-        .description(`A portion of the trail target id`)
+        .description('A portion of the trail target id')
         .example('tar'),
       page: Joi.number()
         .description('The page of results to return (first page is 1)')
@@ -80,7 +79,7 @@ const trailSchema = {
         .min(1)
         .example(25),
       sort: Joi.string()
-        .description(`The field to use for sorting results. Default order is ascending, which can be reversed by prepending a dash. Default is "-when"`)
+        .description('The field to use for sorting results. Default order is ascending, which can be reversed by prepending a dash. Default is "-when"')
         .valid('when', 'id', 'who', 'what', 'subject', '-when', '-id', '-who', '-what', '-subject')
         .example('-when')
     })
@@ -95,7 +94,7 @@ const trailSchema = {
         .description('The maximum timestamp (inclusive)')
         .required(),
       type: Joi.string()
-        .description(`The type of id to search`)
+        .description('The type of id to search')
         .required()
         .valid('who', 'what', 'subject')
         .example('who'),
@@ -108,13 +107,13 @@ const trailSchema = {
         .min(1)
         .example(25),
       desc: Joi.boolean()
-        .description(`If to sort alphabetically by descending order`)
+        .description('If to sort alphabetically by descending order')
         .example(true)
     })
     .unknown(false),
   request: Joi.object()
     .description('A audit trail')
-    .meta({id: 'models/trail.request'})
+    .meta({ id: 'models/trail.request' })
     .keys({
       when: dateTime,
       who: stringOrObject('Trail actor'),
@@ -130,7 +129,7 @@ const trailSchema = {
     .unknown(false),
   response: Joi.object()
     .description('A audit trail')
-    .meta({id: 'models/trail.response'})
+    .meta({ id: 'models/trail.response' })
     .keys({
       id: Joi.number()
         .description('Trail id')

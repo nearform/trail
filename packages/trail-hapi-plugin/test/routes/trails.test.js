@@ -7,8 +7,8 @@ const sinon = require('sinon')
 module.exports.lab = Lab.script()
 const { describe, it: test, before, after } = module.exports.lab
 
-const {DateTime} = require('luxon')
-const {errorsMessages} = require('../../lib/schemas/errors')
+const { DateTime } = require('luxon')
+const { errorsMessages } = require('../../lib/schemas/errors')
 const testServer = require('../test-server')
 
 describe('Trails REST operations', () => {
@@ -61,7 +61,7 @@ describe('Trails REST operations', () => {
 
       expect(trails[0]).to.include({
         id: id,
-        when: DateTime.fromISO('2016-01-02T15:04:05.123', {zone: 'utc'}).toISO(),
+        when: DateTime.fromISO('2016-01-02T15:04:05.123', { zone: 'utc' }).toISO(),
         who: {
           id: '1',
           attributes: {}
@@ -108,7 +108,7 @@ describe('Trails REST operations', () => {
     test('it should return 422 in case of validation errors', async () => {
       const response = await server.inject({
         method: 'GET',
-        url: `/trails?from=bar&where=foo`
+        url: '/trails?from=bar&where=foo'
       })
 
       expect(response.statusCode).to.equal(422)
@@ -175,7 +175,7 @@ describe('Trails REST operations', () => {
     test('it should return 422 in case of validation errors', async () => {
       const response = await server.inject({
         method: 'GET',
-        url: `/trails/enumerate?from=bar`
+        url: '/trails/enumerate?from=bar'
       })
 
       expect(response.statusCode).to.equal(422)
@@ -200,7 +200,7 @@ describe('Trails REST operations', () => {
         payload: {
           when: '2016-01-02T18:04:05.123+03:00',
           who: 'me',
-          what: {'id': 'FOO', 'abc': 'cde'},
+          what: { id: 'FOO', abc: 'cde' },
           subject: 'FOO'
         }
       })
@@ -209,7 +209,7 @@ describe('Trails REST operations', () => {
       const trail = JSON.parse(response.payload)
 
       expect(trail).to.include({
-        when: DateTime.fromISO('2016-01-02T15:04:05.123', {zone: 'utc'}).toISO(),
+        when: DateTime.fromISO('2016-01-02T15:04:05.123', { zone: 'utc' }).toISO(),
         who: {
           id: 'me',
           attributes: {}
@@ -290,7 +290,7 @@ describe('Trails REST operations', () => {
       const id = await server.trailCore.insert({
         when: '2016-01-02T18:04:05.123+03:00',
         who: 'me',
-        what: {'id': 'FOO', 'abc': 'cde'},
+        what: { id: 'FOO', abc: 'cde' },
         subject: 'FOO'
       })
 
@@ -303,7 +303,7 @@ describe('Trails REST operations', () => {
       const trail = JSON.parse(response.payload)
 
       expect(trail).to.include({
-        when: DateTime.fromISO('2016-01-02T15:04:05.123', {zone: 'utc'}).toISO(),
+        when: DateTime.fromISO('2016-01-02T15:04:05.123', { zone: 'utc' }).toISO(),
         who: {
           id: 'me',
           attributes: {}
@@ -401,7 +401,7 @@ describe('Trails REST operations', () => {
         subject: '3'
       })
 
-      expect((await server.trailCore.get(id)).who).to.include({id: '1'})
+      expect((await server.trailCore.get(id)).who).to.include({ id: '1' })
 
       const response = await server.inject({
         method: 'PUT',
@@ -409,7 +409,7 @@ describe('Trails REST operations', () => {
         payload: {
           when: '2016-01-02T18:04:05.123+03:00',
           who: 'me',
-          what: {'id': 'FOO', 'abc': 'cde'},
+          what: { id: 'FOO', abc: 'cde' },
           subject: 'FOO'
         }
       })
@@ -418,7 +418,7 @@ describe('Trails REST operations', () => {
       const trail = JSON.parse(response.payload)
 
       expect(trail).to.include({
-        when: DateTime.fromISO('2016-01-02T15:04:05.123', {zone: 'utc'}).toISO(),
+        when: DateTime.fromISO('2016-01-02T15:04:05.123', { zone: 'utc' }).toISO(),
         who: {
           id: 'me',
           attributes: {}
@@ -438,7 +438,7 @@ describe('Trails REST operations', () => {
         meta: {}
       })
 
-      expect((await server.trailCore.get(id)).who).to.include({id: 'me'})
+      expect((await server.trailCore.get(id)).who).to.include({ id: 'me' })
 
       await server.trailCore.delete(id)
     })
@@ -450,7 +450,7 @@ describe('Trails REST operations', () => {
         payload: {
           when: '2016-01-02T18:04:05.123+03:00',
           who: 'me',
-          what: {'id': 'FOO', 'abc': 'cde'},
+          what: { id: 'FOO', abc: 'cde' },
           subject: 'FOO'
         }
       })

@@ -1,19 +1,19 @@
 'use strict'
 
-const {get} = require('lodash')
+const { get } = require('lodash')
 
 const addReference = function (spec) {
   const info = typeof spec.describe === 'function' ? spec.describe() : spec
   const id = get(info, 'metas.0.id')
 
-  if (id) return {$ref: `#/components/${id}`}
+  if (id) return { $ref: `#/components/${id}` }
   else if (spec.isJoi) return JSON.stringify(info)
   else return spec
 }
 
 const parseResponses = function (route) {
   const responses = {}
-  let specObject = get(route, 'config.response.status')
+  const specObject = get(route, 'config.response.status')
 
   // Get the pairs and sort by HTTP code (lower first)
   const specPairs = Object.entries(specObject).sort((a, b) => a[0] - b[0])
@@ -24,7 +24,7 @@ const parseResponses = function (route) {
     const info = response.describe()
 
     if (code === '204') { // No body reply
-      responses[code.toString()] = {description: info.description}
+      responses[code.toString()] = { description: info.description }
     } else { // Assign the new response, either with a reference or by converting the object
       responses[code.toString()] = {
         description: info.description,
@@ -42,7 +42,7 @@ const parseResponses = function (route) {
 
 const parseParameters = function (route) {
   // If there is a already defined format, use it
-  let specObject = get(route, 'config.validate.params')
+  const specObject = get(route, 'config.validate.params')
 
   if (!specObject) return null
 
@@ -67,7 +67,6 @@ const parseQuerystring = function (route) {
 
   const spec = specObject.describe().keys
   return Object.entries(spec).map(([name, info]) => {
-
     return {
       name,
       in: 'query',
@@ -80,7 +79,7 @@ const parseQuerystring = function (route) {
 
 const parseBody = function (route) {
   // If there is a already defined format, use it
-  let specObject = get(route, 'config.validate.payload')
+  const specObject = get(route, 'config.validate.payload')
 
   if (!specObject) return null
 
@@ -112,9 +111,9 @@ module.exports = (function () {
       for (const route of apiRoutes) {
         // Make sure routes are grouped by path
         const path = route.path
-        if (!spec.paths.hasOwnProperty(path)) spec.paths[path] = {}
+        if (!Object.prototype.hasOwnProperty.call(spec.paths, path)) spec.paths[path] = {}
 
-        const {description, tags} = route.config
+        const { description, tags } = route.config
 
         // Add the route to the path group
         spec.paths[path][route.method.toLowerCase()] = {

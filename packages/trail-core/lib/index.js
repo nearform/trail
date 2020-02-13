@@ -2,10 +2,10 @@
 
 const SQL = require('@nearform/sql')
 const pino = require('pino')
-const {Pool} = require('pg')
+const { Pool } = require('pg')
 
 const defaultPageSize = 25
-const {parseDate, convertToTrail} = require('./trail')
+const { parseDate, convertToTrail } = require('./trail')
 
 class TrailsManager {
   constructor (logger, pool) {
@@ -60,7 +60,7 @@ class TrailsManager {
     }
   }
 
-  async search ({from, to, who, what, subject, page, pageSize, sort, exactMatch = false, caseInsensitive = false} = {}) {
+  async search ({ from, to, who, what, subject, page, pageSize, sort, exactMatch = false, caseInsensitive = false } = {}) {
     // Validate parameters
     if (!from) throw new Error('You must specify a starting date ("from" attribute) when querying trails.')
     if (!to) throw new Error('You must specify a ending date ("to" attribute) when querying trails.')
@@ -72,10 +72,10 @@ class TrailsManager {
     to = parseDate(to)
 
     // Sanitize pagination parameters
-    ;({page, pageSize} = this._sanitizePagination(page, pageSize))
+    ;({ page, pageSize } = this._sanitizePagination(page, pageSize))
 
     // Sanitize ordering
-    const {sortKey, sortAsc} = this._sanitizeSorting(sort)
+    const { sortKey, sortAsc } = this._sanitizeSorting(sort)
 
     // Perform the query
     const sql = SQL`
@@ -101,7 +101,7 @@ class TrailsManager {
     return res.rows.map(convertToTrail)
   }
 
-  async enumerate ({from, to, type, page, pageSize, desc} = {}) {
+  async enumerate ({ from, to, type, page, pageSize, desc } = {}) {
     // Validate parameters
     if (!from) throw new Error('You must specify a starting date ("from" attribute) when enumerating.')
     if (!to) throw new Error('You must specify a ending date ("to" attribute) when enumerating.')
@@ -119,7 +119,7 @@ class TrailsManager {
     if (!['who', 'what', 'subject'].includes(type)) throw new TypeError('You must select between "who", "what" or "subject" type ("type" attribute) when enumerating.')
 
     // Sanitize pagination parameters
-    ;({page, pageSize} = this._sanitizePagination(page, pageSize))
+    ;({ page, pageSize } = this._sanitizePagination(page, pageSize))
 
     // Perform the query
     const sql = SQL`
@@ -222,7 +222,7 @@ class TrailsManager {
   _sanitizeSorting (sortKey) {
     let sortAsc = true
 
-    if (!sortKey) return {sortKey: '"when"', sortAsc: false} // Default is -when
+    if (!sortKey) return { sortKey: '"when"', sortAsc: false } // Default is -when
 
     if (sortKey.startsWith('-')) {
       sortAsc = false
@@ -237,7 +237,7 @@ class TrailsManager {
     if (sortKey === 'when') sortKey = '"when"'
     else if (sortKey !== 'id') sortKey += '_id'
 
-    return {sortKey: `${sortKey}`, sortAsc}
+    return { sortKey: `${sortKey}`, sortAsc }
   }
 
   _sanitizePagination (page, pageSize) {
@@ -251,4 +251,4 @@ class TrailsManager {
   }
 }
 
-module.exports = {TrailsManager}
+module.exports = { TrailsManager }
