@@ -18,7 +18,7 @@ const formatReasons = function (error) {
     let message
     // Check for nested reason from alternatives.
     if (reason.type === 'alternatives.match') {
-      const type = get(reason,'context.details.1.context.error.type')
+      const type = get(reason, 'context.details.1.context.error.type')
       message = errorsMessages[type]
     }
     else {

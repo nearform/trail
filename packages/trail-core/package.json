@@ -1,6 +1,6 @@
 {
   "name": "@nearform/trail-core",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Audit trail logging service",
   "license": "MIT",
   "author": "nearForm Ltd",
@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@nearform/sql": "^1.0.1",
-    "config": "^1.30.0",
+    "config": "^3.2.5",
     "luxon": "^1.2.0",
     "minimist": "^1.2.0",
     "pg": "^7.4.1",
