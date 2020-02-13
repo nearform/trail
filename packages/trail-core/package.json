@@ -44,7 +44,7 @@
     "luxon": "^1.2.0",
     "minimist": "^1.2.0",
     "pg": "^7.4.1",
-    "pino": "^4.16.1",
+    "pino": "^5.16.0",
     "postgrator": "^3.6.0"
   },
   "devDependencies": {
