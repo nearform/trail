@@ -28,16 +28,15 @@ const stringOrObject = function (name) {
     Joi.string()
       .description(`${name} id`)
       .example(name)
-      .required()
-      .error(errors => {
-        const value = get(errors, '0.context.value')
-
-        // The value is object, ignore all the errors here
-        if (typeof value === 'object' && !Array.isArray(value)) return {}
-        // Overwrite message for invalid type
-        return {type: 'custom.stringOrObject'}
+      .error(() => {
+        const type = 'custom.stringOrObject'
+        const err = new Error(type)
+        err.type = type
+        return err
       })
-  ).example(name)
+  )
+  .required()
+  .example(name)
 }
 
 const dateTime = Joi.string()
@@ -117,7 +116,7 @@ const trailSchema = {
     .description('A audit trail')
     .meta({id: 'models/trail.request'})
     .keys({
-        when: dateTime,
+      when: dateTime,
       who: stringOrObject('Trail actor'),
       what: stringOrObject('Trail subject'),
       subject: stringOrObject('Trail target'),

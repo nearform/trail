@@ -14,7 +14,16 @@ const formatReasons = function (error) {
   for (const reason of get(error, 'data.details', [])) {
     // Gather informations and try to assign a message
     const attribute = reason.path.join('.')
-    let message = errorsMessages[reason.type]
+
+    let message
+    // Check for nested reason from alternatives.
+    if (reason.type === 'alternatives.match') {
+      const type = get(reason,'context.details.1.context.error.type')
+      message = errorsMessages[type]
+    }
+    else {
+      message = errorsMessages[reason.type]
+    }
 
     // We found a message, add to the output
     if (message) reasons[attribute] = message

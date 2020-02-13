@@ -277,7 +277,7 @@ describe('Trails REST operations', () => {
         reasons: {
           meta: errorsMessages['object.base'],
           subject: errorsMessages['any.required'],
-          'what.id': errorsMessages['any.required'],
+          what: errorsMessages['custom.stringOrObject'],
           when: errorsMessages['string.isoDate'],
           who: errorsMessages['custom.stringOrObject']
         }
