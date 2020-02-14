@@ -15,9 +15,9 @@ This repository is home to Trail's three main modules:
 
 ### Node.js support
 
-Trail requires [Node.js][node] 8.9.0+.
+Trail requires [Node.js][node] 12.0.0+.
 
-The [Hapi][hapi] plugin and server packages require Hapi 17+.
+The [Hapi][hapi] plugin and server packages require Hapi 19+.
 
 ### Database support
 
