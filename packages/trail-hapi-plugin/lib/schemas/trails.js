@@ -1,13 +1,13 @@
 'use strict'
 
 const config = require('config')
-const Joi = require('joi')
-const joiToSchema = require('joi-to-json-schema')
-const {get} = require('lodash')
+const Joi = require('@hapi/joi')
 
-const {errorsSchemas} = require('./errors')
+const { errorsSchemas } = require('./errors')
 const host = config.get('hapi.host')
 const port = config.get('hapi.port')
+
+const joiToSchema = joi => JSON.stringify(joi.describe())
 
 const namedObject = function (name) {
   return Joi.object()
@@ -16,27 +16,26 @@ const namedObject = function (name) {
       id: Joi.string()
         .description(`${name} id`)
         .example(name)
+        .required()
     })
-    .requiredKeys('id')
     .unknown(true)
 }
 
 const stringOrObject = function (name) {
-  return Joi.alternatives(
+  return Joi.alternatives().try(
     namedObject(name),
     Joi.string()
       .description(`${name} id`)
       .example(name)
-      .required()
-      .error(errors => {
-        const value = get(errors, '0.context.value')
-
-        // The value is object, ignore all the errors here
-        if (typeof value === 'object' && !Array.isArray(value)) return {}
-        // Overwrite message for invalid type
-        return {type: 'custom.stringOrObject'}
+      .error(() => {
+        const type = 'custom.stringOrObject'
+        const err = new Error(type)
+        err.type = type
+        return err
       })
-  ).example(name)
+  )
+    .required()
+    .example(name)
 }
 
 const dateTime = Joi.string()
@@ -48,67 +47,73 @@ const trailSchema = {
   params: {
     id: Joi.number()
       .description('Trail id')
-      .meta({id: 'models/trail.params.id'})
+      .meta({ id: 'models/trail.params.id' })
       .required()
       .min(0)
       .example(12345)
   },
-  search: {
-    from: dateTime
-      .description('The minimum timestamp (inclusive)')
-      .required(),
-    to: dateTime
-      .description('The maximum timestamp (inclusive)')
-      .required(),
-    who: Joi.string()
-      .description(`A portion of the trail actor id`)
-      .example('act'),
-    what: Joi.string()
-      .description(`A portion of the trail subject id`)
-      .example('sub'),
-    subject: Joi.string()
-      .description(`A portion of the trail target id`)
-      .example('tar'),
-    page: Joi.number()
-      .description('The page of results to return (first page is 1)')
-      .min(0)
-      .example(5),
-    pageSize: Joi.number()
-      .description('The number of results per page (default is 25)')
-      .min(1)
-      .example(25),
-    sort: Joi.string()
-      .description(`The field to use for sorting results. Default order is ascending, which can be reversed by prepending a dash. Default is "-when"`)
-      .valid(['when', 'id', 'who', 'what', 'subject', '-when', '-id', '-who', '-what', '-subject'])
-      .example('-when')
-  },
-  enumerate: {
-    from: dateTime
-      .description('The minimum timestamp (inclusive)')
-      .required(),
-    to: dateTime
-      .description('The maximum timestamp (inclusive)')
-      .required(),
-    type: Joi.string()
-      .description(`The type of id to search`)
-      .required()
-      .valid(['who', 'what', 'subject'])
-      .example('who'),
-    page: Joi.number()
-      .description('The page of results to return (first page is 1)')
-      .min(0)
-      .example(5),
-    pageSize: Joi.number()
-      .description('The number of results per page (default is 25)')
-      .min(1)
-      .example(25),
-    desc: Joi.boolean()
-      .description(`If to sort alphabetically by descending order`)
-      .example(true)
-  },
+  search: Joi.object()
+    .description('An audit search')
+    .keys({
+      from: dateTime
+        .description('The minimum timestamp (inclusive)')
+        .required(),
+      to: dateTime
+        .description('The maximum timestamp (inclusive)')
+        .required(),
+      who: Joi.string()
+        .description('A portion of the trail actor id')
+        .example('act'),
+      what: Joi.string()
+        .description('A portion of the trail subject id')
+        .example('sub'),
+      subject: Joi.string()
+        .description('A portion of the trail target id')
+        .example('tar'),
+      page: Joi.number()
+        .description('The page of results to return (first page is 1)')
+        .min(0)
+        .example(5),
+      pageSize: Joi.number()
+        .description('The number of results per page (default is 25)')
+        .min(1)
+        .example(25),
+      sort: Joi.string()
+        .description('The field to use for sorting results. Default order is ascending, which can be reversed by prepending a dash. Default is "-when"')
+        .valid('when', 'id', 'who', 'what', 'subject', '-when', '-id', '-who', '-what', '-subject')
+        .example('-when')
+    })
+    .unknown(false),
+  enumerate: Joi.object()
+    .description('An audit enumeration')
+    .keys({
+      from: dateTime
+        .description('The minimum timestamp (inclusive)')
+        .required(),
+      to: dateTime
+        .description('The maximum timestamp (inclusive)')
+        .required(),
+      type: Joi.string()
+        .description('The type of id to search')
+        .required()
+        .valid('who', 'what', 'subject')
+        .example('who'),
+      page: Joi.number()
+        .description('The page of results to return (first page is 1)')
+        .min(0)
+        .example(5),
+      pageSize: Joi.number()
+        .description('The number of results per page (default is 25)')
+        .min(1)
+        .example(25),
+      desc: Joi.boolean()
+        .description('If to sort alphabetically by descending order')
+        .example(true)
+    })
+    .unknown(false),
   request: Joi.object()
     .description('A audit trail')
-    .meta({id: 'models/trail.request'})
+    .meta({ id: 'models/trail.request' })
     .keys({
       when: dateTime,
       who: stringOrObject('Trail actor'),
@@ -121,22 +126,22 @@ const trailSchema = {
       meta: Joi.object()
         .description('Trail meta')
     })
-    .requiredKeys('when', 'who', 'what', 'subject')
     .unknown(false),
   response: Joi.object()
     .description('A audit trail')
-    .meta({id: 'models/trail.response'})
+    .meta({ id: 'models/trail.response' })
     .keys({
       id: Joi.number()
         .description('Trail id')
         .example(12345),
       when: Joi.any()
         .description('Trail UTC timestamp in ISO 8601 format')
-        .tags('datetime')
-        .example('2018-01-02T03:04:05.123Z'),
-      who: namedObject('Trail actor'),
-      what: namedObject('Trail subject'),
-      subject: namedObject('Trail target'),
+        .tag('datetime')
+        .example('2018-01-02T03:04:05.123Z')
+        .required(),
+      who: namedObject('Trail actor').required(),
+      what: namedObject('Trail subject').required(),
+      subject: namedObject('Trail target').required(),
       where: Joi.object()
         .description('Trail where'),
       why: Joi.object()
@@ -144,7 +149,6 @@ const trailSchema = {
       meta: Joi.object()
         .description('Trail meta')
     })
-    .requiredKeys('when', 'who', 'what', 'subject')
     .unknown(false)
 }
 

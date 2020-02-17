@@ -1,15 +1,15 @@
 'use strict'
 
 module.exports = {
-  'collectCoverageFrom': [
+  collectCoverageFrom: [
     'lib/*.js',
     'lib/**/*.js'
   ],
-  'coverageReporters': [
+  coverageReporters: [
     'text',
     'html'
   ],
-  'testMatch': [
+  testMatch: [
     '**/*.test.js'
   ]
 }

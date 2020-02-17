@@ -1,6 +1,6 @@
 {
   "name": "@nearform/trail-hapi-plugin",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Hapi plugin for the audit trail logging service",
   "license": "MIT",
   "author": "nearForm Ltd",
@@ -33,22 +33,21 @@
   "scripts": {
     "coverage": "lab -c test",
     "coverage:watch": "jest -i --coverage --watch",
-    "depcheck": "../../node_modules/depcheck/bin/depcheck --ignores=config",
+    "depcheck": "npx depcheck --ignores=config",
     "test": "lab test"
   },
   "dependencies": {
-    "@nearform/trail-core": "^2.0.0",
+    "@hapi/hapi": "^19.1.0",
+    "@hapi/joi": "^17.1.0",
+    "@nearform/trail-core": "^3.0.0",
     "boom": "^7.2.0",
-    "config": "^1.30.0",
-    "hapi": "^17.3.1",
-    "joi": "^13.2.0",
-    "joi-to-json-schema": "^3.3.0",
-    "lodash": "^4.17.10",
+    "config": "^3.2.5",
+    "lodash": "^4.17.15",
     "luxon": "^1.2.0"
   },
   "devDependencies": {
+    "@hapi/lab": "^22.0.3",
     "code": "^5.2.0",
-    "lab": "^15.4.5",
-    "sinon": "^5.0.10"
+    "sinon": "^8.1.1"
   }
 }

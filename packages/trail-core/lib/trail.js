@@ -1,6 +1,6 @@
 'use strict'
 
-const {DateTime} = require('luxon')
+const { DateTime } = require('luxon')
 
 const parseComponent = function (attributes, id, label) {
   // Copy an overriden id
@@ -12,7 +12,7 @@ const parseComponent = function (attributes, id, label) {
       throw new Error(`The "${label}" field when passed as a string must be non empty.`)
     }
 
-    return {id: attributes, attributes: {}}
+    return { id: attributes, attributes: {} }
   }
 
   // Valid the value format
@@ -30,12 +30,12 @@ const parseComponent = function (attributes, id, label) {
   attributes = Object.assign({}, attributes)
   Reflect.deleteProperty(attributes, 'id')
 
-  return {id, attributes}
+  return { id, attributes }
 }
 
 const parseDate = function (original) {
   if (original instanceof DateTime) return original.setZone('utc')
-  else if (original instanceof Date) return DateTime.fromMillis(original.getTime(), {zone: 'utc'})
+  else if (original instanceof Date) return DateTime.fromMillis(original.getTime(), { zone: 'utc' })
   else if (typeof original !== 'string') throw new Error('Only Luxon DateTime, JavaScript Date or ISO8601 are supported for dates.')
 
   const when = DateTime.fromISO(original)
@@ -53,7 +53,7 @@ const validateAdditionalFields = function (value, label) {
 
 module.exports = {
   parseDate,
-  convertToTrail ({id, when, who, what, subject, where, why, meta, who_id: whoId, what_id: whatId, subject_id: subjectId}) {
+  convertToTrail ({ id, when, who, what, subject, where, why, meta, who_id: whoId, what_id: whatId, subject_id: subjectId }) {
     // Convert required fields
     if (id !== null && typeof id !== 'undefined' && typeof id !== 'number') throw new Error('The trail id must be a number or null.')
 

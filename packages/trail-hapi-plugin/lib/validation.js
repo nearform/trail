@@ -2,7 +2,7 @@
 
 const Boom = require('boom')
 
-const {errorsMessages} = require('./schemas/errors')
+const { errorsMessages } = require('./schemas/errors')
 
 module.exports = {
   validationOptions: {

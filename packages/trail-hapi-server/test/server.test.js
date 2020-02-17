@@ -1,7 +1,7 @@
 'use strict'
 
 const { expect } = require('code')
-const Lab = require('lab')
+const Lab = require('@hapi/lab')
 const sinon = require('sinon')
 
 module.exports.lab = Lab.script()
@@ -51,7 +51,7 @@ describe('Server', () => {
   })
 
   describe('Swagger', () => {
-    describe(`UI`, async () => {
+    describe('UI', async () => {
       test('it should correctly serve the index.html with the right spec URL', async () => {
         const response = await server.inject({
           method: 'GET',

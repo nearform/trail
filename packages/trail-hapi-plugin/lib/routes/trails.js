@@ -1,12 +1,12 @@
 'use strict'
 
 const { notFound } = require('boom')
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 
-const {errorsSchemas} = require('../schemas/errors')
-const {spec, trailSchema} = require('../schemas/trails')
-const {failAction, validationOptions} = require('../validation')
-const {addApiRoute, generateSpec} = require('../api')
+const { errorsSchemas } = require('../schemas/errors')
+const { spec, trailSchema } = require('../schemas/trails')
+const { failAction, validationOptions } = require('../validation')
+const { addApiRoute, generateSpec } = require('../api')
 
 module.exports = {
   name: 'trails',
@@ -202,7 +202,7 @@ module.exports = {
         },
         response: {
           status: {
-            204: Joi.empty().description('The trail has been deleted successfully.'),
+            204: Joi.any().empty().description('The trail has been deleted successfully.'),
             400: errorsSchemas['400'],
             404: errorsSchemas['404'],
             500: errorsSchemas['500']

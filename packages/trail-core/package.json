@@ -1,6 +1,6 @@
 {
   "name": "@nearform/trail-core",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Audit trail logging service",
   "license": "MIT",
   "author": "nearForm Ltd",
@@ -31,7 +31,7 @@
   "main": "lib/index.js",
   "scripts": {
     "coverage": "lab -c test",
-    "depcheck": "../../node_modules/depcheck/bin/depcheck --ignores=config",
+    "depcheck": "npx depcheck --ignores=config",
     "pg:init": "node ./database/init.js && npm run pg:migrate",
     "pg:test:init": "NODE_ENV=test node ./database/init.js && NODE_ENV=test npm run pg:migrate",
     "pg:travis:init": "NODE_ENV=travis node ./database/init.js && NODE_ENV=travis npm run pg:migrate",
@@ -40,16 +40,16 @@
   },
   "dependencies": {
     "@nearform/sql": "^1.0.1",
-    "config": "^1.30.0",
+    "config": "^3.2.5",
     "luxon": "^1.2.0",
     "minimist": "^1.2.0",
     "pg": "^7.4.1",
-    "pino": "^4.16.1",
+    "pino": "^5.16.0",
     "postgrator": "^3.6.0"
   },
   "devDependencies": {
+    "@hapi/lab": "^22.0.3",
     "code": "^5.2.0",
-    "lab": "^15.4.5",
-    "sinon": "^5.0.10"
+    "sinon": "^8.1.1"
   }
 }

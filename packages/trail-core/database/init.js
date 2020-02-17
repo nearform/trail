@@ -2,14 +2,14 @@
 
 'use strict'
 
-const {Client} = require('pg')
+const { Client } = require('pg')
 const config = require('./config')
 
 // Gather arguments
 
 async function run () {
-  const {host, port, database, username: user, password, idleTimeoutMillis} = config()
-  const client = new Client({host, port, database: 'postgres', user, password, idleTimeoutMillis})
+  const { host, port, database, username: user, password, idleTimeoutMillis } = config()
+  const client = new Client({ host, port, database: 'postgres', user, password, idleTimeoutMillis })
 
   await client.connect()
   await client.query(`DROP DATABASE IF EXISTS ${database}`)
