@@ -1,37 +1,31 @@
-'use strict'
-
-const Hapi = require('@hapi/hapi')
+const fastify = require('fastify')
 
 module.exports = (function () {
   let defaultServer = null
   let port = 8080
   const servers = []
 
-  const build = async function (additionalConfig) {
-    const server = Hapi.Server({
-      host: '127.0.0.1',
-      port: port++,
-      ...additionalConfig
-    })
-
-    server.validator(require('@hapi/joi'))
-
-    await server.register({ plugin: require('../lib/index') })
-    await server.start()
-
-    servers.push(server)
+  const build = async function () {
+    const server = fastify({ logger: false })
+    try {
+      await server.register(require('../lib'))
+      server.listen(port++, '127.0.0.1')
+      servers.push(server)
+    } catch (e) {
+      console.error(e)
+    }
     return server
   }
 
   return {
     build,
-    async buildDefault (additionalConfig, force) {
-      if (!defaultServer || force) defaultServer = await build(additionalConfig)
+    async buildDefault (force) {
+      if (!defaultServer || force) defaultServer = await build()
 
       return defaultServer
     },
     stopAll () {
-      return Promise.all(servers.map(s => s.stop()))
+      return Promise.all(servers.map(s => s.close()))
     }
   }
 })()

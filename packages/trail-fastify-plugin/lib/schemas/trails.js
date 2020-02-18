@@ -5,7 +5,7 @@ const { errorsSchemas } = require('./errors')
 const host = config.get('fastify.host')
 const port = config.get('fastify.port')
 
-const schemaToJSON = s => JSON.stringify(s.valueOf)
+const schemaToJSON = s => JSON.stringify(s.valueOf())
 
 const namedObject = function (name) {
   return S.object()
@@ -20,8 +20,6 @@ const namedObject = function (name) {
 
 // Consider using .definition for this instead? (see fluent-schema readme)
 const stringOrObject = function (name) {
-  // return Joi.alternatives().try(
-    // TODO Possibly S.mixed should be used here instead
   return S.oneOf([
     namedObject(name),
     S.string()
@@ -36,7 +34,7 @@ const stringOrObject = function (name) {
       })
       */
   ])
-    // TODO Will this required work as expected?
+    // TODO Will this required work as expected? Or even needed when oneOf is used?
     .required()
     .examples([name])
 }
@@ -54,7 +52,7 @@ const trailSchema = {
        * (raw seems to be a way to add properties directly to the underlying schema description object)
       .meta({ id: 'models/trail.params.id' })
       */
-      .raw({ id: 'models/trail.params.id' })
+      .raw({ meta: { id: 'models/trail.params.id' } })
       .minimum(0)
       .examples([12345]))
     .required(['id']),
@@ -119,7 +117,7 @@ const trailSchema = {
     /* TODO need to confirm meta -> raw is correct
     .meta({ id: 'models/trail.request' })
     */
-    .raw({ id: 'models/trail.request' })
+    .raw({ meta: { id: 'models/trail.request' } })
     .prop('when', dateTime)
     .prop('who', stringOrObject('Trail actor'))
     .prop('what', stringOrObject('Trail subject'))
@@ -133,17 +131,20 @@ const trailSchema = {
     /* TODO need to confirm meta -> raw is correct
     .meta({ id: 'models/trail.response' })
     */
-    .raw({ id: 'models/trail.response' })
+    .raw({ meta: { id: 'models/trail.response' } })
     .prop('id', S.number()
       .description('Trail id')
       .examples([12345]))
     /* TODO Note Joi.any -> S.string - need to confirm
     .prop('when', Joi.any()
     */
+    /* TODO Confirm switch to dateTime
     .prop('when', S.string()
       .description('Trail UTC timestamp in ISO 8601 format')
       .tag('datetime')
       .examples(['2018-01-02T03:04:05.123Z']))
+      */
+    .prop('when', dateTime)
     .prop('who', namedObject('Trail actor'))
     .prop('what', namedObject('Trail subject'))
     .prop('subject', namedObject('Trail target'))

@@ -30,16 +30,21 @@
     "coverage": "todo -c test",
     "coverage:watch": "jest -i --coverage --watch",
     "depcheck": "npx depcheck --ignores=config",
-    "test": "todo test"
+    "test": "lab test"
   },
   "dependencies": {
     "@nearform/trail-core": "^3.0.0",
+    "ajv": "^6.11.0",
     "boom": "^7.2.0",
     "config": "^3.2.5",
+    "fastify": "^2.12.0",
+    "fastify-plugin": "^1.6.0",
+    "fluent-schema": "^0.10.0",
     "lodash": "^4.17.15",
     "luxon": "^1.2.0"
   },
   "devDependencies": {
+    "@hapi/lab": "^22.0.3",
     "code": "^5.2.0",
     "sinon": "^8.1.1"
   }

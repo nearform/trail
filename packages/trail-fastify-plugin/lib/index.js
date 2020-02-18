@@ -1,5 +1,7 @@
+const fp = require('fastify-plugin')
 const { TrailsManager } = require('@nearform/trail-core')
 const { get } = require('lodash')
+const Ajv = require('ajv')
 
 const { errorsMessages } = require('./schemas/errors')
 
@@ -8,17 +10,19 @@ const environment = get(process, 'env.NODE_ENV', 'development')
 // TODO is this needed?
 const formatReasons = error => {}
 
-const formatStack = error => get(error, 'stack', '').filter((s, i) => i > 0).split('\n').map(s => s.trim().replace(/^at /, ''))
+const formatStack = error => get(error, 'stack', '')
+  .filter((s, i) => i > 0)
+  .split('\n')
+  .map(s => s.trim().replace(/^at /, ''))
 
-module.exports = async function (fastify, options, done) {
+async function trail (server, options) {
   const whitelistedErrors = [404]
-  // TODO options.pool - may need a wrapper function which is passed the trails config and returns the plugin
   const trailsManager = new TrailsManager(undefined, options.pool)
 
-  fastify.decorate('trailCore', trailsManager)
-  fastify.decorateReply('trailCore', trailsManager)
+  server.decorate('trailCore', trailsManager)
+  server.decorateReply('trailCore', trailsManager)
 
-  fastify.addHook('onError', (request, reply, error, done) => {
+  server.addHook('onError', (request, reply, error, done) => {
     // TODO review following
     const code = error.isBoom ? error.output.statusCode : error.statusCode
 
@@ -41,13 +45,22 @@ module.exports = async function (fastify, options, done) {
     done()
   })
 
-  fastify.addHook('onClose', async (instance, done) => {
+  server.addHook('onClose', async (instance, done) => {
     await trailsManager.close()
     done()
   })
 
-  await fastify.register(require('./routes/trails'))
+  // TODO: This isn't needed, used only for debug; remove ajv dependency when removing this.
+  server.schemaCompiler = schema => {
+    const spec = typeof schema.valueOf === 'function' ? schema.valueOf() : schema
+    const ajv = new Ajv()
+    return ajv.compile(spec)
+  }
+
+  await server.register(require('./routes/trails'))
 }
+
+module.exports = fp(trail)
 
 /*
 exports.plugin = {

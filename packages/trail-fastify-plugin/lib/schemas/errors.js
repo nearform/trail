@@ -20,7 +20,7 @@ module.exports = {
       /* TODO
       .meta({ id: 'errors/400' })
       */
-      .raw({ id: 'errors/400' })
+      .raw({ meta: { id: 'errors/400' } })
       .description('Error returned when the input payload is not a valid JSON.')
       .prop('statusCode', S.number().const(400).examples([400]))
       .prop('error', S.string().const('Bad Request').examples(['Bad Request']))
@@ -33,7 +33,7 @@ module.exports = {
       /* TODO
       .meta({ id: 'errors/404' })
       */
-      .raw({ id: 'errors/404' })
+      .raw({ meta: { id: 'errors/404' } })
       .description('Error returned when a requested resource could not be found.')
       .prop('statusCode', S.number().const(404).examples([404]))
       .prop('error', S.string().const('Not Found').examples(['Not Found']))
@@ -44,7 +44,7 @@ module.exports = {
       /* TODO
       .meta({ id: 'errors/404' })
       */
-      .raw({ id: 'errors/404' })
+      .raw({ meta: { id: 'errors/404' } })
       .description('Error returned when a requested resource already exists.')
       .prop('statusCode', S.number().const(409).examples([409]))
       .prop('error', S.string().const('Conflict').examples(['Conflict']))
@@ -55,7 +55,7 @@ module.exports = {
       /* TODO
       .meta({ id: 'errors/422' })
       */
-      .raw({ id: 'errors/422' })
+      .raw({ meta: { id: 'errors/422' } })
       .description('Error returned when the input payload is not a valid trail.')
       .prop('statusCode', S.number().const(422).examples([422]))
       .prop('error', S.string().const('Unprocessable Entity').examples(['Unprocessable Entity']))
@@ -66,7 +66,7 @@ module.exports = {
       /* TODO
       .meta({ id: 'errors/500' })
       */
-      .raw({ id: 'errors/500' })
+      .raw({ meta: { id: 'errors/500' } })
       .description('Error returned when a unexpected error was thrown by the server.')
       .prop('statusCode', S.number().const(500).examples([500]))
       .prop('error', S.string().const('Internal Server Error').examples(['Internal Server Error']))

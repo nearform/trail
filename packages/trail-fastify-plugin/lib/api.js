@@ -1,11 +1,14 @@
 const { get } = require('lodash')
 
 const addReference = function (spec) {
-  const info = typeof spec.describe === 'function' ? spec.describe() : spec
+  const value = typeof spec.valueOf === 'function' ? spec.valueOf() : spec
+  /* TODO confirm
   const id = get(info, 'metas.0.id')
+  */
+  const id = get(value, 'meta.id')
 
   if (id) return { $ref: `#/components/${id}` }
-  else if (spec.isJoi) return JSON.stringify(info)
+  else if (spec.isFluentSchema) return JSON.stringify(value)
   else return spec
 }
 
@@ -18,14 +21,15 @@ const parseResponses = function (route) {
 
   // For each response
   for (const [code, response] of specPairs) {
-    // Get its info and any reference id
-    const info = response.describe()
+    // Get its value and any reference id
+    const value = response.valueOf() // TODO => { description }
 
+    // TODO check value.description here
     if (code === '204') { // No body reply
-      responses[code.toString()] = { description: info.description }
+      responses[code] = { description: value.description }
     } else { // Assign the new response, either with a reference or by converting the object
-      responses[code.toString()] = {
-        description: info.description,
+      responses[code] = {
+        description: value.description,
         content: {
           'application/json': {
             schema: addReference(response)
@@ -45,14 +49,15 @@ const parseParameters = function (route) {
   if (!specObject) return null
 
   return Object.entries(specObject).map(([name, spec]) => {
-    const info = spec.describe()
+    const value = spec.valueOf()
 
+    // TODO check value.description etc. here
     return {
       name,
       in: 'path',
-      description: info.description,
-      required: get(info, 'flags.presence') === 'required',
-      schema: addReference(info)
+      description: value.description,
+      required: get(value, 'flags.presence') === 'required',
+      schema: addReference(value)
     }
   })
 }
@@ -64,13 +69,13 @@ const parseQuerystring = function (route) {
   if (!specObject) return null
 
   const spec = specObject.describe().keys
-  return Object.entries(spec).map(([name, info]) => {
+  return Object.entries(spec).map(([name, value]) => {
     return {
       name,
       in: 'query',
-      description: info.description,
-      required: get(info, 'flags.presence') === 'required',
-      schema: addReference(info)
+      description: value.description,
+      required: get(value, 'flags.presence') === 'required',
+      schema: addReference(value)
     }
   })
 }
@@ -96,25 +101,37 @@ module.exports = (function () {
 
   return {
     addApiRoute (fastify, collection, routeSpec) {
+      const fullRouteSpec = {
+        ...routeSpec,
+        attachValidation: true,
+        async handler (request, reply) {
+          // See https://www.fastify.io/docs/latest/Validation-and-Serialization/#error-handling
+          if (request.validationError) {
+            // TODO Return error - see validation.js
+          }
+          return routeSpec.handler(request, reply)
+        }
+      }
+
       if (!routes[collection]) routes[collection] = []
 
-      routes[collection].push(routeSpec)
-      return fastify.route(routeSpec)
+      routes[collection].push(fullRouteSpec)
+      return fastify.route(fullRouteSpec)
     },
     generateSpec (spec, collection) {
       // Sort by path
-      const apiRoutes = routes[collection].sort((a, b) => a.path.localeCompare(b.path))
+      const apiRoutes = routes[collection].sort((a, b) => a.url.localeCompare(b.url))
 
       // Add each route to the path
       for (const route of apiRoutes) {
         // Make sure routes are grouped by path
-        const path = route.path
-        if (!Object.prototype.hasOwnProperty.call(spec.paths, path)) spec.paths[path] = {}
+        const { url } = route
+        if (!Object.prototype.hasOwnProperty.call(spec.paths, url)) spec.paths[url] = {}
 
         const { description, tags } = route.config
 
         // Add the route to the path group
-        spec.paths[path][route.method.toLowerCase()] = {
+        spec.paths[url][route.method.toLowerCase()] = {
           summary: description,
           tags: tags.filter(t => t !== 'api'),
           responses: parseResponses(route),
