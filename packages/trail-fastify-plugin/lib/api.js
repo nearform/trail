@@ -101,37 +101,41 @@ module.exports = (function () {
 
   return {
     addApiRoute (fastify, collection, routeSpec) {
-      const fullRouteSpec = {
+      const options = {
         ...routeSpec,
-        attachValidation: true,
+        // attachValidation: true,
         async handler (request, reply) {
           // See https://www.fastify.io/docs/latest/Validation-and-Serialization/#error-handling
+          /*
           if (request.validationError) {
+              console.log('VALIDATIONERROR', request.validationError)
+              reply.code = 422
             // TODO Return error - see validation.js
           }
+          */
           return routeSpec.handler(request, reply)
         }
       }
 
       if (!routes[collection]) routes[collection] = []
 
-      routes[collection].push(fullRouteSpec)
-      return fastify.route(fullRouteSpec)
+      routes[collection].push(options)
+      return fastify.route(options)
     },
     generateSpec (spec, collection) {
       // Sort by path
-      const apiRoutes = routes[collection].sort((a, b) => a.url.localeCompare(b.url))
+      const apiRoutes = routes[collection].sort((a, b) => a.path.localeCompare(b.path))
 
       // Add each route to the path
       for (const route of apiRoutes) {
         // Make sure routes are grouped by path
-        const { url } = route
-        if (!Object.prototype.hasOwnProperty.call(spec.paths, url)) spec.paths[url] = {}
+        const { path } = route
+        if (!Object.prototype.hasOwnProperty.call(spec.paths, path)) spec.paths[path] = {}
 
         const { description, tags } = route.config
 
         // Add the route to the path group
-        spec.paths[url][route.method.toLowerCase()] = {
+        spec.paths[path][route.method.toLowerCase()] = {
           summary: description,
           tags: tags.filter(t => t !== 'api'),
           responses: parseResponses(route),

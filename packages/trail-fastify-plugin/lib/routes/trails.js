@@ -7,10 +7,10 @@ const { spec, trailSchema } = require('../schemas/trails')
 const { addApiRoute, generateSpec } = require('../api')
 
 module.exports = async function (fastify, options, done) {
-  for (const url of ['/trails/openapi.json', '/trails/swagger.json']) {
+  for (const path of ['/trails/openapi.json', '/trails/swagger.json']) {
     fastify.route({
       method: 'GET',
-      url,
+      path,
       handler (request, reply) {
         return reply.send(spec)
       }
@@ -19,7 +19,7 @@ module.exports = async function (fastify, options, done) {
 
   addApiRoute(fastify, 'trails', {
     method: 'GET',
-    url: '/trails',
+    path: '/trails',
     async handler (request, reply) {
       const { from, to, who, what, subject, page, pageSize, sort } = request.query
 
@@ -27,8 +27,9 @@ module.exports = async function (fastify, options, done) {
       reply.send(results)
     },
     schema: {
-      /*
       query: trailSchema.search,
+        /* TODO Need to use https://www.npmjs.com/package/fastify-response-validation for response validation
+         * Or see https://www.fastify.io/docs/latest/Validation-and-Serialization/#serialization
       response: S.array()
         .description('The search results.')
         .items(trailSchema.response)
@@ -58,7 +59,7 @@ module.exports = async function (fastify, options, done) {
 
   addApiRoute(fastify, 'trails', {
     method: 'GET',
-    url: '/trails/enumerate',
+    path: '/trails/enumerate',
     async handler (request, reply) {
       const { from, to, type, page, pageSize, desc } = request.query
 
@@ -66,8 +67,8 @@ module.exports = async function (fastify, options, done) {
       reply.send(results)
     },
     schema: {
-      /*
       query: trailSchema.enumerate,
+      /*
       response: S.array()
         .description('The enumeration results.')
         .items(S.string().description('A trail who, what or subject id'))
@@ -97,20 +98,19 @@ module.exports = async function (fastify, options, done) {
 
   addApiRoute(fastify, 'trails', {
     method: 'POST',
-    url: '/trails',
+    path: '/trails',
     async handler (request, reply) {
-      const id = await reply.trailCore.insert(request.payload)
+      const id = await reply.trailCore.insert(request.body)
       const trail = await reply.trailCore.get(id)
 
-      reply.code = 201
-      reply.send(trail)
+      reply.code(201).send(trail)
     },
     schema: {
-      /*
       headers: S.object()
-        .prop('content-type', S.string().const('application/json'))
-        .additionalProperties(true),
+        .additionalProperties(true)
+        .prop('content-type', S.string().const('application/json')),
       body: trailSchema.request,
+      /*
       response: trailSchema.response.description('The newly created audit trail.')
       */
     },
@@ -140,7 +140,7 @@ module.exports = async function (fastify, options, done) {
 
   addApiRoute(fastify, 'trails', {
     method: 'GET',
-    url: '/trails/{id}',
+    path: '/trails/{id}',
     async handler (request, reply) {
       const { id } = request.params
       const trail = await reply.trailCore.get(id)
@@ -179,16 +179,15 @@ module.exports = async function (fastify, options, done) {
 
   addApiRoute(fastify, 'trails', {
     method: 'PUT',
-    url: '/trails/{id}',
+    path: '/trails/{id}',
     async handler (request, reply) {
       const { id } = request.params
-      const updated = await reply.trailCore.update(id, request.payload)
+      const updated = await reply.trailCore.update(id, request.body)
 
       if (!updated) throw notFound(`Trail with id ${id} not found.`)
 
       const trail = await reply.trailCore.get(id)
-      reply.code = 202
-      reply.send(trail)
+      reply.code(202).send(trail)
     },
     schema: {
       /*
@@ -231,15 +230,14 @@ module.exports = async function (fastify, options, done) {
 
   addApiRoute(fastify, 'trails', {
     method: 'DELETE',
-    url: '/trails/{id}',
+    path: '/trails/{id}',
     async handler (request, reply) {
       const { id } = request.params
       const deleted = await reply.trailCore.delete(id)
 
       if (!deleted) throw notFound(`Trail with id ${id} not found.`)
 
-      reply.code = 204
-      reply.send()
+      reply.code(204).send()
     },
     schema: {
       query: trailSchema.params

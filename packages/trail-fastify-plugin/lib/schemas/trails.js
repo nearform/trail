@@ -10,17 +10,17 @@ const schemaToJSON = s => JSON.stringify(s.valueOf())
 const namedObject = function (name) {
   return S.object()
     .description(name)
+    .additionalProperties(true)
     .prop('id', S.string()
       .description(`${name} id`)
       .examples([name])
     )
     .required(['id'])
-    .additionalProperties(true)
 }
 
 // Consider using .definition for this instead? (see fluent-schema readme)
 const stringOrObject = function (name) {
-  return S.oneOf([
+  return S.anyOf([
     namedObject(name),
     S.string()
       .description(`${name} id`)
@@ -34,8 +34,7 @@ const stringOrObject = function (name) {
       })
       */
   ])
-    // TODO Will this required work as expected? Or even needed when oneOf is used?
-    .required()
+    .raw({ meta: { errorType: 'custom.stringOrObject' } })
     .examples([name])
 }
 
@@ -58,6 +57,7 @@ const trailSchema = {
     .required(['id']),
   search: S.object()
     .description('An audit search')
+    .additionalProperties(false)
     .prop('from', dateTime
       .description('The minimum timestamp (inclusive)'))
     .prop('to', dateTime
@@ -86,10 +86,10 @@ const trailSchema = {
         */
       .enum(['when', 'id', 'who', 'what', 'subject', '-when', '-id', '-who', '-what', '-subject'])
       .examples(['-when']))
-    .required(['from', 'to'])
-    .additionalProperties(false),
+    .required(['from', 'to']),
   enumerate: S.object()
     .description('An audit enumeration')
+    .additionalProperties(false)
     .prop('from', dateTime.description('The minimum timestamp (inclusive)'))
     .prop('to', dateTime.description('The maximum timestamp (inclusive)'))
     .prop('type', S.string()
@@ -110,10 +110,10 @@ const trailSchema = {
     .prop('desc', S.boolean()
       .description('If to sort alphabetically by descending order')
       .examples([true]))
-    .required(['from', 'to', 'type'])
-    .additionalProperties(false),
+    .required(['from', 'to', 'type']),
   request: S.object()
     .description('A audit trail')
+    .additionalProperties(false)
     /* TODO need to confirm meta -> raw is correct
     .meta({ id: 'models/trail.request' })
     */
@@ -124,10 +124,10 @@ const trailSchema = {
     .prop('subject', stringOrObject('Trail target'))
     .prop('where', S.object().description('Trail where'))
     .prop('why', S.object().description('Trail reason'))
-    .prop('meta', S.object().description('Trail meta'))
-    .additionalProperties(false),
+    .prop('meta', S.object().description('Trail meta')),
   response: S.object()
     .description('A audit trail')
+    .additionalProperties(false)
     /* TODO need to confirm meta -> raw is correct
     .meta({ id: 'models/trail.response' })
     */
@@ -151,8 +151,7 @@ const trailSchema = {
     .prop('where', S.object().description('Trail where'))
     .prop('why', S.object().description('Trail reason'))
     .prop('meta', S.object().description('Trail meta'))
-    .required(['when', 'who', 'what', 'subject'])
-    .additionalProperties(false)
+    .required(['when', 'who', 'what', 'subject']),
 }
 
 const spec = {
