@@ -25,32 +25,21 @@ const stringOrObject = function (name) {
     S.string()
       .description(`${name} id`)
       .examples([name])
-    /* TODO custom error
-      .error(() => {
-        const type = 'custom.stringOrObject'
-        const err = new Error(type)
-        err.type = type
-        return err
-      })
-      */
   ])
+    .required()
     .raw({ meta: { errorType: 'custom.stringOrObject' } })
     .examples([name])
 }
 
 const dateTime = S.string()
   .description('Trail timestamp in ISO 8601 format')
-  .format('date-time') // https://json-schema.org/understanding-json-schema/reference/string.html
+  .format('date-time')
   .examples(['2018-01-02T03:04:05.123Z'])
 
 const trailSchema = {
   params: S.object()
     .prop('id', S.number()
       .description('Trail id')
-      /* TODO need to confirm meta -> raw is correct
-       * (raw seems to be a way to add properties directly to the underlying schema description object)
-      .meta({ id: 'models/trail.params.id' })
-      */
       .raw({ meta: { id: 'models/trail.params.id' } })
       .minimum(0)
       .examples([12345]))
@@ -81,9 +70,6 @@ const trailSchema = {
       .examples([25]))
     .prop('sort', S.string()
       .description('The field to use for sorting results. Default order is ascending, which can be reversed by prepending a dash. Default is "-when"')
-    /* TODO confirm valid -> enum is correct
-        .valid('when', 'id', 'who', 'what', 'subject', '-when', '-id', '-who', '-what', '-subject')
-        */
       .enum(['when', 'id', 'who', 'what', 'subject', '-when', '-id', '-who', '-what', '-subject'])
       .examples(['-when']))
     .required(['from', 'to']),
@@ -94,9 +80,6 @@ const trailSchema = {
     .prop('to', dateTime.description('The maximum timestamp (inclusive)'))
     .prop('type', S.string()
       .description('The type of id to search')
-    /* TODO confirm valid -> enum is correct
-        .valid('who', 'what', 'subject')
-        */
       .enum(['who', 'what', 'subject'])
       .examples(['who']))
     .prop('page', S.number()
@@ -114,9 +97,6 @@ const trailSchema = {
   request: S.object()
     .description('A audit trail')
     .additionalProperties(false)
-    /* TODO need to confirm meta -> raw is correct
-    .meta({ id: 'models/trail.request' })
-    */
     .raw({ meta: { id: 'models/trail.request' } })
     .prop('when', dateTime)
     .prop('who', stringOrObject('Trail actor'))
@@ -128,9 +108,6 @@ const trailSchema = {
   response: S.object()
     .description('A audit trail')
     .additionalProperties(false)
-    /* TODO need to confirm meta -> raw is correct
-    .meta({ id: 'models/trail.response' })
-    */
     .raw({ meta: { id: 'models/trail.response' } })
     .prop('id', S.number()
       .description('Trail id')
@@ -151,7 +128,7 @@ const trailSchema = {
     .prop('where', S.object().description('Trail where'))
     .prop('why', S.object().description('Trail reason'))
     .prop('meta', S.object().description('Trail meta'))
-    .required(['when', 'who', 'what', 'subject']),
+    .required(['when', 'who', 'what', 'subject'])
 }
 
 const spec = {

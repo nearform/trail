@@ -27,8 +27,8 @@ module.exports = async function (fastify, options, done) {
       reply.send(results)
     },
     schema: {
-      query: trailSchema.search,
-        /* TODO Need to use https://www.npmjs.com/package/fastify-response-validation for response validation
+      query: trailSchema.search
+      /* TODO Need to use https://www.npmjs.com/package/fastify-response-validation for response validation
          * Or see https://www.fastify.io/docs/latest/Validation-and-Serialization/#serialization
       response: S.array()
         .description('The search results.')
@@ -67,7 +67,7 @@ module.exports = async function (fastify, options, done) {
       reply.send(results)
     },
     schema: {
-      query: trailSchema.enumerate,
+      query: trailSchema.enumerate
       /*
       response: S.array()
         .description('The enumeration results.')
@@ -109,7 +109,7 @@ module.exports = async function (fastify, options, done) {
       headers: S.object()
         .additionalProperties(true)
         .prop('content-type', S.string().const('application/json')),
-      body: trailSchema.request,
+      body: trailSchema.request
       /*
       response: trailSchema.response.description('The newly created audit trail.')
       */

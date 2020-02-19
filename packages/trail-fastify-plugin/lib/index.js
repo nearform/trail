@@ -7,56 +7,46 @@ const { errorsMessages } = require('./schemas/errors')
 
 const environment = get(process, 'env.NODE_ENV', 'development')
 
-function longestCommonPrefix(a, b) {
-    let i;
-    for( i = 0; i < a.length && i < b.length && a[i] === b[i]; i++);
-    return a.substring(0,i)
-}
-
-function getSchemaErrorType(schema, path) {
-    const { meta } = path
-        .slice(2)
-        .split('/')
-        .slice(0,-1)
-        .reduce((node, id) => node ? node[id] : {}, schema)
-    return meta ? meta.errorType : null
+function getCustomErrorMessage (schema, path, message) {
+  // Convert a schema path like '#/properties/who/anyOf' to a ref like
+  // 'properties.who.meta.errorType' addressing the custom error type
+  const ref = path
+    .substring(path.indexOf('/') + 1, path.lastIndexOf('/'))
+    .replace(/\//g, '.')
+    .concat('.meta.errorType')
+  const errorType = get(schema, ref)
+  return errorType ? errorsMessages[errorType] : message
 }
 
 const formatReasons = (error, schema) => {
-    const { validation } = error
-    console.log('V',validation)
-
-    // TODO: Probably better to look specifically for validation reason keyword 'anyOf' and then
-    // look for the custom error code directly on the parent node of the indicated schema path.
-    // The 'anyOf' reason should be reported after any nested reasons.
-
-    // Extract reasons and group by field name.
-    const reasons = validation.reduce((reasons, item) => {
-        const {
-            dataPath,
-            schemaPath,
-            message,
-            params: {
-                missingProperty,
-                additionalProperty 
-            }
-        } = item
-        const name = missingProperty || additionalProperty || dataPath.slice(1)
-        if(reasons[name]) {
-            const reason = reasons[name]
-            reason.schemaPath = longestCommonPrefix(reason.schemaPath, schemaPath)
+  const { validation } = error
+  console.log('V', validation)
+  return validation.reduce((reasons, item) => {
+    const {
+      dataPath,
+      schemaPath,
+      keyword,
+      message,
+      params
+    } = item
+    const name = dataPath.slice(1)
+    switch (keyword) {
+      case 'anyOf':
+        reasons[name] = getCustomErrorMessage(schema, schemaPath, message)
+        break
+      case 'required':
+        if (!schemaPath.includes('anyOf')) {
+          reasons[params.missingProperty] = errorsMessages['any.required']
         }
-        else reasons[name] = { message, schemaPath }
-        return reasons
-    }, {})
-
-    // Try reading custom error codes from schema before returning result.
-    return Object.entries(reasons).reduce(( reasons, entry ) => {
-        const [ name, { message, schemaPath }] = entry 
-        const errorType = getSchemaErrorType(schema, schemaPath)
-        reasons[name] = errorType ? errorsMessages[errorType] : message
-        return reasons
-    }, {})
+        break
+      case 'additionalProperties':
+        reasons[params.additionalProperty] = message
+        break
+      default:
+        reasons[name] = message
+    }
+    return reasons
+  }, {})
 }
 
 const formatStack = error => get(error, 'stack', '')
@@ -65,19 +55,19 @@ const formatStack = error => get(error, 'stack', '')
   .map(s => s.trim().replace(/^at /, ''))
 
 const validationContextMessages = {
-    'querystring': 'Invalid input data.',
-    'body': 'Invalid input data.'
+  querystring: 'Invalid input data.',
+  body: 'Invalid input data.'
 }
 
-function formatValidationErrorResponse(error, context) {
-    const { message, validationContext } = error
-    const schema = context.schema[validationContext]
-    return {
-        statusCode: 422,
-        error: 'Unprocessable Entity',
-        message: validationContextMessages[validationContext],
-        reasons: formatReasons(error, schema)
-    }
+function formatValidationErrorResponse (error, context) {
+  const { message, validationContext } = error
+  const schema = context.schema[validationContext]
+  return {
+    statusCode: 422,
+    error: 'Unprocessable Entity',
+    message: validationContextMessages[validationContext],
+    reasons: formatReasons(error, schema)
+  }
 }
 
 async function trail (server, options) {
@@ -100,21 +90,21 @@ async function trail (server, options) {
   }
 
   server.setErrorHandler((error, request, reply) => {
-      //console.log('E',error)
+    // console.log('E',error)
     if (error.validation) {
       const response = formatValidationErrorResponse(error, reply.context)
       reply.code(response.statusCode).type('application/json').send(response)
       return
     }
 
-      // Rewrite JSON parse errors.
-      if(error.message === 'Unexpected end of JSON input') {
-          error = {
-              statusCode: 400,
-              error: 'Bad Request',
-              message: errorsMessages['json.format']
-          }
+    // Rewrite JSON parse errors.
+    if (error.message === 'Unexpected end of JSON input') {
+      error = {
+        statusCode: 400,
+        error: 'Bad Request',
+        message: errorsMessages['json.format']
       }
+    }
 
     // TODO review following
     const code = error.isBoom ? error.output.statusCode : error.statusCode

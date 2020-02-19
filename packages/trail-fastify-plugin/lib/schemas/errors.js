@@ -1,15 +1,14 @@
 const S = require('fluent-schema')
 
-// TODO Presumably error codes will be different in fluent-schema
 const errorsMessages = {
   'json.format': 'The body payload is not a valid JSON.',
   'json.contentType': 'Only JSON payloads are accepted. Please set the "Content-Type" header to start with "application/json".',
   'any.required': 'must be present and non empty',
   'any.empty': 'must a non empty string',
   'object.unknown': 'is not a valid attribute',
-  'object.base': 'must be a object',
+  'object.base': 'should be object',
   'string.base': 'must be a string',
-  'string.isoDate': 'must be a valid UTC timestamp in the format YYYY-MM-DDTHH:MM:SS.sss (example: 2018-07-06T12:34:56.123)',
+  'string.isoDate': 'should match format "date-time"',
   'custom.stringOrObject': 'must be either a non empty string or a object'
 }
 
@@ -17,9 +16,6 @@ module.exports = {
   errorsMessages,
   errorsSchemas: {
     400: S.object()
-      /* TODO
-      .meta({ id: 'errors/400' })
-      */
       .raw({ meta: { id: 'errors/400' } })
       .description('Error returned when the input payload is not a valid JSON.')
       .prop('statusCode', S.number().const(400).examples([400]))
@@ -30,9 +26,6 @@ module.exports = {
       .required(['statusCode', 'error', 'message'])
       .additionalProperties(false),
     404: S.object()
-      /* TODO
-      .meta({ id: 'errors/404' })
-      */
       .raw({ meta: { id: 'errors/404' } })
       .description('Error returned when a requested resource could not be found.')
       .prop('statusCode', S.number().const(404).examples([404]))
@@ -41,9 +34,6 @@ module.exports = {
       .required(['statusCode', 'error', 'message'])
       .additionalProperties(false),
     409: S.object()
-      /* TODO
-      .meta({ id: 'errors/404' })
-      */
       .raw({ meta: { id: 'errors/404' } })
       .description('Error returned when a requested resource already exists.')
       .prop('statusCode', S.number().const(409).examples([409]))
@@ -52,9 +42,6 @@ module.exports = {
       .required(['statusCode', 'error', 'message'])
       .additionalProperties(false),
     422: S.object()
-      /* TODO
-      .meta({ id: 'errors/422' })
-      */
       .raw({ meta: { id: 'errors/422' } })
       .description('Error returned when the input payload is not a valid trail.')
       .prop('statusCode', S.number().const(422).examples([422]))
@@ -63,9 +50,6 @@ module.exports = {
       .required(['statusCode', 'error', 'message'])
       .additionalProperties(false),
     500: S.object()
-      /* TODO
-      .meta({ id: 'errors/500' })
-      */
       .raw({ meta: { id: 'errors/500' } })
       .description('Error returned when a unexpected error was thrown by the server.')
       .prop('statusCode', S.number().const(500).examples([500]))
