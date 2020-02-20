@@ -7,7 +7,7 @@ const { errorsMessages } = require('./schemas/errors')
 
 const environment = get(process, 'env.NODE_ENV', 'development')
 
-function getCustomErrorMessage(schema, path, message) {
+function getCustomErrorMessage (schema, path, message) {
   // Convert a schema path like '#/properties/who/anyOf' to a ref addressing
   // the custom error type, e.g. 'properties.who.meta.errorType'
   const ref = path
@@ -18,7 +18,7 @@ function getCustomErrorMessage(schema, path, message) {
   return errorType ? errorsMessages[errorType] : message
 }
 
-function formatReasons(error, schema) {
+function formatReasons (error, schema) {
   const { validation } = error
   return validation.reduce((reasons, item) => {
     const {
@@ -77,9 +77,10 @@ async function trail (server, options) {
     done()
   })
 
+  const ajv = new Ajv({ allErrors: true })
+
   server.schemaCompiler = schema => {
     const spec = typeof schema.valueOf === 'function' ? schema.valueOf() : schema
-    const ajv = new Ajv({ allErrors: true })
     return ajv.compile(spec)
   }
 

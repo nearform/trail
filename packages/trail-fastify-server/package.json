@@ -1,0 +1,57 @@
+{
+  "name": "@nearform/trail-fastify-server",
+  "version": "3.0.0",
+  "description": "Server running Fastify plugin for the audit trail logging service",
+  "license": "MIT",
+  "author": "nearForm Ltd",
+  "contributors": [
+    "Mehdi Avdi (https://github.com/mavdi)",
+    "Paolo Insogna (https://github.com/ShogunPanda)"
+  ],
+  "homepage": "https://github.com/nearform/trail#readme",
+  "keywords": [
+    "audit",
+    "log",
+    "logging",
+    "hapi",
+    "server",
+    "trail"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nearform/trail.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nearform/trail/issues"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/index.js",
+  "bin": {
+    "trail-fastify-server": "start.js"
+  },
+  "scripts": {
+    "coverage": "lab -l -c test",
+    "depcheck": "npx depcheck --ignores=config",
+    "start": "node start.js",
+    "test": "lab -l test"
+  },
+  "dependencies": {
+    "@nearform/trail-core": "^3.0.0",
+    "@nearform/trail-fastify-plugin": "^3.0.0",
+    "config": "^3.2.5",
+    "fastify": "^2.12.0",
+    "fastify-static": "^2.6.0",
+    "fluent-schema": "^0.10.0",
+    "swagger-ui-dist": "^3.13.6"
+  },
+  "devDependencies": {
+    "@hapi/lab": "^22.0.3",
+    "code": "^5.2.0",
+    "sinon": "^8.1.1"
+  }
+}

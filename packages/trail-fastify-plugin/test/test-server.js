@@ -9,8 +9,7 @@ module.exports = (function () {
     const server = fastify({ logger: false })
     try {
       await server.register(require('../lib'))
-      server.listen(port++, '127.0.0.1')
-      await server.ready()
+      await server.listen(port++, '127.0.0.1')
       servers.push(server)
     } catch (e) {
       console.error(e)
