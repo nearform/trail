@@ -33,6 +33,7 @@ const stringOrObject = function (name) {
 const dateTime = S.string()
   .description('Trail timestamp in ISO 8601 format')
   .format('date-time')
+    .raw({ meta: { errorType: 'custom.isoDate' } })
   .examples(['2018-01-02T03:04:05.123Z'])
 
 const trailSchema = {
@@ -97,7 +98,10 @@ const trailSchema = {
     .description('A audit trail')
     .additionalProperties(false)
     .raw({ meta: { id: 'models/trail.request' } })
-    .prop('when', dateTime)
+    .prop('when',S.string()
+        .description('Trail timestamp in ISO 8601 format')
+        .format('date-time')
+        .examples(['2018-01-02T03:04:05.123Z']))
     .prop('who', stringOrObject('Trail actor'))
     .prop('what', stringOrObject('Trail subject'))
     .prop('subject', stringOrObject('Trail target'))

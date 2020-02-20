@@ -30,9 +30,6 @@ function formatReasons(error, schema) {
     } = item
     const name = dataPath.slice(1)
     switch (keyword) {
-      case 'anyOf':
-        reasons[name] = getCustomErrorMessage(schema, schemaPath, message)
-        break
       case 'required':
         if (!schemaPath.includes('anyOf')) {
           reasons[params.missingProperty] = errorsMessages['any.required']
@@ -42,7 +39,7 @@ function formatReasons(error, schema) {
         reasons[params.additionalProperty] = errorsMessages['object.unknown']
         break
       default:
-        reasons[name] = message
+        reasons[name] = getCustomErrorMessage(schema, schemaPath, message)
     }
     return reasons
   }, {})

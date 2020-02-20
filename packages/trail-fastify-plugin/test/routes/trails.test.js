@@ -118,8 +118,7 @@ describe('Trails REST operations', () => {
         message: 'Invalid input data.',
         reasons: {
           where: 'is not a valid attribute',
-          from: 'should match format "date-time"',
-          // from: 'must be a valid UTC timestamp in the format YYYY-MM-DDTHH:MM:SS.sss (example: 2018-07-06T12:34:56.123)',
+          from: 'must be a valid UTC timestamp in the format YYYY-MM-DDTHH:MM:SS.sss (example: 2018-07-06T12:34:56.123)',
           to: 'must be present and non empty'
         }
       })
@@ -185,8 +184,7 @@ describe('Trails REST operations', () => {
         error: 'Unprocessable Entity',
         message: 'Invalid input data.',
         reasons: {
-          from: 'should match format "date-time"',
-          // from: 'must be a valid UTC timestamp in the format YYYY-MM-DDTHH:MM:SS.sss (example: 2018-07-06T12:34:56.123)',
+          from: 'must be a valid UTC timestamp in the format YYYY-MM-DDTHH:MM:SS.sss (example: 2018-07-06T12:34:56.123)',
           to: 'must be present and non empty',
           type: 'must be present and non empty'
         }
@@ -234,7 +232,7 @@ describe('Trails REST operations', () => {
       await server.trailCore.delete(trail.id)
     })
 
-    /* TODO
+    /* Fastify appears to parse the content before validating errors, so not possible to reproduce this unit test as-is.
     test('it should return 400 in case of invalid Content-Type header', async () => {
       const response = await server.inject({
         method: 'POST',

@@ -9,7 +9,8 @@ const errorsMessages = {
   'object.base': 'should be object',
   'string.base': 'must be a string',
   'string.isoDate': 'should match format "date-time"',
-  'custom.stringOrObject': 'must be either a non empty string or a object'
+    'custom.stringOrObject': 'must be either a non empty string or a object',
+    'custom.isoDate': 'must be a valid UTC timestamp in the format YYYY-MM-DDTHH:MM:SS.sss (example: 2018-07-06T12:34:56.123)'
 }
 
 module.exports = {
