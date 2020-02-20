@@ -19,14 +19,13 @@ const parseResponses = function (route) {
   // For each response
   for (const [code, response] of specPairs) {
     // Get its value and any reference id
-    const value = response.valueOf() // TODO => { description }
+    const { description } = response.valueOf()
 
-    // TODO check value.description here
     if (code === '204') { // No body reply
-      responses[code] = { description: value.description }
+      responses[code] = { description }
     } else { // Assign the new response, either with a reference or by converting the object
       responses[code] = {
-        description: value.description,
+        description,
         content: {
           'application/json': {
             schema: addReference(response)
@@ -41,14 +40,13 @@ const parseResponses = function (route) {
 
 const parseParameters = function (route) {
   // If there is a already defined format, use it
-  const specObject = get(route, 'config.validate.params')
+  const specObject = get(route, 'schema.params')
 
   if (!specObject) return null
 
   return Object.entries(specObject).map(([name, spec]) => {
     const value = spec.valueOf()
 
-    // TODO check value.description etc. here
     return {
       name,
       in: 'path',
@@ -61,12 +59,11 @@ const parseParameters = function (route) {
 
 const parseQuerystring = function (route) {
   // If there is a already defined format, use it
-  const specObject = get(route, 'config.validate.query')
+  const specObject = get(route, 'schema.query')
 
   if (!specObject) return null
 
-  const spec = specObject.describe().keys
-  return Object.entries(spec).map(([name, value]) => {
+  return Object.entries(specObject).map(([name, value]) => {
     return {
       name,
       in: 'query',
@@ -79,7 +76,7 @@ const parseQuerystring = function (route) {
 
 const parseBody = function (route) {
   // If there is a already defined format, use it
-  const specObject = get(route, 'config.validate.payload')
+  const specObject = get(route, 'schema.body')
 
   if (!specObject) return null
 

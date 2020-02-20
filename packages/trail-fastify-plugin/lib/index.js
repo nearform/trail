@@ -7,7 +7,7 @@ const { errorsMessages } = require('./schemas/errors')
 
 const environment = get(process, 'env.NODE_ENV', 'development')
 
-function getCustomErrorMessage (schema, path, message) {
+function getCustomErrorMessage(schema, path, message) {
   // Convert a schema path like '#/properties/who/anyOf' to a ref addressing
   // the custom error type, e.g. 'properties.who.meta.errorType'
   const ref = path
@@ -18,7 +18,7 @@ function getCustomErrorMessage (schema, path, message) {
   return errorType ? errorsMessages[errorType] : message
 }
 
-const formatReasons = (error, schema) => {
+function formatReasons(error, schema) {
   const { validation } = error
   return validation.reduce((reasons, item) => {
     const {
@@ -70,7 +70,6 @@ function formatValidationErrorResponse (error, context) {
 }
 
 async function trail (server, options) {
-  // const whitelistedErrors = [404]
   const trailsManager = new TrailsManager(undefined, options.pool)
 
   server.decorate('trailCore', trailsManager)
@@ -93,7 +92,6 @@ async function trail (server, options) {
       return reply.code(response.statusCode).send(response)
     }
 
-    // TODO Review following line and compare to (1) boom usage (2) actual structure of error object
     const code = error.isBoom ? error.output.statusCode : (error.statusCode || 500)
 
     if (error.message === 'Unexpected end of JSON input') { // Body was an invalid JSON

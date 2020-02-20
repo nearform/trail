@@ -18,7 +18,6 @@ const namedObject = function (name) {
     .required(['id'])
 }
 
-// Consider using .definition for this instead? (see fluent-schema readme)
 const stringOrObject = function (name) {
   return S.anyOf([
     namedObject(name),
@@ -112,15 +111,6 @@ const trailSchema = {
     .prop('id', S.number()
       .description('Trail id')
       .examples([12345]))
-    /* TODO Note Joi.any -> S.string - need to confirm
-    .prop('when', Joi.any()
-    */
-    /* TODO Confirm switch to dateTime
-    .prop('when', S.string()
-      .description('Trail UTC timestamp in ISO 8601 format')
-      .tag('datetime')
-      .examples(['2018-01-02T03:04:05.123Z']))
-      */
     .prop('when', dateTime)
     .prop('who', namedObject('Trail actor'))
     .prop('what', namedObject('Trail subject'))
