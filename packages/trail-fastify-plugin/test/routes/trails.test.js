@@ -117,12 +117,10 @@ describe('Trails REST operations', () => {
         error: 'Unprocessable Entity',
         message: 'Invalid input data.',
         reasons: {
-          where: 'should NOT have additional properties',
+          where: 'is not a valid attribute',
           from: 'should match format "date-time"',
-          to: 'must be present and non empty'
           // from: 'must be a valid UTC timestamp in the format YYYY-MM-DDTHH:MM:SS.sss (example: 2018-07-06T12:34:56.123)',
-          // to: 'must be present and non empty',
-          // where: 'is not a valid attribute'
+          to: 'must be present and non empty'
         }
       })
     })
@@ -188,11 +186,9 @@ describe('Trails REST operations', () => {
         message: 'Invalid input data.',
         reasons: {
           from: 'should match format "date-time"',
+          // from: 'must be a valid UTC timestamp in the format YYYY-MM-DDTHH:MM:SS.sss (example: 2018-07-06T12:34:56.123)',
           to: 'must be present and non empty',
           type: 'must be present and non empty'
-          // from: 'must be a valid UTC timestamp in the format YYYY-MM-DDTHH:MM:SS.sss (example: 2018-07-06T12:34:56.123)',
-          // to: 'must be present and non empty',
-          // type: 'must be present and non empty'
         }
       })
     })

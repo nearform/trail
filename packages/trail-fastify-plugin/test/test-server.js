@@ -10,6 +10,7 @@ module.exports = (function () {
     try {
       await server.register(require('../lib'))
       server.listen(port++, '127.0.0.1')
+      await server.ready()
       servers.push(server)
     } catch (e) {
       console.error(e)

@@ -38,11 +38,11 @@ const dateTime = S.string()
 
 const trailSchema = {
   params: S.object()
-    .prop('id', S.number()
+    .prop('id', S.string()
       .description('Trail id')
       .raw({ meta: { id: 'models/trail.params.id' } })
-      .minimum(0)
-      .examples([12345]))
+      .pattern(/^\d+$/)
+      .examples(['12345']))
     .required(['id']),
   search: S.object()
     .description('An audit search')

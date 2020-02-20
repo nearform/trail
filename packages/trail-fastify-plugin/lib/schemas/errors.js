@@ -47,6 +47,7 @@ module.exports = {
       .prop('statusCode', S.number().const(422).examples([422]))
       .prop('error', S.string().const('Unprocessable Entity').examples(['Unprocessable Entity']))
       .prop('message', S.string().const('Invalid input data.').examples(['Invalid input data.']))
+      .prop('reasons', S.object().additionalProperties(true))
       .required(['statusCode', 'error', 'message'])
       .additionalProperties(false),
     500: S.object()

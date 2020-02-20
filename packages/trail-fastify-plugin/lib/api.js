@@ -2,9 +2,6 @@ const { get } = require('lodash')
 
 const addReference = function (spec) {
   const value = typeof spec.valueOf === 'function' ? spec.valueOf() : spec
-  /* TODO confirm
-  const id = get(info, 'metas.0.id')
-  */
   const id = get(value, 'meta.id')
 
   if (id) return { $ref: `#/components/${id}` }
@@ -14,7 +11,7 @@ const addReference = function (spec) {
 
 const parseResponses = function (route) {
   const responses = {}
-  const specObject = get(route, 'config.response.status')
+  const specObject = get(route, 'schema.response', {})
 
   // Get the pairs and sort by HTTP code (lower first)
   const specPairs = Object.entries(specObject).sort((a, b) => a[0] - b[0])
@@ -101,26 +98,9 @@ module.exports = (function () {
 
   return {
     addApiRoute (fastify, collection, routeSpec) {
-      const options = {
-        ...routeSpec,
-        // attachValidation: true,
-        async handler (request, reply) {
-          // See https://www.fastify.io/docs/latest/Validation-and-Serialization/#error-handling
-          /*
-          if (request.validationError) {
-              console.log('VALIDATIONERROR', request.validationError)
-              reply.code = 422
-            // TODO Return error - see validation.js
-          }
-          */
-          return routeSpec.handler(request, reply)
-        }
-      }
-
       if (!routes[collection]) routes[collection] = []
-
-      routes[collection].push(options)
-      return fastify.route(options)
+      routes[collection].push(routeSpec)
+      return fastify.route(routeSpec)
     },
     generateSpec (spec, collection) {
       // Sort by path

@@ -3,7 +3,6 @@ const S = require('fluent-schema')
 
 const { errorsSchemas } = require('../schemas/errors')
 const { spec, trailSchema } = require('../schemas/trails')
-// const { failAction, validationOptions } = require('../validation')
 const { addApiRoute, generateSpec } = require('../api')
 
 module.exports = async function (fastify, options, done) {
@@ -22,38 +21,22 @@ module.exports = async function (fastify, options, done) {
     path: '/trails',
     async handler (request, reply) {
       const { from, to, who, what, subject, page, pageSize, sort } = request.query
-
       const results = await reply.trailCore.search({ from, to, who, what, subject, page, pageSize, sort })
       reply.send(results)
     },
     schema: {
-      query: trailSchema.search
-      /* TODO Need to use https://www.npmjs.com/package/fastify-response-validation for response validation
-         * Or see https://www.fastify.io/docs/latest/Validation-and-Serialization/#serialization
-      response: S.array()
-        .description('The search results.')
-        .items(trailSchema.response)
-        */
+      query: trailSchema.search,
+      response: {
+        200: S.array()
+          .description('The search results.')
+          .items(trailSchema.response),
+        422: errorsSchemas['422'],
+        500: errorsSchemas['500']
+      }
     },
     config: {
       description: 'Search audit trails.',
-      tags: ['api', 'trails'],
-      /*
-      validate: {
-        query: trailSchema.search,
-        failAction,
-        options: validationOptions
-      },
-      */
-      response: {
-        status: {
-          200: S.array()
-            .description('The search results.')
-            .items(trailSchema.response),
-          422: errorsSchemas['422'],
-          500: errorsSchemas['500']
-        }
-      }
+      tags: ['api', 'trails']
     }
   })
 
@@ -62,37 +45,22 @@ module.exports = async function (fastify, options, done) {
     path: '/trails/enumerate',
     async handler (request, reply) {
       const { from, to, type, page, pageSize, desc } = request.query
-
       const results = await reply.trailCore.enumerate({ from, to, type, page, pageSize, desc })
       reply.send(results)
     },
     schema: {
-      query: trailSchema.enumerate
-      /*
-      response: S.array()
-        .description('The enumeration results.')
-        .items(S.string().description('A trail who, what or subject id'))
-        */
+      query: trailSchema.enumerate,
+      response: {
+        200: S.array()
+          .description('The enumeration results.')
+          .items(S.string().description('A trail who, what or subject id')),
+        422: errorsSchemas['422'],
+        500: errorsSchemas['500']
+      }
     },
     config: {
       description: 'Enumerate audit trails ids.',
-      tags: ['api', 'trails'],
-      /*
-      validate: {
-        query: trailSchema.enumerate,
-        failAction,
-        options: validationOptions
-      },
-      */
-      response: {
-        status: {
-          200: S.array()
-            .description('The enumeration results.')
-            .items(S.string().description('A trail who, what or subject id')),
-          422: errorsSchemas['422'],
-          500: errorsSchemas['500']
-        }
-      }
+      tags: ['api', 'trails']
     }
   })
 
@@ -102,45 +70,29 @@ module.exports = async function (fastify, options, done) {
     async handler (request, reply) {
       const id = await reply.trailCore.insert(request.body)
       const trail = await reply.trailCore.get(id)
-
       reply.code(201).send(trail)
     },
     schema: {
       headers: S.object()
         .additionalProperties(true)
         .prop('content-type', S.string().const('application/json')),
-      body: trailSchema.request
-      /*
-      response: trailSchema.response.description('The newly created audit trail.')
-      */
+      body: trailSchema.request,
+      response: {
+        201: trailSchema.response.description('The newly created audit trail.'),
+        400: errorsSchemas['400'],
+        422: errorsSchemas['422'],
+        500: errorsSchemas['500']
+      }
     },
     config: {
       description: 'Create a new audit trail.',
-      tags: ['api', 'trails'],
-      /*
-      validate: {
-        headers: S.object()
-          .prop('content-type', S.string().valid('application/json'))
-          .additionalProperties(true),
-        payload: trailSchema.request,
-        failAction,
-        options: validationOptions
-      },
-      */
-      response: {
-        status: {
-          201: trailSchema.response.description('The newly created audit trail.'),
-          400: errorsSchemas['400'],
-          422: errorsSchemas['422'],
-          500: errorsSchemas['500']
-        }
-      }
+      tags: ['api', 'trails']
     }
   })
 
   addApiRoute(fastify, 'trails', {
     method: 'GET',
-    path: '/trails/{id}',
+    path: '/trails/:id',
     async handler (request, reply) {
       const { id } = request.params
       const trail = await reply.trailCore.get(id)
@@ -150,36 +102,24 @@ module.exports = async function (fastify, options, done) {
       return reply.send(trail)
     },
     schema: {
-      /*
-      query: trailSchema.params,
-      response: trailSchema.response.description('The requested audit trail.')
-      */
+      params: trailSchema.params,
+      response: {
+        200: trailSchema.response.description('The requested audit trail.'),
+        400: errorsSchemas['400'],
+        404: errorsSchemas['404'],
+        500: errorsSchemas['500']
+      }
     },
     config: {
       auth: false,
       description: 'Get a audit trail.',
-      tags: ['api', 'trails'],
-      /*
-      validate: {
-        params: {
-          id: trailSchema.params.id
-        }
-      },
-      */
-      response: {
-        status: {
-          200: trailSchema.response.description('The requested audit trail.'),
-          400: errorsSchemas['400'],
-          404: errorsSchemas['404'],
-          500: errorsSchemas['500']
-        }
-      }
+      tags: ['api', 'trails']
     }
   })
 
   addApiRoute(fastify, 'trails', {
     method: 'PUT',
-    path: '/trails/{id}',
+    path: '/trails/:id',
     async handler (request, reply) {
       const { id } = request.params
       const updated = await reply.trailCore.update(id, request.body)
@@ -190,47 +130,29 @@ module.exports = async function (fastify, options, done) {
       reply.code(202).send(trail)
     },
     schema: {
-      /*
       headers: S.object()
         .prop('content-type', S.string().const('application/json'))
         .additionalProperties(true),
-      query: trailSchema.params,
+      params: trailSchema.params,
       body: trailSchema.request,
-      response: trailSchema.response.description('The updated audit trail.').valueOf()
-      */
+      response: {
+        202: trailSchema.response.description('The updated audit trail.'),
+        400: errorsSchemas['400'],
+        404: errorsSchemas['404'],
+        422: errorsSchemas['422'],
+        500: errorsSchemas['500']
+      }
     },
     config: {
       auth: false,
       description: 'Update a audit trail.',
-      tags: ['api', 'trails'],
-      /*
-      validate: {
-        headers: S.object()
-          .prop('content-type', S.string().valid('application/json'))
-          .additionalProperties(true),
-        params: {
-          id: trailSchema.params.id
-        },
-        payload: trailSchema.request
-      },
-      */
-      response: {
-        status: {
-          /*
-          202: trailSchema.response.description('The updated audit trail.'),
-          400: errorsSchemas['400'],
-          404: errorsSchemas['404'],
-          422: errorsSchemas['422'],
-          500: errorsSchemas['500']
-        */
-        }
-      }
+      tags: ['api', 'trails']
     }
   })
 
   addApiRoute(fastify, 'trails', {
     method: 'DELETE',
-    path: '/trails/{id}',
+    path: '/trails/:id',
     async handler (request, reply) {
       const { id } = request.params
       const deleted = await reply.trailCore.delete(id)
@@ -240,30 +162,18 @@ module.exports = async function (fastify, options, done) {
       reply.code(204).send()
     },
     schema: {
-      query: trailSchema.params
-      // TODO Is following correct for an empty response?
-      // response: S.object().description('The trail has been deleted successfully.').null()
+      params: trailSchema.params,
+      response: {
+        204: S.object().maxProperties(0).description('The trail has been deleted successfully.'),
+        400: errorsSchemas['400'],
+        404: errorsSchemas['404'],
+        500: errorsSchemas['500']
+      }
     },
     config: {
       auth: false,
       description: 'Delete a audit trail.',
-      tags: ['api', 'trails'],
-      /*
-      validate: {
-        params: {
-          id: trailSchema.params.id
-        }
-      },
-      */
-      response: {
-        status: {
-          // TODO Is following correct for an empty response?
-          // 204: S.object().maxProperties(0).description('The trail has been deleted successfully.'),
-          400: errorsSchemas['400'],
-          404: errorsSchemas['404'],
-          500: errorsSchemas['500']
-        }
-      }
+      tags: ['api', 'trails']
     }
   })
 

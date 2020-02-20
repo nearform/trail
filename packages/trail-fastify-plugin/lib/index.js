@@ -8,8 +8,8 @@ const { errorsMessages } = require('./schemas/errors')
 const environment = get(process, 'env.NODE_ENV', 'development')
 
 function getCustomErrorMessage (schema, path, message) {
-  // Convert a schema path like '#/properties/who/anyOf' to a ref like
-  // 'properties.who.meta.errorType' addressing the custom error type
+  // Convert a schema path like '#/properties/who/anyOf' to a ref addressing
+  // the custom error type, e.g. 'properties.who.meta.errorType'
   const ref = path
     .substring(path.indexOf('/') + 1, path.lastIndexOf('/'))
     .replace(/\//g, '.')
@@ -20,7 +20,6 @@ function getCustomErrorMessage (schema, path, message) {
 
 const formatReasons = (error, schema) => {
   const { validation } = error
-  console.log('V', validation)
   return validation.reduce((reasons, item) => {
     const {
       dataPath,
@@ -40,7 +39,7 @@ const formatReasons = (error, schema) => {
         }
         break
       case 'additionalProperties':
-        reasons[params.additionalProperty] = message
+        reasons[params.additionalProperty] = errorsMessages['object.unknown']
         break
       default:
         reasons[name] = message
@@ -50,8 +49,8 @@ const formatReasons = (error, schema) => {
 }
 
 const formatStack = error => get(error, 'stack', '')
-  .filter((s, i) => i > 0)
   .split('\n')
+  .filter((s, i) => i > 0)
   .map(s => s.trim().replace(/^at /, ''))
 
 const validationContextMessages = {
@@ -60,7 +59,7 @@ const validationContextMessages = {
 }
 
 function formatValidationErrorResponse (error, context) {
-  const { message, validationContext } = error
+  const { validationContext } = error
   const schema = context.schema[validationContext]
   return {
     statusCode: 422,
@@ -71,7 +70,7 @@ function formatValidationErrorResponse (error, context) {
 }
 
 async function trail (server, options) {
-  const whitelistedErrors = [404]
+  // const whitelistedErrors = [404]
   const trailsManager = new TrailsManager(undefined, options.pool)
 
   server.decorate('trailCore', trailsManager)
@@ -82,7 +81,6 @@ async function trail (server, options) {
     done()
   })
 
-  // TODO: This isn't needed, used only for debug; remove ajv dependency when removing this.
   server.schemaCompiler = schema => {
     const spec = typeof schema.valueOf === 'function' ? schema.valueOf() : schema
     const ajv = new Ajv({ allErrors: true })
@@ -90,88 +88,33 @@ async function trail (server, options) {
   }
 
   server.setErrorHandler((error, request, reply) => {
-    // console.log('E',error)
     if (error.validation) {
       const response = formatValidationErrorResponse(error, reply.context)
-      reply.code(response.statusCode).type('application/json').send(response)
-      return
+      return reply.code(response.statusCode).send(response)
     }
 
-    // Rewrite JSON parse errors.
-    if (error.message === 'Unexpected end of JSON input') {
+    // TODO Review following line and compare to (1) boom usage (2) actual structure of error object
+    const code = error.isBoom ? error.output.statusCode : (error.statusCode || 500)
+
+    if (error.message === 'Unexpected end of JSON input') { // Body was an invalid JSON
       error = {
         statusCode: 400,
         error: 'Bad Request',
         message: errorsMessages['json.format']
       }
+    } else if (code === 500) { // Add the stack
+      const stack = environment !== 'production' ? formatStack(error) : undefined
+      error = {
+        statusCode: 500,
+        error: 'Internal Server Error',
+        message: `[${error.code || error.name}] ${error.message}`,
+        stack
+      }
     }
-
-    // TODO review following
-    const code = error.isBoom ? error.output.statusCode : error.statusCode
-
-    if (
-      !error.isTrail && error.message !== 'Invalid request payload JSON format' &&
-            (code < 400 || whitelistedErrors.includes(code))
-    ) return // No error or a error we don't want to manage, we're fine
-
-    // Body was an invalid JSON
-    if (error.message === 'Invalid request payload JSON format') {
-      error.message = errorsMessages['json.format']
-      error.reformat()
-    } else if (code === 422) { // Validation errors
-      error.output.payload.reasons = formatReasons(error)
-    } else if (code === 500 && environment !== 'production') { // Add the stack
-      error.output.payload.message = `[${error.code || error.name}] ${error.message}`
-      error.output.payload.stack = formatStack(error)
-    }
-    reply.code = code
-    reply.send(error)
+    reply.code(code).send(error)
   })
 
   await server.register(require('./routes/trails'))
 }
 
-module.exports = fp(trail)
-
-/*
-exports.plugin = {
-  pkg: require('../package'),
-
-  register: async (server, options) => {
-    const whitelistedErrors = [404]
-    const trailsManager = new TrailsManager(undefined, options.pool)
-
-    server.decorate('server', 'trailCore', trailsManager)
-    server.decorate('request', 'trailCore', trailsManager)
-
-    server.ext('onPreResponse', (request, h) => {
-      const error = request.response
-      const code = error.isBoom ? error.output.statusCode : error.statusCode
-
-      if (
-        !error.isTrail && error.message !== 'Invalid request payload JSON format' &&
-        (code < 400 || whitelistedErrors.includes(code))
-      ) return h.continue // No error or a error we don't want to manage, we're fine
-
-      // Body was an invalid JSON
-      if (error.message === 'Invalid request payload JSON format') {
-        error.message = errorsMessages['json.format']
-        error.reformat()
-      } else if (code === 422) { // Validation errors
-        error.output.payload.reasons = formatReasons(error)
-      } else if (code === 500 && environment !== 'production') { // Add the stack
-        error.output.payload.message = `[${error.code || error.name}] ${error.message}`
-        error.output.payload.stack = formatStack(error)
-      }
-
-      return h.continue
-    })
-
-    server.ext('onPostStop', async () => {
-      await trailsManager.close()
-    })
-
-    await server.register(require('./routes/trails'))
-  }
-}
-*/
+module.exports = fp(trail, { name: 'trail-fastify-plugin' })
