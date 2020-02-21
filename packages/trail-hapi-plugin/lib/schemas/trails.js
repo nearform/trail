@@ -1,13 +1,10 @@
-'use strict'
-
 const config = require('config')
 const Joi = require('@hapi/joi')
+const j2s = require('joi-to-swagger')
 
 const { errorsSchemas } = require('./errors')
 const host = config.get('hapi.host')
 const port = config.get('hapi.port')
-
-const joiToSchema = joi => JSON.stringify(joi.describe())
 
 const namedObject = function (name) {
   return Joi.object()
@@ -44,14 +41,16 @@ const dateTime = Joi.string()
   .isoDate()
 
 const trailSchema = {
-  params: {
-    id: Joi.number()
-      .description('Trail id')
-      .meta({ id: 'models/trail.params.id' })
-      .required()
-      .min(0)
-      .example(12345)
-  },
+  params: Joi.object()
+    .meta({ className: 'trail/params' })
+    .keys({
+      id: Joi.number()
+        .description('Trail id')
+        .meta({ id: 'models/trail.params.id' })
+        .required()
+        .min(0)
+        .example(12345)
+    }),
   search: Joi.object()
     .description('An audit search')
     .keys({
@@ -113,7 +112,7 @@ const trailSchema = {
     .unknown(false),
   request: Joi.object()
     .description('A audit trail')
-    .meta({ id: 'models/trail.request' })
+    .meta({ className: 'trail/request' })
     .keys({
       when: dateTime,
       who: stringOrObject('Trail actor'),
@@ -129,7 +128,7 @@ const trailSchema = {
     .unknown(false),
   response: Joi.object()
     .description('A audit trail')
-    .meta({ id: 'models/trail.response' })
+    .meta({ className: 'trail/response' })
     .keys({
       id: Joi.number()
         .description('Trail id')
@@ -151,6 +150,19 @@ const trailSchema = {
     })
     .unknown(false)
 }
+
+const components = [
+  trailSchema.params,
+  trailSchema.request,
+  trailSchema.response,
+  errorsSchemas[400],
+  errorsSchemas[404],
+  errorsSchemas[422],
+  errorsSchemas[500]
+].reduce((components, joi, idx) => {
+  const result = j2s(joi, components)
+  return { schemas: Object.assign(components.schemas, result.components.schemas) }
+}, { schemas: {} })
 
 const spec = {
   openapi: '3.0.1',
@@ -184,23 +196,12 @@ const spec = {
       description: 'Endpoints for monitoring and uptime'
     }
   ],
-  components: {
-    models: {
-      'trail.params.id': joiToSchema(trailSchema.params.id),
-      'trail.request': joiToSchema(trailSchema.request),
-      'trail.response': joiToSchema(trailSchema.response)
-    },
-    errors: {
-      400: joiToSchema(errorsSchemas['400']),
-      404: joiToSchema(errorsSchemas['404']),
-      422: joiToSchema(errorsSchemas['422']),
-      500: joiToSchema(errorsSchemas['500'])
-    }
-  },
+  components,
   paths: {}
 }
 
 module.exports = {
   trailSchema,
+  components,
   spec
 }

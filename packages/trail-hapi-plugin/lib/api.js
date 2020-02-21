@@ -1,17 +1,7 @@
-'use strict'
-
 const { get } = require('lodash')
+const j2s = require('joi-to-swagger')
 
-const addReference = function (spec) {
-  const info = typeof spec.describe === 'function' ? spec.describe() : spec
-  const id = get(info, 'metas.0.id')
-
-  if (id) return { $ref: `#/components/${id}` }
-  else if (spec.isJoi) return JSON.stringify(info)
-  else return spec
-}
-
-const parseResponses = function (route) {
+const parseResponses = function (route, components) {
   const responses = {}
   const specObject = get(route, 'config.response.status')
 
@@ -20,18 +10,15 @@ const parseResponses = function (route) {
 
   // For each response
   for (const [code, response] of specPairs) {
-    // Get its info and any reference id
-    const info = response.describe()
+    const { swagger: schema } = j2s(response, components)
 
     if (code === '204') { // No body reply
-      responses[code.toString()] = { description: info.description }
+      responses[code.toString()] = { description: schema.description }
     } else { // Assign the new response, either with a reference or by converting the object
       responses[code.toString()] = {
-        description: info.description,
+        description: schema.description,
         content: {
-          'application/json': {
-            schema: addReference(response)
-          }
+          'application/json': { schema }
         }
       }
     }
@@ -40,55 +27,40 @@ const parseResponses = function (route) {
   return responses
 }
 
-const parseParameters = function (route) {
-  // If there is a already defined format, use it
-  const specObject = get(route, 'config.validate.params')
-
+const parseSpecObject = function (specObject, scope, components) {
   if (!specObject) return null
-
-  return Object.entries(specObject).map(([name, spec]) => {
-    const info = spec.describe()
-
+  const { swagger: { properties = {}, required = [] } } = j2s(specObject, components)
+  return Object.entries(properties).map(([name, schema]) => {
     return {
       name,
-      in: 'path',
-      description: info.description,
-      required: get(info, 'flags.presence') === 'required',
-      schema: addReference(info)
+      in: scope,
+      description: schema.description,
+      required: required.includes(name),
+      schema
     }
   })
 }
 
-const parseQuerystring = function (route) {
-  // If there is a already defined format, use it
-  const specObject = get(route, 'config.validate.query')
-
-  if (!specObject) return null
-
-  const spec = specObject.describe().keys
-  return Object.entries(spec).map(([name, info]) => {
-    return {
-      name,
-      in: 'query',
-      description: info.description,
-      required: get(info, 'flags.presence') === 'required',
-      schema: addReference(info)
-    }
-  })
+const parseParameters = function (route, components) {
+  return parseSpecObject(get(route, 'config.validate.params'), 'path', components)
 }
 
-const parseBody = function (route) {
+const parseQuerystring = function (route, components) {
+  return parseSpecObject(get(route, 'config.validate.query'), 'query', components)
+}
+
+const parseBody = function (route, components) {
   // If there is a already defined format, use it
   const specObject = get(route, 'config.validate.payload')
 
   if (!specObject) return null
 
+  const { swagger: schema } = j2s(specObject, components)
+
   return {
-    description: specObject.description,
+    description: schema.description,
     content: {
-      'application/json': {
-        schema: addReference(specObject)
-      }
+      'application/json': { schema }
     }
   }
 }
@@ -103,7 +75,7 @@ module.exports = (function () {
       routes[collection].push(routeSpec)
       return server.route(routeSpec)
     },
-    generateSpec (spec, collection) {
+    generateSpec (spec, components, collection) {
       // Sort by path
       const apiRoutes = routes[collection].sort((a, b) => a.path.localeCompare(b.path))
 
@@ -119,11 +91,11 @@ module.exports = (function () {
         spec.paths[path][route.method.toLowerCase()] = {
           summary: description,
           tags: tags.filter(t => t !== 'api'),
-          responses: parseResponses(route),
-          requestBody: parseBody(route),
+          responses: parseResponses(route, components),
+          requestBody: parseBody(route, components),
           parameters: [
-            parseParameters(route),
-            parseQuerystring(route)
+            parseParameters(route, components),
+            parseQuerystring(route, components)
           ].filter(l => l).reduce((a, b) => a.concat(b), [])
         }
       }
