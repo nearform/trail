@@ -18,13 +18,14 @@ module.exports = async function (server, options) {
       const path = request.params['*']
       if (path === '' || path === 'index.html') {
         // Serve the patched index file
+        reply.header('Content-Type', 'text/html')
         return reply.send(index)
       }
       // Force correct MIME type on JS files
       if (extname(path) === '.js') {
         reply.header('Content-Type', 'application/javascript')
       }
-      reply.send(path)
+      reply.sendFile(path)
     }
   })
 }

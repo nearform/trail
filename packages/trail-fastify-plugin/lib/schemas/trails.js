@@ -5,8 +5,6 @@ const { errorsSchemas } = require('./errors')
 const host = config.get('fastify.host')
 const port = config.get('fastify.port')
 
-const schemaToJSON = s => JSON.stringify(s.valueOf())
-
 const namedObject = function (name) {
   return S.object()
     .description(name)
@@ -159,15 +157,15 @@ const spec = {
   ],
   components: {
     models: {
-      'trail.params.id': schemaToJSON(trailSchema.params.id),
-      'trail.request': schemaToJSON(trailSchema.request),
-      'trail.response': schemaToJSON(trailSchema.response)
+      'trail.params.id': trailSchema.params.valueOf(),
+      'trail.request': trailSchema.request.valueOf(),
+      'trail.response': trailSchema.response.valueOf()
     },
     errors: {
-      400: schemaToJSON(errorsSchemas['400']),
-      404: schemaToJSON(errorsSchemas['404']),
-      422: schemaToJSON(errorsSchemas['422']),
-      500: schemaToJSON(errorsSchemas['500'])
+      400: errorsSchemas['400'].valueOf(),
+      404: errorsSchemas['404'].valueOf(),
+      422: errorsSchemas['422'].valueOf(),
+      500: errorsSchemas['500'].valueOf()
     }
   },
   paths: {}

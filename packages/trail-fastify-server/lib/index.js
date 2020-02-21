@@ -12,10 +12,8 @@ module.exports = async function () {
     const startTime = process.hrtime()
 
     const server = fastify()
-
     server.register(require('fastify-static'), {
-      root: require('swagger-ui-dist').getAbsoluteFSPath(),
-      prefix: '/files'
+      root: require('swagger-ui-dist').getAbsoluteFSPath()
     })
     server.register(require('./swagger'))
     server.register(require('@nearform/trail-fastify-plugin'), config)

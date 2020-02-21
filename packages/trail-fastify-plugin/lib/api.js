@@ -3,10 +3,7 @@ const { get } = require('lodash')
 const addReference = function (spec) {
   const value = typeof spec.valueOf === 'function' ? spec.valueOf() : spec
   const id = get(value, 'meta.id')
-
-  if (id) return { $ref: `#/components/${id}` }
-  else if (spec.isFluentSchema) return JSON.stringify(value)
-  else return spec
+  return id ? { $ref: `#/components/${id}` } : value
 }
 
 const parseResponses = function (route) {
@@ -38,40 +35,28 @@ const parseResponses = function (route) {
   return responses
 }
 
-const parseParameters = function (route) {
-  // If there is a already defined format, use it
-  const specObject = get(route, 'schema.params')
-
+const parseSpecObject = function (specObject, scope) {
   if (!specObject) return null
 
-  return Object.entries(specObject).map(([name, spec]) => {
-    const value = spec.valueOf()
+  const { required = [], properties = {} } = specObject.valueOf()
 
+  return Object.entries(properties).map(([name, spec]) => {
     return {
       name,
-      in: 'path',
-      description: value.description,
-      required: get(value, 'flags.presence') === 'required',
-      schema: addReference(value)
+      in: scope,
+      description: spec.description,
+      required: required.includes(name),
+      schema: addReference(spec)
     }
   })
 }
 
+const parseParameters = function (route) {
+  return parseSpecObject(get(route, 'schema.params'), 'path')
+}
+
 const parseQuerystring = function (route) {
-  // If there is a already defined format, use it
-  const specObject = get(route, 'schema.query')
-
-  if (!specObject) return null
-
-  return Object.entries(specObject).map(([name, value]) => {
-    return {
-      name,
-      in: 'query',
-      description: value.description,
-      required: get(value, 'flags.presence') === 'required',
-      schema: addReference(value)
-    }
-  })
+  return parseSpecObject(get(route, 'schema.query'), 'query')
 }
 
 const parseBody = function (route) {
