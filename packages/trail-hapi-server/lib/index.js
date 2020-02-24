@@ -1,3 +1,5 @@
+'use strict'
+
 const Joi = require('@hapi/joi')
 const config = require('config')
 const { errorsSchemas } = require('@nearform/trail-hapi-plugin/lib/schemas/errors')

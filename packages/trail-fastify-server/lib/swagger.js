@@ -1,3 +1,5 @@
+'use strict'
+
 const { readFile } = require('fs').promises
 const { extname, join } = require('path')
 

@@ -1,3 +1,5 @@
+'use strict'
+
 const config = require('config')
 const Joi = require('@hapi/joi')
 const j2s = require('joi-to-swagger')

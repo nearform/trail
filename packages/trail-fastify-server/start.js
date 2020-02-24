@@ -1,3 +1,5 @@
+'use strict'
+
 // If forked as child, send output message via ipc to parent, otherwise output to console
 const logMessage = process.send ? process.send : console.log
 

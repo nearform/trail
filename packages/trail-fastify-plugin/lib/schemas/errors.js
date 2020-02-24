@@ -1,3 +1,5 @@
+'use strict'
+
 const S = require('fluent-schema')
 
 const errorsMessages = {

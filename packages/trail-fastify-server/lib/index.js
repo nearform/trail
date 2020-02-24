@@ -1,3 +1,5 @@
+'use strict'
+
 const S = require('fluent-schema')
 const fastify = require('fastify')
 const config = require('config')

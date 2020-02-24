@@ -1,3 +1,5 @@
+'use strict'
+
 const { get } = require('lodash')
 const j2s = require('joi-to-swagger')
 

@@ -15,13 +15,12 @@ npm install @nearform/trail-fastify-plugin
 ## Usage
 
 ```javascript
+const Fastify = require('fastify')
+
 const main = async function() {
-  import Fastify from 'fastify'
   const fastify = Fastify()
 
   fastify.register(require('@nearform/trail-fastify-plugin'))
-
-  await fastify.ready()
 
   await fastify.listen(3000, console.log)
 }

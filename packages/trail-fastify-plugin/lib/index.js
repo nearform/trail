@@ -1,3 +1,5 @@
+'use strict'
+
 const fp = require('fastify-plugin')
 const { TrailsManager } = require('@nearform/trail-core')
 const { get } = require('lodash')
@@ -72,9 +74,8 @@ async function trail (server, options) {
   server.decorate('trailCore', trailsManager)
   server.decorateReply('trailCore', trailsManager)
 
-  server.addHook('onClose', async (instance, done) => {
+  server.addHook('onClose', async instance => {
     await trailsManager.close()
-    done()
   })
 
   const ajv = new Ajv({ allErrors: true })

@@ -1,3 +1,5 @@
+'use strict'
+
 const { notFound } = require('@hapi/boom')
 const S = require('fluent-schema')
 
@@ -5,7 +7,7 @@ const { errorsSchemas } = require('../schemas/errors')
 const { spec, trailSchema } = require('../schemas/trails')
 const { addApiRoute, generateSpec } = require('../api')
 
-module.exports = async function (fastify, options, done) {
+module.exports = async function (fastify, options) {
   for (const path of ['/trails/openapi.json', '/trails/swagger.json']) {
     fastify.route({
       method: 'GET',
@@ -22,7 +24,7 @@ module.exports = async function (fastify, options, done) {
     async handler (request, reply) {
       const { from, to, who, what, subject, page, pageSize, sort } = request.query
       const results = await reply.trailCore.search({ from, to, who, what, subject, page, pageSize, sort })
-      reply.send(results)
+      return results
     },
     schema: {
       query: trailSchema.search,
@@ -46,7 +48,7 @@ module.exports = async function (fastify, options, done) {
     async handler (request, reply) {
       const { from, to, type, page, pageSize, desc } = request.query
       const results = await reply.trailCore.enumerate({ from, to, type, page, pageSize, desc })
-      reply.send(results)
+      return results
     },
     schema: {
       query: trailSchema.enumerate,
@@ -70,7 +72,8 @@ module.exports = async function (fastify, options, done) {
     async handler (request, reply) {
       const id = await reply.trailCore.insert(request.body)
       const trail = await reply.trailCore.get(id)
-      reply.code(201).send(trail)
+      reply.code(201)
+      return trail
     },
     schema: {
       headers: S.object()
@@ -99,7 +102,7 @@ module.exports = async function (fastify, options, done) {
 
       if (!trail) throw notFound(`Trail with id ${id} not found.`)
 
-      return reply.send(trail)
+      return trail
     },
     schema: {
       params: trailSchema.params,
@@ -127,7 +130,8 @@ module.exports = async function (fastify, options, done) {
       if (!updated) throw notFound(`Trail with id ${id} not found.`)
 
       const trail = await reply.trailCore.get(id)
-      reply.code(202).send(trail)
+      reply.code(202)
+      return trail
     },
     schema: {
       headers: S.object()
@@ -179,6 +183,4 @@ module.exports = async function (fastify, options, done) {
 
   // Add tagged routes to the swagger.json
   generateSpec(spec, 'trails')
-
-  done()
 }
