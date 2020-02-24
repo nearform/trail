@@ -46,5 +46,10 @@
     "pg": "^7.4.1",
     "pino": "^5.16.0",
     "postgrator": "^3.6.0"
+  },
+  "devDependencies": {
+    "@hapi/lab": "^22.0.3",
+    "code": "^5.2.0",
+    "sinon": "^8.1.1"
   }
 }
