@@ -1,5 +1,3 @@
-'use strict'
-
 const { readFileSync } = require('fs')
 const { join } = require('path')
 
@@ -21,7 +19,7 @@ module.exports = {
     })
 
     // Serve the rest of the UI
-    server.dependency('inert', () => {
+    server.dependency('@hapi/inert', () => {
       server.route({
         method: 'GET',
         path: '/documentation/{param*}',
