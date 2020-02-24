@@ -1,4 +1,4 @@
-const { notFound } = require('boom')
+const { notFound } = require('@hapi/boom')
 const S = require('fluent-schema')
 
 const { errorsSchemas } = require('../schemas/errors')

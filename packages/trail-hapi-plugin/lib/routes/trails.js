@@ -1,6 +1,6 @@
 'use strict'
 
-const { notFound } = require('boom')
+const { notFound } = require('@hapi/boom')
 const Joi = require('@hapi/joi')
 
 const { errorsSchemas } = require('../schemas/errors')

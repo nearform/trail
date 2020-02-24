@@ -69,10 +69,10 @@
     "packages/*"
   ],
   "dependencies": {
-    "@nearform/trail-core": "file:packages/trail-core",
-    "@nearform/trail-fastify-plugin": "file:packages/trail-fastify-plugin",
-    "@nearform/trail-fastify-server": "file:packages/trail-fastify-server",
-    "@nearform/trail-hapi-plugin": "file:packages/trail-hapi-plugin",
-    "@nearform/trail-hapi-server": "file:packages/trail-hapi-server"
+    "@nearform/trail-core": "^3.0.0",
+    "@nearform/trail-fastify-plugin": "^3.0.0",
+    "@nearform/trail-fastify-server": "^3.0.0",
+    "@nearform/trail-hapi-plugin": "^3.0.0",
+    "@nearform/trail-hapi-server": "^3.0.0"
   }
 }
