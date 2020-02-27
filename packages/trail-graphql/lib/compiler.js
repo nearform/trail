@@ -12,7 +12,7 @@ function makeQueryExecutor (opts) {
     const document = parse(graphql)
     const query = compileQuery(schema, document)
     if (!isCompiledQuery(query)) {
-      throw new Error('Query compilation error')
+      throw new Error('Query compilation error: ' + query.errors.map(e => e.message).join('; '))
     }
     return query.query()
   }

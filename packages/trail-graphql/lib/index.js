@@ -2,6 +2,7 @@
 
 const { GraphQLScalarType } = require('graphql')
 const { Kind } = require('graphql/language')
+const { GraphQLJSON } = require('graphql-type-json')
 const { DateTime } = require('luxon')
 const { TrailsManager } = require('@nearform/trail-core')
 
@@ -12,7 +13,7 @@ const Date = new GraphQLScalarType({
     return DateTime.fromISO(value)
   },
   serialize (value) {
-    return value.toISO()
+    return value
   },
   parseLiteral (ast) {
     if (ast.kind === Kind.STRING) {
@@ -22,35 +23,26 @@ const Date = new GraphQLScalarType({
   }
 })
 
-const StringID = new GraphQLScalarType({
-  name: 'StringID',
-  description: 'An object representing a string value by ID',
+const StringData = new GraphQLScalarType({
+  name: 'StringData',
+  description: 'An object representing a string by value or by ID with attributes',
   parseValue (value) {
+    console.error('parseValue', value)
     return value
   },
   serialize (value) {
-    return value.id
+    console.error('ser', value)
+    // return value.id
+    return value
   },
   parseLiteral (ast) {
     if (ast.kind === Kind.STRING) {
-      return ast.value
+      return { id: ast.value }
     }
-    return null
-  }
-})
-
-const JSON = new GraphQLScalarType({
-  name: 'JSON',
-  description: 'JSON value',
-  parseValue (value) {
-    return JSON.parse(value)
-  },
-  serialize (value) {
-    return JSON.stringify(value)
-  },
-  parseLiteral (ast) {
-    if (ast.kind === Kind.STRING) {
-      return JSON.parse(ast.value)
+    if (ast.kind === Kind.OBJECT) {
+      // TODO Possibly just need to return the parsed JSON as-is, after confirming an id property exists
+      const { id, ...attributes } = GraphQLJSON.parseLiteral(value)
+      return { id, attributes }
     }
     return null
   }
@@ -77,7 +69,7 @@ const TrailType = {
 
 const typeDefs = `
   scalar Date
-  scalar StringID
+  scalar StringData
   scalar JSON
 
   enum SortOrder { ${Object.keys(SortOrder).join(' ')} }
@@ -87,9 +79,9 @@ const typeDefs = `
   type Trail {
     id: Int!
     when: Date!
-    who: StringID!
-    what: StringID!
-    subject: StringID!
+    who: StringData!
+    what: StringData!
+    subject: StringData!
     where: JSON
     why: JSON
     meta: JSON
@@ -125,12 +117,28 @@ const typeDefs = `
 
   type Mutation {
 
-    insert(trail: Trail!): Int!
+    insert(
+      when: Date!
+      who: StringData!
+      what: StringData!
+      subject: StringData!
+      where: JSON
+      why: JSON
+      meta: JSON
+    ): Int!
 
-    update(id: Int!, trail: Trail!): Boolean!
+    update(
+      id: Int!
+      when: Date!
+      who: StringData!
+      what: StringData!
+      subject: StringData!
+      where: JSON
+      why: JSON
+      meta: JSON
+    ): Boolean!
 
     delete(id: Int!): Boolean!
-
   }
 `
 
@@ -154,10 +162,10 @@ function makeResolvers (opts) {
       }
     },
     Mutation: {
-      insert (_, { trail }) {
+      insert (_, trail) {
         return trailsManager.insert(trail)
       },
-      update (_, { id, trail }) {
+      update (_, { id, ...trail }) {
         return trailsManager.update(id, trail)
       },
       delete (_, { id }) {
@@ -165,8 +173,8 @@ function makeResolvers (opts) {
       }
     },
     Date,
-    StringID,
-    JSON,
+    StringData,
+    JSON: GraphQLJSON,
     SortOrder,
     TrailType
   }
