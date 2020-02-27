@@ -52,17 +52,17 @@ describe('GraphQL', () => {
       const [id] = await insertRecords(this, [record])
 
       const { data: { trail } } = await this.subject.execQuery(`{
-          trail(id: ${id}) {
-            id
-            when
-            who
-            what
-            subject
-            where
-            why
-            meta
-          }
-        }`)
+        trail(id: ${id}) {
+          id
+          when
+          who
+          what
+          subject
+          where
+          why
+          meta
+        }
+      }`)
 
       const expected = convertToTrail({ id, ...record })
       expect(trail).to.equal(expected)
@@ -132,9 +132,9 @@ describe('GraphQL', () => {
       const what = 'open'
       const subject = 'window'
 
-      const { data: { insert: id } } = await this.subject.execQuery(`mutation {
-            insert(when: "${when}", who: "${who}", what: "${what}", subject: "${subject}")
-          }`)
+      const { data: { id } } = await this.subject.execQuery(`mutation {
+        id: insert(when: "${when}", who: "${who}", what: "${what}", subject: "${subject}")
+      }`)
 
       expect(id).to.be.a.number()
 
@@ -143,47 +143,56 @@ describe('GraphQL', () => {
       const trail = await getTrail(this, id)
       expect(trail).to.equal(expected)
     })
-      // TODO insert using string data - { id: 'xxx' } and with attrs - { id: 'xxx', a: 1, b: 2 }
-    /*
-      test('insert invalid', async () => {
-          const id = await this.subject.execQuery(`{
-            insert()
-          }`)
-          expect(id).to.be.null()
-      })
-      test('update', async () => {
-          const trail = { when: '2018-01-01T12:34:56.000Z', who: 'dog', what: 'open', subject: 'window' }
-          const [ id ] = await insertRecords(this, [trail])
-          const newWhat = 'close'
-          const ok = await this.subject.execQuery(`{
-            update(id: ${id}, what: "${newWhat}")
-          }`)
-          expect(ok).to.be.true()
-          const { what } = await getRecord(this, id)
-          expect(what).to.equal(newWhat)
-      })
-      test('update nonexisting', async () => {
-          const ok = await this.subject.execQuery(`{
-            update(id: ${id}, what: "xxx")
-          }`)
-          expect(ok).to.be.false()
-      })
-      test('delete', async () => {
-          const trail = { when: '2018-01-01T12:34:56.000Z', who: 'dog', what: 'open', subject: 'window' }
-          const [ id ] = await insertRecords(this, [trail])
-          const ok = await this.subject.execQuery(`{
-            delete(id: ${id})
-          }`)
-          expect(ok).to.be.true()
-          const record = await getRecord(this, id)
-          expect(record).to.be.null()
-      })
-      test('delete nonexisting', async () => {
-          const ok = await this.subject.execQuery(`{
-            delete(id: 12345)
-          }`)
-          expect(ok).to.be.false()
-      })
-      */
+
+    // TODO insert using string data - { id: 'xxx' } and with attrs - { id: 'xxx', a: 1, b: 2 }
+
+    test('insert invalid', async () => {
+      try {
+        await this.subject.execQuery(`mutation {
+          insert(when: "")
+        }`)
+      } catch (e) {
+        expect(e.message).to.equal('Query compilation error: Argument "who" of required type "StringData!" was not provided.')
+      }
+    })
+
+    test('update', async () => {
+      const when = '2018-01-01T12:34:56.000Z'
+      const who = 'dog'
+      const what = 'open'
+      const subject = 'window'
+      const [id] = await insertRecords(this, [{ when, who, what, subject }])
+
+      const newWhat = 'close'
+      const { data: { ok } } = await this.subject.execQuery(`mutation {
+        ok: update(id: ${id}, when: "${when}", who: "${who}", what: "${newWhat}", subject: "${subject}")
+      }`)
+
+      expect(ok).to.be.true()
+      const trail = await getTrail(this, id)
+      expect(trail.what.id).to.equal(newWhat)
+    })
+
+    // TODO invalid update
+
+    test('remove', async () => {
+      const record = { when: '2018-01-01T12:34:56.000Z', who: 'dog', what: 'open', subject: 'window' }
+      const [id] = await insertRecords(this, [record])
+
+      const { data: { ok } } = await this.subject.execQuery(`mutation {
+        ok: remove(id: ${id})
+      }`)
+
+      expect(ok).to.be.true()
+      const trail = await getTrail(this, id)
+      expect(trail).to.be.null()
+    })
+
+    test('remove nonexisting', async () => {
+      const { data: { ok } } = await this.subject.execQuery(`mutation {
+        ok: remove(id: 12345)
+      }`)
+      expect(ok).to.be.false()
+    })
   })
 })

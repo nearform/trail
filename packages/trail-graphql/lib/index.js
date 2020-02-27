@@ -31,7 +31,6 @@ const StringData = new GraphQLScalarType({
     return value
   },
   serialize (value) {
-    console.error('ser', value)
     // return value.id
     return value
   },
@@ -138,7 +137,8 @@ const typeDefs = `
       meta: JSON
     ): Boolean!
 
-    delete(id: Int!): Boolean!
+    remove(id: Int!): Boolean!
+
   }
 `
 
@@ -168,7 +168,8 @@ function makeResolvers (opts) {
       update (_, { id, ...trail }) {
         return trailsManager.update(id, trail)
       },
-      delete (_, { id }) {
+      // NOTE graphql-jit has problems with 'delete' when used as a name.
+      remove (_, { id }) {
         return trailsManager.delete(id)
       }
     },
