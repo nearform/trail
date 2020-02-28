@@ -10,10 +10,21 @@ const Date = new GraphQLScalarType({
   name: 'Date',
   description: 'ISO 8601 formatted date scalar type',
   parseValue (value) {
-    return DateTime.fromISO(value)
+    if (typeof value === 'string') {
+      // Assume value is in correct ISO format and return unparsed; trail-core will handle
+      // the necessary conversion.
+      return value
+    }
+    if (value instanceof DateTime) {
+      // Convert to ISO string when passed an actual DateTime instance; this avoids problems
+      // when trail-core is using a different version of luxon (e.g. because of non-hoisted
+      // packages in a monorepo setting).
+      return value.toISO()
+    }
+    return null
   },
   serialize (value) {
-    return value
+    return value.toISO()
   },
   parseLiteral (ast) {
     if (ast.kind === Kind.STRING) {
@@ -23,15 +34,19 @@ const Date = new GraphQLScalarType({
   }
 })
 
-const StringData = new GraphQLScalarType({
-  name: 'StringData',
-  description: 'An object representing a string by value or by ID with attributes',
+const StringWithAttrs = new GraphQLScalarType({
+  name: 'StringWithAttrs',
+  description: 'An object representing a string by value, or by ID with associated attributes',
   parseValue (value) {
-    console.error('parseValue', value)
-    return value
+    if (typeof value === 'string') {
+      return { id: value }
+    }
+    if (typeof value === 'object' && typeof value.id === 'string') {
+      return value
+    }
+    return null
   },
   serialize (value) {
-    // return value.id
     return value
   },
   parseLiteral (ast) {
@@ -39,9 +54,10 @@ const StringData = new GraphQLScalarType({
       return { id: ast.value }
     }
     if (ast.kind === Kind.OBJECT) {
-      // TODO Possibly just need to return the parsed JSON as-is, after confirming an id property exists
-      const { id, ...attributes } = GraphQLJSON.parseLiteral(value)
-      return { id, attributes }
+      const value = GraphQLJSON.parseLiteral(ast)
+      if (typeof value === 'object' && typeof value.id === 'string') {
+        return value
+      }
     }
     return null
   }
@@ -68,7 +84,7 @@ const TrailType = {
 
 const typeDefs = `
   scalar Date
-  scalar StringData
+  scalar StringWithAttrs
   scalar JSON
 
   enum SortOrder { ${Object.keys(SortOrder).join(' ')} }
@@ -78,9 +94,9 @@ const typeDefs = `
   type Trail {
     id: Int!
     when: Date!
-    who: StringData!
-    what: StringData!
-    subject: StringData!
+    who: StringWithAttrs!
+    what: StringWithAttrs!
+    subject: StringWithAttrs!
     where: JSON
     why: JSON
     meta: JSON
@@ -118,9 +134,9 @@ const typeDefs = `
 
     insert(
       when: Date!
-      who: StringData!
-      what: StringData!
-      subject: StringData!
+      who: StringWithAttrs!
+      what: StringWithAttrs!
+      subject: StringWithAttrs!
       where: JSON
       why: JSON
       meta: JSON
@@ -129,9 +145,9 @@ const typeDefs = `
     update(
       id: Int!
       when: Date!
-      who: StringData!
-      what: StringData!
-      subject: StringData!
+      who: StringWithAttrs!
+      what: StringWithAttrs!
+      subject: StringWithAttrs!
       where: JSON
       why: JSON
       meta: JSON
@@ -168,13 +184,14 @@ function makeResolvers (opts) {
       update (_, { id, ...trail }) {
         return trailsManager.update(id, trail)
       },
-      // NOTE graphql-jit has problems with 'delete' when used as a name.
+      // NOTE: This resolver should be called 'delete' but graphql-jit has problems
+      // with the name (presumably because of clash with the JS 'delete' keyword).
       remove (_, { id }) {
         return trailsManager.delete(id)
       }
     },
     Date,
-    StringData,
+    StringWithAttrs,
     JSON: GraphQLJSON,
     SortOrder,
     TrailType

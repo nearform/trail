@@ -8,13 +8,13 @@ const { typeDefs, makeResolvers } = require('.')
 function makeQueryExecutor (opts) {
   const resolvers = makeResolvers(opts)
   const schema = makeExecutableSchema({ typeDefs, resolvers })
-  return graphql => {
+  return (graphql, args) => {
     const document = parse(graphql)
     const query = compileQuery(schema, document)
     if (!isCompiledQuery(query)) {
       throw new Error('Query compilation error: ' + query.errors.map(e => e.message).join('; '))
     }
-    return query.query()
+    return query.query(null, null, args)
   }
 }
 

@@ -8,13 +8,30 @@ module.exports.lab = Lab.script()
 const { describe, it: test, before, after } = module.exports.lab
 
 const { TrailsManager } = require('@nearform/trail-core')
-const { convertToTrail } = require('@nearform/trail-core/lib/trail')
 const { makeQueryExecutor } = require('../lib/compiler')
 
-const sampleTrail = function () {
-  const date = DateTime.fromISO('2018-04-11T07:00:00.123-09:00', { setZone: true })
-  return { id: null, when: date, who: 'who', what: { id: 'what', additional: true }, subject: 'subject' }
+const convertToStringWithAttrs = val => {
+  switch (typeof val) {
+    case 'string':
+      return { id: val, attributes: {} }
+    case 'undefined':
+      return {}
+    default:
+      const { id, ...attributes } = val
+      return { id, attributes }
+  }
 }
+
+const convertToTrail = ({ id, when, who, what, subject, where, why, meta }) => ({
+  id,
+  when: when,
+  who: convertToStringWithAttrs(who),
+  what: convertToStringWithAttrs(what),
+  subject: convertToStringWithAttrs(subject),
+  where: where || {},
+  why: why || {},
+  meta: meta || {}
+})
 
 const insertRecords = async (test, records) => {
   const { subject: { trailsManager } } = test
@@ -23,9 +40,16 @@ const insertRecords = async (test, records) => {
   return ids
 }
 
-const getTrail = (test, id) => {
+const getTrail = async (test, id) => {
   const { subject: { trailsManager } } = test
-  return trailsManager.get(id)
+  const trail = await trailsManager.get(id)
+  // The TrailsManager returns dates using luxon's DateTime format, but the graphql adapter uses
+  // the string ISO format in its serialized output (for JSON compatibility); so do conversion
+  // here before returning the result to be compared with expected output.
+  if (trail) {
+    trail.when = trail.when.toISO()
+  }
+  return trail
 }
 
 describe('GraphQL', () => {
@@ -144,7 +168,28 @@ describe('GraphQL', () => {
       expect(trail).to.equal(expected)
     })
 
-    // TODO insert using string data - { id: 'xxx' } and with attrs - { id: 'xxx', a: 1, b: 2 }
+    test('insert with args and attributes', async () => {
+      const when = '2018-01-01T12:34:56.000Z'
+      const who = { id: 'dog', a: 1 }
+      const what = { id: 'open', b: '2' }
+      const subject = 'window'
+
+      const { data: { id } } = await this.subject.execQuery(`mutation Insert(
+          $when: Date!
+          $who: StringWithAttrs!
+          $what: StringWithAttrs!
+          $subject: StringWithAttrs!
+        ) {
+          id: insert(when: $when, who: $who, what: $what, subject: $subject)
+      }`, { when, who, what, subject })
+
+      expect(id).to.be.a.number()
+
+      const expected = convertToTrail({ id, when, who, what, subject })
+
+      const trail = await getTrail(this, id)
+      expect(trail).to.equal(expected)
+    })
 
     test('insert invalid', async () => {
       try {
@@ -152,7 +197,7 @@ describe('GraphQL', () => {
           insert(when: "")
         }`)
       } catch (e) {
-        expect(e.message).to.equal('Query compilation error: Argument "who" of required type "StringData!" was not provided.')
+        expect(e.message).to.equal('Query compilation error: Argument "who" of required type "StringWithAttrs!" was not provided.')
       }
     })
 
