@@ -177,15 +177,26 @@ describe('GraphQL', () => {
       const what = 'open'
       const subject = 'window'
 
-      const { data: { id } } = await this.subject.execQuery(`mutation {
-        id: insert(when: "${when}", who: "${who}", what: "${what}", subject: "${subject}")
+      const { data: { trail } } = await this.subject.execQuery(`mutation {
+        trail: insert(when: "${when}", who: "${who}", what: "${what}", subject: "${subject}") {
+          id
+          when
+          who
+          what
+          subject
+          meta
+          where
+          why
+        }
       }`)
+
+      const { id } = trail
 
       expect(id).to.be.a.number()
 
       const expected = convertToTrail({ id, when, who, what, subject })
 
-      const trail = await getTrail(this, id)
+        //const trail = await getTrail(this, id)
       expect(trail).to.equal(expected)
     })
 
@@ -195,20 +206,30 @@ describe('GraphQL', () => {
       const what = { id: 'open', b: '2' }
       const subject = 'window'
 
-      const { data: { id } } = await this.subject.execQuery(`mutation Insert(
-          $when: Date!
-          $who: StringWithAttrs!
-          $what: StringWithAttrs!
-          $subject: StringWithAttrs!
-        ) {
-          id: insert(when: $when, who: $who, what: $what, subject: $subject)
+      const { data: { trail } } = await this.subject.execQuery(`mutation Insert(
+        $when: Date!
+        $who: StringWithAttrs!
+        $what: StringWithAttrs!
+        $subject: StringWithAttrs!
+      ) {
+        trail: insert(when: $when, who: $who, what: $what, subject: $subject) {
+          id
+          when
+          who
+          what
+          subject
+          meta
+          where
+          why
+        }
       }`, { when, who, what, subject })
+
+      const { id } = trail
 
       expect(id).to.be.a.number()
 
       const expected = convertToTrail({ id, when, who, what, subject })
 
-      const trail = await getTrail(this, id)
       expect(trail).to.equal(expected)
     })
 
@@ -308,12 +329,14 @@ describe('GraphQL', () => {
       const newWhat = 'close'
 
       const { data } = await this.subject.execQuery(`mutation {
-        insert: insert(when: "${newTrail.when}", who: "${newTrail.who}", what: "${newTrail.what}", subject: "${newTrail.subject}")
+        insert: insert(when: "${newTrail.when}", who: "${newTrail.who}", what: "${newTrail.what}", subject: "${newTrail.subject}") {
+          id
+        }
         update: update(id: ${ids[0]}, when: "${records[0].when}", who: "${records[0].who}", what: "${newWhat}", subject: "${records[0].subject}")
         remove: remove(id: ${ids[1]})
       }`)
 
-      const id = data.insert
+      const { id } = data.insert
       const expected = convertToTrail({ id, ...newTrail })
 
       const trail = await getTrail(this, id)

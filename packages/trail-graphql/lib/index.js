@@ -28,7 +28,8 @@ const Date = new GraphQLScalarType({
   },
   parseLiteral (ast) {
     if (ast.kind === Kind.STRING) {
-      return DateTime.fromISO(ast.value)
+      // See note above in parseValue() method.
+      return ast.value
     }
     return null
   }
@@ -140,7 +141,7 @@ const typeDefs = `
       where: JSON
       why: JSON
       meta: JSON
-    ): Int!
+    ): Trail
 
     update(
       id: Int!
@@ -178,8 +179,9 @@ function makeResolvers (opts) {
       }
     },
     Mutation: {
-      insert (_, trail) {
-        return trailsManager.insert(trail)
+      async insert (_, trail) {
+        const id = await trailsManager.insert(trail)
+        return id ? trailsManager.get(id) : null
       },
       update (_, { id, ...trail }) {
         return trailsManager.update(id, trail)
