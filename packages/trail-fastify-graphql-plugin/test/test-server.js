@@ -1,4 +1,8 @@
+'use strict'
+
 const fastify = require('fastify')
+
+const { TrailsManager } = require('@nearform/trail-core')
 
 module.exports = (function () {
   let defaultServer = null
@@ -6,9 +10,11 @@ module.exports = (function () {
   const servers = []
 
   const build = async function () {
-    const server = fastify({ logger: false })
+      const server = fastify({ logger: false })
     try {
-      await server.register(require('../lib'))
+      const trailsManager = new TrailsManager()
+      await server.register(require('../lib'), { trailsManager })
+      server.decorate('trailCore', trailsManager)
       await server.listen(port++, '127.0.0.1')
       servers.push(server)
     } catch (e) {

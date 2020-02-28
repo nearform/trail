@@ -8,10 +8,11 @@ module.exports.lab = Lab.script()
 const { describe, it: test, before, after } = module.exports.lab
 
 const { DateTime } = require('luxon')
-const { errorsMessages } = require('../../lib/schemas/errors')
-const testServer = require('../test-server')
+const testServer = require('./test-server')
 
-describe('Trails REST operations', () => {
+const encodeQuery = q => encodeURIComponent(q.replace(/\s+/g,' '))
+
+describe('Trails graphql HTTP operations', () => {
   let server = null
 
   before(async () => {
@@ -22,26 +23,8 @@ describe('Trails REST operations', () => {
     return testServer.stopAll()
   })
 
-  describe('JSON spec', () => {
-    for (const url of ['/trails/openapi.json', '/trails/swagger.json']) {
-      test(`GET ${url} it should server the API spec file`, async () => {
-        const response = await server.inject({
-          method: 'GET',
-          url
-        })
-
-        expect(response.statusCode).to.equal(200)
-        const payload = JSON.parse(response.payload)
-
-        expect(payload).include({
-          openapi: '3.0.1'
-        })
-      })
-    }
-  })
-
-  describe('GET /trails', async () => {
-    test('it should search trails and return it with 200', async () => {
+  describe('GET /graphql - query data', async () => {
+    test('it should query trails and return with 200', async () => {
       await server.trailCore.performDatabaseOperations(client => client.query('TRUNCATE trails'))
 
       const id = await server.trailCore.insert({
@@ -51,13 +34,29 @@ describe('Trails REST operations', () => {
         subject: '3'
       })
 
+      const query = encodeQuery(`{
+        trails(
+          from: "2014-01-02T18:04:05.123+03:00"
+          to: "2018-01-02T18:04:05.123+03:00"
+        ) {
+          id
+          when
+          who
+          what
+          subject
+          where
+          why
+          meta
+        }
+      }`)
+
       const response = await server.inject({
         method: 'GET',
-        url: `/trails?from=${encodeURIComponent('2014-01-02T18:04:05.123+03:00')}&to=${encodeURIComponent('2018-01-02T18:04:05.123+03:00')}`
+        url: `/graphql?query=${query}`
       })
 
       expect(response.statusCode).to.equal(200)
-      const trails = JSON.parse(response.payload)
+      const { data: { trails } } = JSON.parse(response.payload)
 
       expect(trails[0]).to.include({
         id: id,
@@ -82,146 +81,52 @@ describe('Trails REST operations', () => {
       await server.trailCore.delete(id)
     })
 
-    test('it should search trails and return a empty array when no records are found', async () => {
-      await server.trailCore.performDatabaseOperations(client => client.query('TRUNCATE trails'))
 
-      const id = await server.trailCore.insert({
-        when: '2016-01-02T18:04:05.123+03:00',
-        who: '1',
-        what: '2',
-        subject: '3'
-      })
-
-      const response = await server.inject({
-        method: 'GET',
-        url: `/trails?from=${encodeURIComponent('2014-01-02T18:04:05.123+03:00')}&to=${encodeURIComponent('2018-01-02T18:04:05.123+03:00')}&who=foo`
-      })
-
-      expect(response.statusCode).to.equal(200)
-      const trails = JSON.parse(response.payload)
-
-      expect(trails).to.equal([])
-
-      await server.trailCore.delete(id)
-    })
-
-    test('it should return 422 in case of validation errors', async () => {
-      const response = await server.inject({
-        method: 'GET',
-        url: '/trails?from=bar&where=foo'
-      })
-
-      expect(response.statusCode).to.equal(422)
-      expect(JSON.parse(response.payload)).to.include({
-        statusCode: 422,
-        error: 'Unprocessable Entity',
-        message: 'Invalid input data.',
-        reasons: {
-          where: 'is not a valid attribute',
-          from: 'must be a valid UTC timestamp in the format YYYY-MM-DDTHH:MM:SS.sss (example: 2018-07-06T12:34:56.123)',
-          to: 'must be present and non empty'
-        }
-      })
-    })
+    // TODO Test error conditions
   })
-
-  describe('GET /trails/enumerate', async () => {
-    test('it should enumerate trails and return it with 200', async () => {
-      await server.trailCore.performDatabaseOperations(client => client.query('TRUNCATE trails'))
-
-      const id = await server.trailCore.insert({
-        when: '2016-01-02T18:04:05.123+03:00',
-        who: '1',
-        what: '2',
-        subject: '3'
-      })
-
-      const response = await server.inject({
-        method: 'GET',
-        url: `/trails/enumerate?from=${encodeURIComponent('2014-01-02T18:04:05.123+03:00')}&to=${encodeURIComponent('2018-01-02T18:04:05.123+03:00')}&type=who`
-      })
-
-      expect(response.statusCode).to.equal(200)
-      const enumeration = JSON.parse(response.payload)
-
-      expect(enumeration).to.equal(['1'])
-
-      await server.trailCore.delete(id)
-    })
-
-    test('it should enumerate trails and return a empty array when no records are found', async () => {
-      await server.trailCore.performDatabaseOperations(client => client.query('TRUNCATE trails'))
-
-      const id = await server.trailCore.insert({
-        when: '2016-01-02T18:04:05.123+03:00',
-        who: '1',
-        what: '2',
-        subject: '3'
-      })
-
-      const response = await server.inject({
-        method: 'GET',
-        url: `/trails/enumerate?from=${encodeURIComponent('2014-01-02T18:04:05.123+03:00')}&to=${encodeURIComponent('2015-01-02T18:04:05.123+03:00')}&type=who`
-      })
-
-      expect(response.statusCode).to.equal(200)
-      const enumeration = JSON.parse(response.payload)
-
-      expect(enumeration).to.equal([])
-
-      await server.trailCore.delete(id)
-    })
-
-    test('it should return 422 in case of validation errors', async () => {
-      const response = await server.inject({
-        method: 'GET',
-        url: '/trails/enumerate?from=bar'
-      })
-
-      expect(response.statusCode).to.equal(422)
-      expect(JSON.parse(response.payload)).to.equal({
-        statusCode: 422,
-        error: 'Unprocessable Entity',
-        message: 'Invalid input data.',
-        reasons: {
-          from: 'must be a valid UTC timestamp in the format YYYY-MM-DDTHH:MM:SS.sss (example: 2018-07-06T12:34:56.123)',
-          to: 'must be present and non empty',
-          type: 'must be present and non empty'
-        }
-      })
-    })
-  })
-
-  describe('POST /trails', async () => {
+    
+  describe('POST /graphql - insert mutations', async () => {
     test('it should create a new trail and return it with 201', async () => {
+      const when = '2016-01-02T15:04:05.123'
+      const who = 'me'
+      const what = 'FOO'
+        const subject = 'FOO'
+
       const response = await server.inject({
         method: 'POST',
-        url: '/trails',
-        payload: {
-          when: '2016-01-02T18:04:05.123+03:00',
-          who: 'me',
-          what: { id: 'FOO', abc: 'cde' },
-          subject: 'FOO'
-        }
+        url: '/graphql',
+        headers: {
+          'Content-Type': 'application/graphql'
+        },
+        payload: `mutation {
+          trail: insert(when: "${when}", who: "${who}", what: "${what}", subject: "${subject}") {
+            id
+            when
+            who
+            what
+            subject
+            where
+            why
+            meta
+          }
+        }`
       })
 
-      expect(response.statusCode).to.equal(201)
-      const trail = JSON.parse(response.payload)
+      expect(response.statusCode).to.equal(200)
+      const { data: { trail } } = JSON.parse(response.payload)
 
       expect(trail).to.include({
-        when: DateTime.fromISO('2016-01-02T15:04:05.123', { zone: 'utc' }).toISO(),
+        when: DateTime.fromISO(when, { zone: 'utc' }).toISO(),
         who: {
-          id: 'me',
+          id: who,
           attributes: {}
         },
         what: {
-          id: 'FOO',
-          attributes: {
-            abc: 'cde'
-          }
+          id: what,
+          attributes: {}
         },
         subject: {
-          id: 'FOO',
+          id: subject,
           attributes: {}
         },
         where: {},
@@ -232,22 +137,10 @@ describe('Trails REST operations', () => {
       await server.trailCore.delete(trail.id)
     })
 
-    /* Fastify appears to parse the content before validating errors, so not possible to reproduce this unit test as-is.
-    test('it should return 400 in case of invalid Content-Type header', async () => {
-      const response = await server.inject({
-        method: 'POST',
-        url: '/trails',
-        headers: {
-          'Content-Type': 'text/plain'
-        },
-        payload: 'abc'
-      })
+    // TODO POST should support both JSON and graphql payloads, as well has having query specified in URL param
+    // so test all of these; see https://graphql.org/learn/serving-over-http/
 
-      expect(response.statusCode).to.equal(400)
-      expect(JSON.parse(response.payload)).to.include({ statusCode: 400, error: 'Bad Request', message: errorsMessages['json.contentType'] })
-    })
-    */
-
+          /*
     test('it should return 400 in case of invalid JSON payload', async () => {
       const response = await server.inject({
         method: 'POST',
@@ -288,8 +181,10 @@ describe('Trails REST operations', () => {
         }
       })
     })
+    */
   })
 
+        /*
   describe('GET /trails/{id}', async () => {
     test('it should retrieve a existing trail and return it with 200', async () => {
       const id = await server.trailCore.insert({
@@ -507,4 +402,5 @@ describe('Trails REST operations', () => {
       })
     })
   })
+  */
 })

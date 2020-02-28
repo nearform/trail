@@ -42,7 +42,9 @@
   },
   "devDependencies": {
     "@hapi/lab": "^22.0.3",
+    "@nearform/trail-core": "^3.0.0",
     "code": "^5.2.0",
+    "luxon": "^1.2.0",
     "sinon": "^8.1.1"
   }
 }
