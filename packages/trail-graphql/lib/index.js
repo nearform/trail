@@ -106,7 +106,7 @@ const typeDefs = `
 
     trail(id: Int!): Trail
 
-    search(
+    trails(
       from: Date!
       to: Date!
       who: String
@@ -170,7 +170,7 @@ function makeResolvers (opts) {
       trail (_, { id }) {
         return trailsManager.get(id)
       },
-      search (_, args) {
+      trails (_, args) {
         return trailsManager.search(args)
       },
       enumerate (_, args) {
