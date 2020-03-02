@@ -259,6 +259,25 @@ describe('GraphQL', () => {
       expect(trail.what.id).to.equal(newWhat)
     })
 
+    test('update partial', async () => {
+      const when = '2018-01-01T12:34:56.000Z'
+      const who = 'dog'
+      const what = 'open'
+      const subject = 'window'
+      const [id] = await insertRecords(this, [{ when, who, what, subject }])
+
+      const newWhat = 'close'
+      const newSubject = 'door'
+      const { data: { ok } } = await this.subject.execQuery(`mutation {
+        ok: update(id: ${id}, what: "${newWhat}", subject: "${newSubject}")
+      }`)
+
+      expect(ok).to.be.true()
+      const trail = await getTrail(this, id)
+      expect(trail.what.id).to.equal(newWhat)
+      expect(trail.subject.id).to.equal(newSubject)
+    })
+
     test('update with args and attributes', async () => {
       const when = '2018-01-01T12:34:56.000Z'
       const who = { id: 'dog', a: 1 }

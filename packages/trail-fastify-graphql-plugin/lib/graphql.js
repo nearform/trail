@@ -145,10 +145,10 @@ const typeDefs = `
 
     update(
       id: Int!
-      when: Date!
-      who: StringWithAttrs!
-      what: StringWithAttrs!
-      subject: StringWithAttrs!
+      when: Date
+      who: StringWithAttrs
+      what: StringWithAttrs
+      subject: StringWithAttrs
       where: JSON
       why: JSON
       meta: JSON
@@ -183,8 +183,13 @@ function makeResolvers (opts) {
         const id = await trailsManager.insert(trail)
         return id ? trailsManager.get(id) : null
       },
-      update (_, { id, ...trail }) {
-        return trailsManager.update(id, trail)
+      async update (_, { id, ...trail }) {
+        const record = await trailsManager.get(id)
+        if (!record) {
+          return false
+        }
+        const { id: x, ...fields } = record
+        return trailsManager.update(id, { ...fields, ...trail })
       },
       // NOTE: This resolver should be called 'delete' but graphql-jit has problems
       // with the name (presumably because of clash with the JS 'delete' keyword).
