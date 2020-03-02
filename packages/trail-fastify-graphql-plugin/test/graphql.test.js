@@ -1,44 +1,82 @@
 'use strict'
 
-const { expect } = require('code')
+// Leak detection errors reported are likely due to this problem: https://github.com/hapijs/lab/issues/709
+
+const { expect } = require('@hapi/code')
 const Lab = require('@hapi/lab')
-const sinon = require('sinon')
 
 module.exports.lab = Lab.script()
 const { describe, it: test, before, after } = module.exports.lab
 
-const { DateTime } = require('luxon')
-const testServer = require('./test-server')
+const { TrailsManager } = require('@nearform/trail-core')
+const { makeQueryExecutor } = require('./graphql-compiler')
 
-const encodeQuery = q => encodeURIComponent(q.replace(/\s+/g, ' '))
+const convertToStringWithAttrs = val => {
+  if (typeof val === 'string') {
+    return { id: val, attributes: {} }
+  }
+  if (typeof val === 'undefined') {
+    return {}
+  }
+  const { id, ...attributes } = val
+  return { id, attributes }
+}
 
-describe('Trails graphql HTTP operations', () => {
-  let server = null
+const convertToTrail = ({ id, when, who, what, subject, where, why, meta }) => ({
+  id,
+  when: when,
+  who: convertToStringWithAttrs(who),
+  what: convertToStringWithAttrs(what),
+  subject: convertToStringWithAttrs(subject),
+  where: where || {},
+  why: why || {},
+  meta: meta || {}
+})
 
-  before(async () => {
-    server = await testServer.buildDefault()
+const insertRecords = async (test, records) => {
+  const { subject: { trailsManager } } = test
+  await trailsManager.performDatabaseOperations(client => client.query('TRUNCATE trails'))
+  const ids = await Promise.all(records.map(r => trailsManager.insert(r)))
+  return ids
+}
+
+const getTrail = async (test, id) => {
+  const { subject: { trailsManager } } = test
+  const trail = await trailsManager.get(id)
+  // The TrailsManager returns dates using luxon's DateTime format, but the graphql adapter uses
+  // the string ISO format in its serialized output (for JSON compatibility); so do conversion
+  // here before returning the result to be compared with expected output.
+  if (trail) {
+    trail.when = trail.when.toISO()
+  }
+  return trail
+}
+
+describe('GraphQL', () => {
+  before(() => {
+    const trailsManager = new TrailsManager()
+    const execQuery = makeQueryExecutor({ trailsManager })
+    this.subject = { trailsManager, execQuery }
   })
 
   after(async () => {
-    return testServer.stopAll()
+    const { trailsManager } = this.subject
+    await trailsManager.performDatabaseOperations(client => client.query('TRUNCATE trails'))
+    await trailsManager.close()
   })
 
-  describe('GET /graphql - query data', async () => {
-    test('query trails and return with 200', async () => {
-      await server.trailCore.performDatabaseOperations(client => client.query('TRUNCATE trails'))
+  describe('Query', () => {
+    test('get trail', async () => {
+      const when = '2018-01-01T12:34:56.000Z'
+      const who = 'dog cat fish'
+      const what = 'open morning'
+      const subject = 'window'
 
-      const id = await server.trailCore.insert({
-        when: '2016-01-02T18:04:05.123+03:00',
-        who: '1',
-        what: '2',
-        subject: '3'
-      })
+      const record = { when, who, what, subject }
+      const [id] = await insertRecords(this, [record])
 
-      const query = encodeQuery(`{
-        trails(
-          from: "2014-01-02T18:04:05.123+03:00"
-          to: "2018-01-02T18:04:05.123+03:00"
-        ) {
+      const { data: { trail } } = await this.subject.execQuery(`{
+        trail(id: ${id}) {
           id
           when
           who
@@ -50,212 +88,261 @@ describe('Trails graphql HTTP operations', () => {
         }
       }`)
 
-      const response = await server.inject({
-        method: 'GET',
-        url: `/graphql?query=${query}`
-      })
-
-      expect(response.statusCode).to.equal(200)
-      const { data: { trails } } = JSON.parse(response.payload)
-
-      expect(trails[0]).to.include({
-        id: id,
-        when: DateTime.fromISO('2016-01-02T15:04:05.123', { zone: 'utc' }).toISO(),
-        who: {
-          id: '1',
-          attributes: {}
-        },
-        what: {
-          id: '2',
-          attributes: {}
-        },
-        subject: {
-          id: '3',
-          attributes: {}
-        },
-        where: {},
-        why: {},
-        meta: {}
-      })
-
-      await server.trailCore.delete(id)
+      const expected = convertToTrail({ id, ...record })
+      expect(trail).to.equal(expected)
     })
 
-    test('return 400 in case of malformed query', async () => {
-      const query = encodeQuery(`{
-        trails(
-          from: "2014-01-02T18:04:05.123+03:00"
-          to: "2018-01-02T18:04:05.123+03:00"
-        ) {
-          id
-          when
-          who`)
+    test('get trails', async () => {
+      const records = [
+        { when: '2018-01-01T12:34:56.000Z', who: 'dog', what: 'open', subject: 'window' },
+        { when: '2018-01-02T12:34:56.000Z', who: 'cat', what: 'open', subject: 'window' },
+        { when: '2018-01-03T12:34:56.000Z', who: 'whale', what: 'close', subject: 'door' },
+        { when: '2018-01-04T12:34:56.000Z', who: 'cat', what: 'close', subject: 'door' },
+        { when: '2018-01-05T12:34:56.000Z', who: 'shark', what: 'check', subject: 'world' }
+      ]
 
-      const response = await server.inject({
-        method: 'GET',
-        url: `/graphql?query=${query}`
-      })
+      await insertRecords(this, records)
 
-      expect(response.statusCode).to.equal(400)
-      expect(JSON.parse(response.payload)).to.include({
-        errors: [
-          {
-            message: 'Syntax Error: Expected Name, found <EOF>',
-            locations: [{ line: 1, column: 100 }]
-          }
-        ],
-        data: null
-      })
-    })
+      const from = records[0].when
+      const to = records[records.length - 1].when
 
-    test('return 400 in case of invalid query', async () => {
-      const query = encodeQuery(`{
-        otherthings(
-          from: "2014-01-02T18:04:05.123+03:00"
-          to: "2018-01-02T18:04:05.123+03:00"
-        ) {
-          id
+      const { data: { trails } } = await this.subject.execQuery(`{
+        trails(from: "${from}", to: "${to}") {
           when
           who
-        }`)
+          what
+          subject
+        }
+      }`)
 
-      const response = await server.inject({
-        method: 'GET',
-        url: `/graphql?query=${query}`
-      })
+      const expected = records
+        .map(record => {
+          const { when, who, what, subject } = convertToTrail(record)
+          return { when, who, what, subject }
+        })
+        .reverse()
 
-      expect(response.statusCode).to.equal(400)
-      expect(JSON.parse(response.payload)).to.include({
-        errors: [
-          {
-            message: 'Syntax Error: Expected Name, found <EOF>',
-            locations: [{ line: 1, column: 107 }]
-          }
-        ],
-        data: null
+      expect(trails).to.equal(expected)
+    })
+
+    test('enumerate', async () => {
+      const records = [
+        { when: '2018-01-01T12:34:56.000Z', who: 'dog', what: 'open', subject: 'window' },
+        { when: '2018-01-02T12:34:56.000Z', who: 'cat', what: 'open', subject: 'window' },
+        { when: '2018-01-03T12:34:56.000Z', who: 'whale', what: 'close', subject: 'door' },
+        { when: '2018-01-04T12:34:56.000Z', who: 'cat', what: 'close', subject: 'door' },
+        { when: '2018-01-05T12:34:56.000Z', who: 'shark', what: 'check', subject: 'world' }
+      ]
+
+      await insertRecords(this, records)
+
+      const from = records[0].when
+      const to = records[records.length - 1].when
+
+      const { data: { enumerate } } = await this.subject.execQuery(`{
+        enumerate(from: "${from}", to: "${to}", type: WHO)
+      }`)
+
+      const expected = records.map(r => r.who).sort().filter((w, i, a) => w !== a[i - 1])
+
+      expect(enumerate).to.equal(expected)
+    })
+
+    test('get trails multiple concurrent', async () => {
+      const records = [
+        { when: '2018-01-01T12:34:56.000Z', who: 'dog', what: 'open', subject: 'window' },
+        { when: '2018-01-02T12:34:56.000Z', who: 'cat', what: 'open', subject: 'window' },
+        { when: '2018-01-03T12:34:56.000Z', who: 'whale', what: 'close', subject: 'door' },
+        { when: '2018-01-04T12:34:56.000Z', who: 'cat', what: 'close', subject: 'door' },
+        { when: '2018-01-05T12:34:56.000Z', who: 'shark', what: 'check', subject: 'world' }
+      ]
+
+      const ids = await insertRecords(this, records)
+
+      const { data } = await this.subject.execQuery(`{
+        ${ids.map(id => `_${id}: trail(id: ${id}) { when, who, what, subject }\n`)}
+      }`)
+
+      ids.forEach((id, idx) => {
+        const { when, who, what, subject } = convertToTrail(records[idx])
+        expect(data[`_${id}`]).to.equal({ when, who, what, subject })
       })
     })
   })
 
-  describe('POST /graphql - insert mutations', async () => {
-    test('create new trail from graphql payload and return with 201', async () => {
-      const when = '2016-01-02T15:04:05.123'
-      const who = 'me'
-      const what = 'FOO'
-      const subject = 'FOO'
+  describe('Mutate', () => {
+    test('insert', async () => {
+      const when = '2018-01-01T12:34:56.000Z'
+      const who = 'dog'
+      const what = 'open'
+      const subject = 'window'
 
-      const response = await server.inject({
-        method: 'POST',
-        url: '/graphql',
-        headers: {
-          'Content-Type': 'application/graphql'
-        },
-        payload: `mutation {
-          trail: insert(when: "${when}", who: "${who}", what: "${what}", subject: "${subject}") {
-            id
-            when
-            who
-            what
-            subject
-            where
-            why
-            meta
-          }
-        }`
-      })
+      const { data: { trail } } = await this.subject.execQuery(`mutation {
+        trail: insert(when: "${when}", who: "${who}", what: "${what}", subject: "${subject}") {
+          id
+          when
+          who
+          what
+          subject
+          meta
+          where
+          why
+        }
+      }`)
 
-      expect(response.statusCode).to.equal(200)
-      const { data: { trail } } = JSON.parse(response.payload)
+      const { id } = trail
 
-      expect(trail).to.include({
-        when: DateTime.fromISO(when, { zone: 'utc' }).toISO(),
-        who: {
-          id: who,
-          attributes: {}
-        },
-        what: {
-          id: what,
-          attributes: {}
-        },
-        subject: {
-          id: subject,
-          attributes: {}
-        },
-        where: {},
-        why: {},
-        meta: {}
-      })
+      expect(id).to.be.a.number()
 
-      await server.trailCore.delete(trail.id)
+      const expected = convertToTrail({ id, when, who, what, subject })
+
+      expect(trail).to.equal(expected)
     })
 
-    test('create new trail from json payload with variables and return with 201', async () => {
-      const when = '2016-01-02T15:04:05.123'
-      const who = 'me'
-      const what = 'FOO'
-      const subject = 'FOO'
+    test('insert with args and attributes', async () => {
+      const when = '2018-01-01T12:34:56.000Z'
+      const who = { id: 'dog', a: 1 }
+      const what = { id: 'open', b: '2' }
+      const subject = 'window'
 
-      const response = await server.inject({
-        method: 'POST',
-        url: '/graphql',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        payload: JSON.stringify({
-          query: `mutation insertTrail($when: Date!, $who: StringWithAttrs!, $what: StringWithAttrs!, $subject: StringWithAttrs!) {
-            trail: insert(when: $when, who: $who, what: $what, subject: $subject) {
-               id
-               when
-               who
-               what
-               subject
-               where
-               why
-               meta
-             }
-           }`,
-          variables: { when, who, what, subject }
-        })
-      })
+      const { data: { trail } } = await this.subject.execQuery(`mutation Insert(
+        $when: Date!
+        $who: StringWithAttrs!
+        $what: StringWithAttrs!
+        $subject: StringWithAttrs!
+      ) {
+        trail: insert(when: $when, who: $who, what: $what, subject: $subject) {
+          id
+          when
+          who
+          what
+          subject
+          meta
+          where
+          why
+        }
+      }`, { when, who, what, subject })
 
-      expect(response.statusCode).to.equal(200)
+      const { id } = trail
 
-      const { data: { trail } } = JSON.parse(response.payload)
+      expect(id).to.be.a.number()
 
-      expect(trail).to.include({
-        when: DateTime.fromISO(when, { zone: 'utc' }).toISO(),
-        who: {
-          id: who,
-          attributes: {}
-        },
-        what: {
-          id: what,
-          attributes: {}
-        },
-        subject: {
-          id: subject,
-          attributes: {}
-        },
-        where: {},
-        why: {},
-        meta: {}
-      })
+      const expected = convertToTrail({ id, when, who, what, subject })
 
-      await server.trailCore.delete(trail.id)
+      expect(trail).to.equal(expected)
     })
 
-    test('return 400 in case of invalid JSON payload', async () => {
-      const response = await server.inject({
-        method: 'POST',
-        url: '/graphql',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        payload: '{"a":1'
-      })
+    test('insert invalid', async () => {
+      try {
+        await this.subject.execQuery(`mutation {
+          insert(when: "")
+        }`)
+      } catch (e) {
+        expect(e.message).to.equal('Query compilation error: Argument "who" of required type "StringWithAttrs!" was not provided.')
+      }
+    })
 
-      expect(response.statusCode).to.equal(400)
-      expect(JSON.parse(response.payload)).to.include({ errors: [{ message: 'Unexpected end of JSON input' }], data: null })
+    test('update', async () => {
+      const when = '2018-01-01T12:34:56.000Z'
+      const who = 'dog'
+      const what = 'open'
+      const subject = 'window'
+      const [id] = await insertRecords(this, [{ when, who, what, subject }])
+
+      const newWhat = 'close'
+      const { data: { ok } } = await this.subject.execQuery(`mutation {
+        ok: update(id: ${id}, when: "${when}", who: "${who}", what: "${newWhat}", subject: "${subject}")
+      }`)
+
+      expect(ok).to.be.true()
+      const trail = await getTrail(this, id)
+      expect(trail.what.id).to.equal(newWhat)
+    })
+
+    test('update with args and attributes', async () => {
+      const when = '2018-01-01T12:34:56.000Z'
+      const who = { id: 'dog', a: 1 }
+      const what = { id: 'open', b: '2' }
+      const subject = 'window'
+      const [id] = await insertRecords(this, [{ when, who, what, subject }])
+
+      const newWhat = 'close'
+      const { data: { ok } } = await this.subject.execQuery(`mutation Update(
+          $id: Int!,
+          $when: Date!
+          $who: StringWithAttrs!
+          $what: StringWithAttrs!
+          $subject: StringWithAttrs!
+        ) {
+        ok: update(id: $id, when: $when, who: $who, what: $what, subject: $subject)
+      }`, { id, when, who, what: newWhat, subject })
+
+      expect(ok).to.be.true()
+      const trail = await getTrail(this, id)
+      expect(trail.what.id).to.equal(newWhat)
+    })
+
+    test('update invalid', async () => {
+      const when = '2018-01-01T12:34:56.000Z'
+      const who = 'dog'
+      const what = 'open'
+      const subject = 'window'
+      const [id] = await insertRecords(this, [{ when, who, what, subject }])
+
+      try {
+        await this.subject.execQuery(`mutation {
+          ok: update(id: ${id}, when: "")
+        }`)
+      } catch (e) {
+        expect(e.message).to.equal('Query compilation error: Argument "who" of required type "StringWithAttrs!" was not provided.')
+      }
+    })
+
+    test('remove', async () => {
+      const record = { when: '2018-01-01T12:34:56.000Z', who: 'dog', what: 'open', subject: 'window' }
+      const [id] = await insertRecords(this, [record])
+
+      const { data: { ok } } = await this.subject.execQuery(`mutation {
+        ok: remove(id: ${id})
+      }`)
+
+      expect(ok).to.be.true()
+      const trail = await getTrail(this, id)
+      expect(trail).to.be.null()
+    })
+
+    test('remove nonexisting', async () => {
+      const { data: { ok } } = await this.subject.execQuery(`mutation {
+        ok: remove(id: 1)
+      }`)
+      expect(ok).to.be.false()
+    })
+
+    test('multiple concurrent', async () => {
+      const records = [
+        { when: '2018-01-01T12:34:56.000Z', who: 'dog', what: 'open', subject: 'window' },
+        { when: '2018-01-02T12:34:56.000Z', who: 'cat', what: 'open', subject: 'window' }
+      ]
+      const ids = await insertRecords(this, records)
+      const newTrail = { when: '2018-01-03T12:34:56.000Z', who: 'whale', what: 'close', subject: 'door' }
+      const newWhat = 'close'
+
+      const { data } = await this.subject.execQuery(`mutation {
+        insert: insert(when: "${newTrail.when}", who: "${newTrail.who}", what: "${newTrail.what}", subject: "${newTrail.subject}") {
+          id
+        }
+        update: update(id: ${ids[0]}, when: "${records[0].when}", who: "${records[0].who}", what: "${newWhat}", subject: "${records[0].subject}")
+        remove: remove(id: ${ids[1]})
+      }`)
+
+      const { id } = data.insert
+      const expected = convertToTrail({ id, ...newTrail })
+
+      const trail = await getTrail(this, id)
+      expect(trail).to.equal(expected)
+
+      expect(data.update).to.equal(true)
+      expect(data.remove).to.equal(true)
     })
   })
 })

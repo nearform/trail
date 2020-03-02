@@ -4,6 +4,9 @@
   "description": "Fastify plugin providing graphql endpoints for the audit trail logging service",
   "license": "MIT",
   "author": "nearForm Ltd",
+  "contributors": [
+    "Julian Goacher (https://github.com/juliangoacher)"
+  ],
   "homepage": "https://github.com/nearform/trail#readme",
   "keywords": [
     "audit",
@@ -33,18 +36,21 @@
     "test": "lab test"
   },
   "dependencies": {
-    "@nearform/trail-graphql": "^3.0.0",
+    "@nearform/trail-core": "^3.0.0",
     "config": "^3.2.5",
     "fastify": "^2.12.0",
     "fastify-gql": "^3.0.6",
     "fastify-plugin": "^1.6.0",
-    "graphql-tools": "4.0.7"
+    "graphql": "^14.6.0",
+    "graphql-jit": "0.4.2",
+    "graphql-tools": "4.0.7",
+    "graphql-type-json": "^0.3.1",
+    "luxon": "1.22.0"
   },
   "devDependencies": {
+    "@hapi/code": "^8.0.1",
     "@hapi/lab": "^22.0.3",
     "@nearform/trail-core": "^3.0.0",
-    "code": "^5.2.0",
-    "luxon": "^1.2.0",
     "sinon": "^8.1.1"
   }
 }

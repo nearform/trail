@@ -3,7 +3,7 @@
 const { parse } = require('graphql')
 const { makeExecutableSchema } = require('graphql-tools')
 const { compileQuery, isCompiledQuery } = require('graphql-jit')
-const { typeDefs, makeResolvers } = require('.')
+const { typeDefs, makeResolvers } = require('../lib/graphql')
 
 function makeQueryExecutor (opts) {
   const resolvers = makeResolvers(opts)

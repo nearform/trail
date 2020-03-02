@@ -1,10 +1,10 @@
 'use strict'
 
-// https://github.com/mcollina/fastify-gql
 const gql = require('fastify-gql')
 const fp = require('fastify-plugin')
 const { makeExecutableSchema } = require('graphql-tools')
-const { typeDefs, makeResolvers } = require('@nearform/trail-graphql')
+
+const { typeDefs, makeResolvers } = require('./graphql')
 
 async function graphql (server, options) {
   const {
