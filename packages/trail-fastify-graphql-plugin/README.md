@@ -97,7 +97,7 @@ For example:
 
 ```graphql
 mutation {
-    trail: insert(when: "2018-01-01T12:34:56.000Z", who: "A Person", what: "A thing", subject: "Substance") {
+    insert(when: "2018-01-01T12:34:56.000Z", who: "A Person", what: "A thing", subject: "Substance") {
         id
         when
         who
