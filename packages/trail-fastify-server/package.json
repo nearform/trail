@@ -43,6 +43,7 @@
   "dependencies": {
     "@nearform/trail-core": "^3.0.0",
     "@nearform/trail-fastify-plugin": "^3.0.0",
+    "@nearform/trail-fastify-graphql-plugin": "^3.0.0",
     "config": "^3.2.5",
     "fastify": "^2.12.0",
     "fastify-static": "^2.6.0",
