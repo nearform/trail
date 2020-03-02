@@ -10,7 +10,7 @@ module.exports = (function () {
   const servers = []
 
   const build = async function () {
-      const server = fastify({ logger: false })
+    const server = fastify({ logger: false })
     try {
       const trailsManager = new TrailsManager()
       await server.register(require('../lib'), { trailsManager })
