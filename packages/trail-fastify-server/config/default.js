@@ -1,4 +1,5 @@
 module.exports = {
   ...require('@nearform/trail-fastify-plugin/config/default'),
-  useGraphql: true
+  useGraphql: true,
+  useRESTAPI: true
 }
