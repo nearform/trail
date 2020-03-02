@@ -110,6 +110,23 @@ mutation {
 }
 ```
 
+### Insert a new trail record with attributed strings
+
+```graphql
+mutation {
+    insert(when: "2018-01-01T12:34:56.000Z", who: { id: "A Person", attr: 10 }, what: { id: "A thing", attr: 20 }, subject: "Substance") {
+        id
+        when
+        who
+        what
+        subject
+        meta
+        where
+        why
+    }
+}
+```
+
 ### Update an existing trail record
 
 ```graphql
