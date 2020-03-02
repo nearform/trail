@@ -1,6 +1,6 @@
 'use strict'
 
-// Leak detection errors reported are likely due to this problem: https://github.com/hapijs/lab/issues/709
+// Leak detection errors reported are caused by graphql-tools in graphql-compiler.js
 
 const { expect } = require('@hapi/code')
 const Lab = require('@hapi/lab')
