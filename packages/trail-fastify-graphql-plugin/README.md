@@ -38,15 +38,15 @@ The schema provides the following queries:
 
 * `trail(id: Int!)`: Fetch a trail record by ID.
 * `trails(from: Date!, to: Date!, ...)`: Search for trail records within a specified date range, and optionally filter by additional values.
-* `enumerate(from: Date!, to: Date!, type: TrailType!, ...)`: Return an enumeration of trails of the specified type, within the specified date range.
+* `enumerateTrails(from: Date!, to: Date!, type: TrailType!, ...)`: Return an enumeration of trails of the specified type, within the specified date range.
 
 ### Mutations
 
 The schema provides the following mutations:
 
-* `insert(when: Date!, who: StringWithAttrs!, what: StringWithAttrs!, subject: StringWithAttrs!, where: JSON, why: JSON, meta: JSON)`: Insert a new trail record.
-* `update(id: Int!, when: Date!, who: StringWithAttrs!, what: StringWithAttrs!, subject: StringWithAttrs!, where: JSON, why: JSON, meta: JSON)`: Update a trail record.
-* `remove(id: Int!)`: Delete a trail record.
+* `insertTrail(when: Date!, who: StringWithAttrs!, what: StringWithAttrs!, subject: StringWithAttrs!, where: JSON, why: JSON, meta: JSON)`: Insert a new trail record.
+* `updateTrail(id: Int!, when: Date!, who: StringWithAttrs!, what: StringWithAttrs!, subject: StringWithAttrs!, where: JSON, why: JSON, meta: JSON)`: Update a trail record.
+* `deleteTrail(id: Int!)`: Delete a trail record.
 
 ### String values
 
@@ -89,7 +89,7 @@ For example:
 
 ```graphql
 {
-    enumerate(from: "2018-01-01T12:34:56.000Z", to: "2018-01-05T12:34:56.000Z", type: WHO)
+    enumerateTrails(from: "2018-01-01T12:34:56.000Z", to: "2018-01-05T12:34:56.000Z", type: WHO)
 }
 ```
 
@@ -97,7 +97,7 @@ For example:
 
 ```graphql
 mutation {
-    insert(when: "2018-01-01T12:34:56.000Z", who: "A Person", what: "A thing", subject: "Substance") {
+    insertTrail(when: "2018-01-01T12:34:56.000Z", who: "A Person", what: "A thing", subject: "Substance") {
         id
         when
         who
@@ -114,7 +114,7 @@ mutation {
 
 ```graphql
 mutation {
-    insert(when: "2018-01-01T12:34:56.000Z", who: { id: "A Person", attr: 10 }, what: { id: "A thing", attr: 20 }, subject: "Substance") {
+    insertTrail(when: "2018-01-01T12:34:56.000Z", who: { id: "A Person", attr: 10 }, what: { id: "A thing", attr: 20 }, subject: "Substance") {
         id
         when
         who
@@ -131,7 +131,7 @@ mutation {
 
 ```graphql
 mutation {
-    update(id: 123, when: "2018-01-01T12:34:56.000Z", who: "A N Other", what: "Something else", subject: "Object")
+    updateTrail(id: 123, when: "2018-01-01T12:34:56.000Z", who: "A N Other", what: "Something else", subject: "Object")
 }
 ```
 
@@ -139,7 +139,7 @@ mutation {
 
 ```graphql
 mutation {
-    remove(id: 123)
+    deleteTrail(id: 123)
 }
 ```
 

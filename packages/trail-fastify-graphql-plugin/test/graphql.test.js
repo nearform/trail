@@ -139,13 +139,13 @@ describe('GraphQL', () => {
       const from = records[0].when
       const to = records[records.length - 1].when
 
-      const { data: { enumerate } } = await this.subject.execQuery(`{
-        enumerate(from: "${from}", to: "${to}", type: WHO)
+      const { data: { enumerateTrails } } = await this.subject.execQuery(`{
+        enumerateTrails(from: "${from}", to: "${to}", type: WHO)
       }`)
 
       const expected = records.map(r => r.who).sort().filter((w, i, a) => w !== a[i - 1])
 
-      expect(enumerate).to.equal(expected)
+      expect(enumerateTrails).to.equal(expected)
     })
 
     test('get trails multiple concurrent', async () => {
@@ -178,7 +178,7 @@ describe('GraphQL', () => {
       const subject = 'window'
 
       const { data: { trail } } = await this.subject.execQuery(`mutation {
-        trail: insert(when: "${when}", who: "${who}", what: "${what}", subject: "${subject}") {
+        trail: insertTrail(when: "${when}", who: "${who}", what: "${what}", subject: "${subject}") {
           id
           when
           who
@@ -211,7 +211,7 @@ describe('GraphQL', () => {
         $what: StringWithAttrs!
         $subject: StringWithAttrs!
       ) {
-        trail: insert(when: $when, who: $who, what: $what, subject: $subject) {
+        trail: insertTrail(when: $when, who: $who, what: $what, subject: $subject) {
           id
           when
           who
@@ -235,11 +235,51 @@ describe('GraphQL', () => {
     test('insert invalid', async () => {
       try {
         await this.subject.execQuery(`mutation {
-          insert(when: "")
+          insertTrail(when: "")
         }`)
       } catch (e) {
         expect(e.message).to.equal('Query compilation error: Argument "who" of required type "StringWithAttrs!" was not provided.')
       }
+    })
+
+    test('insert with JSON values', async () => {
+      const when = '2018-01-01T12:34:56.000Z'
+      const who = 'dog'
+      const what = 'open'
+      const subject = 'window'
+      const where = `{ where: "there" }`
+      const why = `{ reason: "because" }`
+      const meta = `{ meta0: 0, meta1: "one", meta2: [ 2 ] }`
+
+        const { data: { trail } } = await this.subject.execQuery(`mutation {
+        trail: insertTrail(when: "${when}", who: "${who}", what: "${what}", subject: "${subject}", where: ${where}, why: ${why}, meta: ${meta}) {
+          id
+          when
+          who
+          what
+          subject
+          meta
+          where
+          why
+        }
+      }`)
+
+      const { id } = trail
+
+      expect(id).to.be.a.number()
+
+        const expected = convertToTrail({
+            id,
+            when,
+            who,
+            what,
+            subject,
+            where: { where: 'there' },
+            why: { reason: 'because' },
+            meta: { meta0: 0, meta1: 'one', meta2: [ 2 ] }
+        })
+
+      expect(trail).to.equal(expected)
     })
 
     test('update', async () => {
@@ -251,7 +291,7 @@ describe('GraphQL', () => {
 
       const newWhat = 'close'
       const { data: { ok } } = await this.subject.execQuery(`mutation {
-        ok: update(id: ${id}, when: "${when}", who: "${who}", what: "${newWhat}", subject: "${subject}")
+        ok: updateTrail(id: ${id}, when: "${when}", who: "${who}", what: "${newWhat}", subject: "${subject}")
       }`)
 
       expect(ok).to.be.true()
@@ -269,7 +309,7 @@ describe('GraphQL', () => {
       const newWhat = 'close'
       const newSubject = 'door'
       const { data: { ok } } = await this.subject.execQuery(`mutation {
-        ok: update(id: ${id}, what: "${newWhat}", subject: "${newSubject}")
+        ok: updateTrail(id: ${id}, what: "${newWhat}", subject: "${newSubject}")
       }`)
 
       expect(ok).to.be.true()
@@ -293,7 +333,7 @@ describe('GraphQL', () => {
           $what: StringWithAttrs!
           $subject: StringWithAttrs!
         ) {
-        ok: update(id: $id, when: $when, who: $who, what: $what, subject: $subject)
+        ok: updateTrail(id: $id, when: $when, who: $who, what: $what, subject: $subject)
       }`, { id, when, who, what: newWhat, subject })
 
       expect(ok).to.be.true()
@@ -310,19 +350,19 @@ describe('GraphQL', () => {
 
       try {
         await this.subject.execQuery(`mutation {
-          ok: update(id: ${id}, when: "")
+          ok: updateTrail(id: ${id}, when: "")
         }`)
       } catch (e) {
         expect(e.message).to.equal('Query compilation error: Argument "who" of required type "StringWithAttrs!" was not provided.')
       }
     })
 
-    test('remove', async () => {
+    test('delete', async () => {
       const record = { when: '2018-01-01T12:34:56.000Z', who: 'dog', what: 'open', subject: 'window' }
       const [id] = await insertRecords(this, [record])
 
       const { data: { ok } } = await this.subject.execQuery(`mutation {
-        ok: remove(id: ${id})
+        ok: deleteTrail(id: ${id})
       }`)
 
       expect(ok).to.be.true()
@@ -330,9 +370,9 @@ describe('GraphQL', () => {
       expect(trail).to.be.null()
     })
 
-    test('remove nonexisting', async () => {
+    test('delete nonexisting', async () => {
       const { data: { ok } } = await this.subject.execQuery(`mutation {
-        ok: remove(id: 1)
+        ok: deleteTrail(id: 1)
       }`)
       expect(ok).to.be.false()
     })
@@ -347,11 +387,11 @@ describe('GraphQL', () => {
       const newWhat = 'close'
 
       const { data } = await this.subject.execQuery(`mutation {
-        insert: insert(when: "${newTrail.when}", who: "${newTrail.who}", what: "${newTrail.what}", subject: "${newTrail.subject}") {
+        insert: insertTrail(when: "${newTrail.when}", who: "${newTrail.who}", what: "${newTrail.what}", subject: "${newTrail.subject}") {
           id
         }
-        update: update(id: ${ids[0]}, when: "${records[0].when}", who: "${records[0].who}", what: "${newWhat}", subject: "${records[0].subject}")
-        remove: remove(id: ${ids[1]})
+        update: updateTrail(id: ${ids[0]}, when: "${records[0].when}", who: "${records[0].who}", what: "${newWhat}", subject: "${records[0].subject}")
+        remove: deleteTrail(id: ${ids[1]})
       }`)
 
       const { id } = data.insert

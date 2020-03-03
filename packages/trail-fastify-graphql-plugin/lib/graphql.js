@@ -120,7 +120,7 @@ const typeDefs = `
       caseInsensitive: Boolean
     ): [Trail!]!
 
-    enumerate(
+    enumerateTrails(
       from: Date!
       to: Date!
       type: TrailType!
@@ -133,7 +133,7 @@ const typeDefs = `
 
   type Mutation {
 
-    insert(
+    insertTrail(
       when: Date!
       who: StringWithAttrs!
       what: StringWithAttrs!
@@ -143,7 +143,7 @@ const typeDefs = `
       meta: JSON
     ): Trail
 
-    update(
+    updateTrail(
       id: Int!
       when: Date
       who: StringWithAttrs
@@ -154,7 +154,7 @@ const typeDefs = `
       meta: JSON
     ): Boolean!
 
-    remove(id: Int!): Boolean!
+    deleteTrail(id: Int!): Boolean!
 
   }
 `
@@ -174,16 +174,16 @@ function makeResolvers (opts) {
       trails (_, args) {
         return trailsManager.search(args)
       },
-      enumerate (_, args) {
+      enumerateTrails (_, args) {
         return trailsManager.enumerate(args)
       }
     },
     Mutation: {
-      async insert (_, trail) {
+      async insertTrail (_, trail) {
         const id = await trailsManager.insert(trail)
         return id ? trailsManager.get(id) : null
       },
-      async update (_, { id, ...trail }) {
+      async updateTrail (_, { id, ...trail }) {
         const record = await trailsManager.get(id)
         if (!record) {
           return false
@@ -191,9 +191,7 @@ function makeResolvers (opts) {
         const { id: x, ...fields } = record
         return trailsManager.update(id, { ...fields, ...trail })
       },
-      // NOTE: This resolver should be called 'delete' but graphql-jit has problems
-      // with the name (presumably because of clash with the JS 'delete' keyword).
-      remove (_, { id }) {
+      deleteTrail (_, { id }) {
         return trailsManager.delete(id)
       }
     },

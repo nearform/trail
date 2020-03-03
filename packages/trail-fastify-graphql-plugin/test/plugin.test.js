@@ -150,7 +150,7 @@ describe('Trails graphql HTTP operations', () => {
           'Content-Type': 'application/graphql'
         },
         payload: `mutation {
-          trail: insert(when: "${when}", who: "${who}", what: "${what}", subject: "${subject}") {
+          trail: insertTrail(when: "${when}", who: "${who}", what: "${what}", subject: "${subject}") {
             id
             when
             who
@@ -202,7 +202,7 @@ describe('Trails graphql HTTP operations', () => {
         },
         payload: JSON.stringify({
           query: `mutation insertTrail($when: Date!, $who: StringWithAttrs!, $what: StringWithAttrs!, $subject: StringWithAttrs!) {
-            trail: insert(when: $when, who: $who, what: $what, subject: $subject) {
+            trail: insertTrail(when: $when, who: $who, what: $what, subject: $subject) {
                id
                when
                who
