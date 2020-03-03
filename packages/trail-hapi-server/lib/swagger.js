@@ -21,7 +21,7 @@ module.exports = {
     })
 
     // Serve the rest of the UI
-    server.dependency('inert', () => {
+    server.dependency('@hapi/inert', () => {
       server.route({
         method: 'GET',
         path: '/documentation/{param*}',

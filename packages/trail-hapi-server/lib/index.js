@@ -32,7 +32,7 @@ module.exports = async function () {
         plugin: require('./swagger')
       },
       {
-        plugin: require('inert')
+        plugin: require('@hapi/inert')
       },
       {
         plugin: require('@nearform/trail-hapi-plugin'),

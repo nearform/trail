@@ -25,7 +25,7 @@
     "url": "https://github.com/nearform/trail/issues"
   },
   "engines": {
-    "node": ">=8.9.0"
+    "node": ">=12.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -42,12 +42,12 @@
   },
   "dependencies": {
     "@hapi/hapi": "^19.1.0",
+    "@hapi/inert": "^6.0.1",
     "@hapi/joi": "^17.1.0",
     "@nearform/trail-core": "^3.0.0",
     "@nearform/trail-hapi-plugin": "^3.0.0",
     "config": "^3.2.5",
     "hapi-pino": "^6.5.0",
-    "inert": "^5.1.0",
     "swagger-ui-dist": "^3.13.6"
   },
   "devDependencies": {

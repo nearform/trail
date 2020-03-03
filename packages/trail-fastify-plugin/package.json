@@ -1,13 +1,9 @@
 {
-  "name": "@nearform/trail-hapi-plugin",
+  "name": "@nearform/trail-fastify-plugin",
   "version": "3.0.0",
-  "description": "Hapi plugin for the audit trail logging service",
+  "description": "Fastify plugin for the audit trail logging service",
   "license": "MIT",
   "author": "nearForm Ltd",
-  "contributors": [
-    "Mehdi Avdi (https://github.com/mavdi)",
-    "Paolo Insogna (https://github.com/ShogunPanda)"
-  ],
   "homepage": "https://github.com/nearform/trail#readme",
   "keywords": [
     "audit",
@@ -31,18 +27,19 @@
   },
   "main": "lib/index.js",
   "scripts": {
-    "coverage": "lab -c test",
+    "coverage": "todo -c test",
     "coverage:watch": "jest -i --coverage --watch",
     "depcheck": "npx depcheck --ignores=config",
     "test": "lab test"
   },
   "dependencies": {
     "@hapi/boom": "^9.0.0",
-    "@hapi/hapi": "^19.1.0",
-    "@hapi/joi": "^17.1.0",
     "@nearform/trail-core": "^3.0.0",
+    "ajv": "^6.11.0",
     "config": "^3.2.5",
-    "joi-to-swagger": "^4.0.0",
+    "fastify": "^2.12.0",
+    "fastify-plugin": "^1.6.0",
+    "fluent-schema": "^0.10.0",
     "lodash": "^4.17.15",
     "luxon": "^1.2.0"
   },

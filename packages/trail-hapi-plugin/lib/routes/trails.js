@@ -1,10 +1,10 @@
 'use strict'
 
-const { notFound } = require('boom')
+const { notFound } = require('@hapi/boom')
 const Joi = require('@hapi/joi')
 
 const { errorsSchemas } = require('../schemas/errors')
-const { spec, trailSchema } = require('../schemas/trails')
+const { spec, components, trailSchema } = require('../schemas/trails')
 const { failAction, validationOptions } = require('../validation')
 const { addApiRoute, generateSpec } = require('../api')
 
@@ -126,9 +126,7 @@ module.exports = {
         description: 'Get a audit trail.',
         tags: ['api', 'trails'],
         validate: {
-          params: {
-            id: trailSchema.params.id
-          }
+          params: trailSchema.params
         },
         response: {
           status: {
@@ -163,9 +161,7 @@ module.exports = {
               'content-type': Joi.string().valid('application/json')
             })
             .unknown(true),
-          params: {
-            id: trailSchema.params.id
-          },
+          params: trailSchema.params,
           payload: trailSchema.request
         },
         response: {
@@ -196,9 +192,7 @@ module.exports = {
         description: 'Delete a audit trail.',
         tags: ['api', 'trails'],
         validate: {
-          params: {
-            id: trailSchema.params.id
-          }
+          params: trailSchema.params
         },
         response: {
           status: {
@@ -213,7 +207,7 @@ module.exports = {
 
     // Add tagged routes to the swagger.json
     server.ext('onPostStart', server => {
-      generateSpec(spec, 'trails')
+      generateSpec(spec, components, 'trails')
     })
   }
 }
