@@ -247,11 +247,11 @@ describe('GraphQL', () => {
       const who = 'dog'
       const what = 'open'
       const subject = 'window'
-      const where = `{ where: "there" }`
-      const why = `{ reason: "because" }`
-      const meta = `{ meta0: 0, meta1: "one", meta2: [ 2 ] }`
+      const where = '{ where: "there" }'
+      const why = '{ reason: "because" }'
+      const meta = '{ meta0: 0, meta1: "one", meta2: [ 2 ] }'
 
-        const { data: { trail } } = await this.subject.execQuery(`mutation {
+      const { data: { trail } } = await this.subject.execQuery(`mutation {
         trail: insertTrail(when: "${when}", who: "${who}", what: "${what}", subject: "${subject}", where: ${where}, why: ${why}, meta: ${meta}) {
           id
           when
@@ -268,16 +268,16 @@ describe('GraphQL', () => {
 
       expect(id).to.be.a.number()
 
-        const expected = convertToTrail({
-            id,
-            when,
-            who,
-            what,
-            subject,
-            where: { where: 'there' },
-            why: { reason: 'because' },
-            meta: { meta0: 0, meta1: 'one', meta2: [ 2 ] }
-        })
+      const expected = convertToTrail({
+        id,
+        when,
+        who,
+        what,
+        subject,
+        where: { where: 'there' },
+        why: { reason: 'because' },
+        meta: { meta0: 0, meta1: 'one', meta2: [2] }
+      })
 
       expect(trail).to.equal(expected)
     })
