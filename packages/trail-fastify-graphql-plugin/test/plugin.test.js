@@ -296,3 +296,128 @@ describe('Trails graphql HTTP operations', () => {
     })
   })
 })
+
+describe('Trails graphql HTTP operations with prefix path', () => {
+  let server = null
+  const prefix = '/prefix'
+
+  before(async () => {
+    server = await testServer.build({ prefix })
+  })
+
+  after(async () => {
+    return testServer.stopAll()
+  })
+
+  describe(`GET ${prefix}/graphql - query data`, async () => {
+    test('query trails and return with 200', async () => {
+      await server.trailCore.performDatabaseOperations(client => client.query('TRUNCATE trails'))
+
+      const id = await server.trailCore.insert({
+        when: '2016-01-02T18:04:05.123+03:00',
+        who: '1',
+        what: '2',
+        subject: '3'
+      })
+
+      const query = encodeQuery(`{
+        trails(
+          from: "2014-01-02T18:04:05.123+03:00"
+          to: "2018-01-02T18:04:05.123+03:00"
+        ) {
+          id
+          when
+          who
+          what
+          subject
+          where
+          why
+          meta
+        }
+      }`)
+
+      const response = await server.inject({
+        method: 'GET',
+        url: `${prefix}/graphql?query=${query}`
+      })
+
+      expect(response.statusCode).to.equal(200)
+      const { data: { trails } } = JSON.parse(response.payload)
+
+      expect(trails[0]).to.include({
+        id: id,
+        when: DateTime.fromISO('2016-01-02T15:04:05.123', { zone: 'utc' }).toISO(),
+        who: {
+          id: '1',
+          attributes: {}
+        },
+        what: {
+          id: '2',
+          attributes: {}
+        },
+        subject: {
+          id: '3',
+          attributes: {}
+        },
+        where: {},
+        why: {},
+        meta: {}
+      })
+
+      await server.trailCore.delete(id)
+    })
+  })
+
+  describe(`POST ${prefix}/graphql - insert mutations`, async () => {
+    test('create new trail from graphql payload and return with 201', async () => {
+      const when = '2016-01-02T15:04:05.123'
+      const who = 'me'
+      const what = 'FOO'
+      const subject = 'FOO'
+
+      const response = await server.inject({
+        method: 'POST',
+        url: `${prefix}/graphql`,
+        headers: {
+          'Content-Type': 'application/graphql'
+        },
+        payload: `mutation {
+          trail: insertTrail(when: "${when}", who: "${who}", what: "${what}", subject: "${subject}") {
+            id
+            when
+            who
+            what
+            subject
+            where
+            why
+            meta
+          }
+        }`
+      })
+
+      expect(response.statusCode).to.equal(200)
+      const { data: { trail } } = JSON.parse(response.payload)
+
+      expect(trail).to.include({
+        when: DateTime.fromISO(when, { zone: 'utc' }).toISO(),
+        who: {
+          id: who,
+          attributes: {}
+        },
+        what: {
+          id: what,
+          attributes: {}
+        },
+        subject: {
+          id: subject,
+          attributes: {}
+        },
+        where: {},
+        why: {},
+        meta: {}
+      })
+
+      await server.trailCore.delete(trail.id)
+    })
+  })
+})

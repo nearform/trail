@@ -9,11 +9,11 @@ module.exports = (function () {
   let port = 8080
   const servers = []
 
-  const build = async function () {
+  const build = async function (opts = {}) {
     const server = fastify({ logger: false })
     try {
       const trailsManager = new TrailsManager()
-      await server.register(require('../lib'), { trailsManager })
+      await server.register(require('../lib'), { trailsManager, ...opts })
       server.decorate('trailCore', trailsManager)
       await server.listen(port++, '127.0.0.1')
       servers.push(server)
