@@ -290,12 +290,14 @@ describe('GraphQL', () => {
       const [id] = await insertRecords(this, [{ when, who, what, subject }])
 
       const newWhat = 'close'
-      const { data: { ok } } = await this.subject.execQuery(`mutation {
-        ok: updateTrail(id: ${id}, when: "${when}", who: "${who}", what: "${newWhat}", subject: "${subject}")
+      const { data: { trail } } = await this.subject.execQuery(`mutation {
+        trail: updateTrail(id: ${id}, when: "${when}", who: "${who}", what: "${newWhat}", subject: "${subject}") {
+          what
+        }
       }`)
 
-      expect(ok).to.be.true()
-      const trail = await getTrail(this, id)
+        //expect(ok).to.be.true()
+        //const trail = await getTrail(this, id)
       expect(trail.what.id).to.equal(newWhat)
     })
 
@@ -308,12 +310,15 @@ describe('GraphQL', () => {
 
       const newWhat = 'close'
       const newSubject = 'door'
-      const { data: { ok } } = await this.subject.execQuery(`mutation {
-        ok: updateTrail(id: ${id}, what: "${newWhat}", subject: "${newSubject}")
+      const { data: { trail } } = await this.subject.execQuery(`mutation {
+        trail: updateTrail(id: ${id}, what: "${newWhat}", subject: "${newSubject}") {
+          what
+          subject
+        }
       }`)
 
-      expect(ok).to.be.true()
-      const trail = await getTrail(this, id)
+        //expect(ok).to.be.true()
+        //const trail = await getTrail(this, id)
       expect(trail.what.id).to.equal(newWhat)
       expect(trail.subject.id).to.equal(newSubject)
     })
@@ -326,18 +331,20 @@ describe('GraphQL', () => {
       const [id] = await insertRecords(this, [{ when, who, what, subject }])
 
       const newWhat = 'close'
-      const { data: { ok } } = await this.subject.execQuery(`mutation Update(
+      const { data: { trail } } = await this.subject.execQuery(`mutation Update(
           $id: Int!,
           $when: Date!
           $who: StringWithAttrs!
           $what: StringWithAttrs!
           $subject: StringWithAttrs!
         ) {
-        ok: updateTrail(id: $id, when: $when, who: $who, what: $what, subject: $subject)
+        trail: updateTrail(id: $id, when: $when, who: $who, what: $what, subject: $subject) {
+          what
+        }
       }`, { id, when, who, what: newWhat, subject })
 
-      expect(ok).to.be.true()
-      const trail = await getTrail(this, id)
+        //expect(ok).to.be.true()
+        //const trail = await getTrail(this, id)
       expect(trail.what.id).to.equal(newWhat)
     })
 
@@ -350,7 +357,7 @@ describe('GraphQL', () => {
 
       try {
         await this.subject.execQuery(`mutation {
-          ok: updateTrail(id: ${id}, when: "")
+          updateTrail(id: ${id}, when: "")
         }`)
       } catch (e) {
         expect(e.message).to.equal('Query compilation error: Argument "who" of required type "StringWithAttrs!" was not provided.')
@@ -390,7 +397,9 @@ describe('GraphQL', () => {
         insert: insertTrail(when: "${newTrail.when}", who: "${newTrail.who}", what: "${newTrail.what}", subject: "${newTrail.subject}") {
           id
         }
-        update: updateTrail(id: ${ids[0]}, when: "${records[0].when}", who: "${records[0].who}", what: "${newWhat}", subject: "${records[0].subject}")
+        update: updateTrail(id: ${ids[0]}, when: "${records[0].when}", who: "${records[0].who}", what: "${newWhat}", subject: "${records[0].subject}") {
+          id
+        }
         remove: deleteTrail(id: ${ids[1]})
       }`)
 
@@ -400,7 +409,7 @@ describe('GraphQL', () => {
       const trail = await getTrail(this, id)
       expect(trail).to.equal(expected)
 
-      expect(data.update).to.equal(true)
+      expect(data.update.id).to.equal(ids[0])
       expect(data.remove).to.equal(true)
     })
   })

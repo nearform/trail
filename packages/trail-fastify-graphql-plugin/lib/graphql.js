@@ -152,7 +152,7 @@ const typeDefs = `
       where: JSON
       why: JSON
       meta: JSON
-    ): Boolean!
+    ): Trail
 
     deleteTrail(id: Int!): Boolean!
 
@@ -186,10 +186,11 @@ function makeResolvers (opts) {
       async updateTrail (_, { id, ...trail }) {
         const record = await trailsManager.get(id)
         if (!record) {
-          return false
+          return null 
         }
         const { id: x, ...fields } = record
-        return trailsManager.update(id, { ...fields, ...trail })
+        const ok = await trailsManager.update(id, { ...fields, ...trail })
+        return ok ? trailsManager.get(id) : null
       },
       deleteTrail (_, { id }) {
         return trailsManager.delete(id)

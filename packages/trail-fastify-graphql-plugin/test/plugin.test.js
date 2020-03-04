@@ -188,7 +188,7 @@ describe('Trails graphql HTTP operations', () => {
       await server.trailCore.delete(trail.id)
     })
 
-    test('create new trail from json payload with variables and return with 201', async () => {
+    test('create new trail from json payload with variables and return with 200', async () => {
       const when = '2016-01-02T15:04:05.123'
       const who = 'me'
       const what = 'FOO'
@@ -239,6 +239,44 @@ describe('Trails graphql HTTP operations', () => {
         why: {},
         meta: {}
       })
+
+      await server.trailCore.delete(trail.id)
+    })
+
+    test('update trail with JSON variable and return with 200', async () => {
+      await server.trailCore.performDatabaseOperations(client => client.query('TRUNCATE trails'))
+
+      const id = await server.trailCore.insert({
+        when: '2016-01-02T18:04:05.123+03:00',
+        who: 'who',
+        what: 'what',
+        subject: 'subject'
+      })
+
+      const meta = { tags: [ 'foo', 'bar' ] }
+
+      const response = await server.inject({
+        method: 'POST',
+        url: '/graphql',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        payload: JSON.stringify({
+          query: `mutation updateTrail($id: Int!, $meta: JSON) {
+            trail: updateTrail(id: $id, meta: $meta) {
+               id
+               meta
+             }
+           }`,
+          variables: { id, meta }
+        })
+      })
+
+      expect(response.statusCode).to.equal(200)
+
+      const { data: { trail } } = JSON.parse(response.payload)
+
+      expect(trail).to.include({ id, meta })
 
       await server.trailCore.delete(trail.id)
     })
