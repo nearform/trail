@@ -253,7 +253,7 @@ describe('Trails graphql HTTP operations', () => {
         subject: 'subject'
       })
 
-      const meta = { tags: [ 'foo', 'bar' ] }
+      const meta = { tags: ['foo', 'bar'] }
 
       const response = await server.inject({
         method: 'POST',

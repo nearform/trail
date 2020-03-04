@@ -296,8 +296,8 @@ describe('GraphQL', () => {
         }
       }`)
 
-        //expect(ok).to.be.true()
-        //const trail = await getTrail(this, id)
+      // expect(ok).to.be.true()
+      // const trail = await getTrail(this, id)
       expect(trail.what.id).to.equal(newWhat)
     })
 
@@ -317,8 +317,8 @@ describe('GraphQL', () => {
         }
       }`)
 
-        //expect(ok).to.be.true()
-        //const trail = await getTrail(this, id)
+      // expect(ok).to.be.true()
+      // const trail = await getTrail(this, id)
       expect(trail.what.id).to.equal(newWhat)
       expect(trail.subject.id).to.equal(newSubject)
     })
@@ -343,8 +343,8 @@ describe('GraphQL', () => {
         }
       }`, { id, when, who, what: newWhat, subject })
 
-        //expect(ok).to.be.true()
-        //const trail = await getTrail(this, id)
+      // expect(ok).to.be.true()
+      // const trail = await getTrail(this, id)
       expect(trail.what.id).to.equal(newWhat)
     })
 

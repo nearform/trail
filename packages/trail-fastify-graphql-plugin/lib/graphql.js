@@ -186,7 +186,7 @@ function makeResolvers (opts) {
       async updateTrail (_, { id, ...trail }) {
         const record = await trailsManager.get(id)
         if (!record) {
-          return null 
+          return null
         }
         const { id: x, ...fields } = record
         const ok = await trailsManager.update(id, { ...fields, ...trail })
