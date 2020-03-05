@@ -2,7 +2,7 @@
 
 const { GraphQLScalarType } = require('graphql')
 const { Kind } = require('graphql/language')
-const { GraphQLJSON } = require('graphql-type-json')
+const { GraphQLJSON } = require('./graphql-json-type')
 const { DateTime } = require('luxon')
 const { TrailsManager } = require('@nearform/trail-core')
 
