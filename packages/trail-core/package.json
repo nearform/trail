@@ -41,7 +41,7 @@
   "dependencies": {
     "@nearform/sql": "^1.0.1",
     "config": "^3.2.5",
-    "luxon": "^1.2.0",
+    "luxon": "^1.22.0",
     "minimist": "^1.2.0",
     "pg": "^7.4.1",
     "pino": "^5.16.0",

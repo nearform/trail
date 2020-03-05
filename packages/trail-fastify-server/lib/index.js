@@ -18,7 +18,12 @@ module.exports = async function () {
       root: require('swagger-ui-dist').getAbsoluteFSPath()
     })
     server.register(require('./swagger'))
-    server.register(require('@nearform/trail-fastify-plugin'), config)
+    if (config.get('useRESTAPI')) {
+      server.register(require('@nearform/trail-fastify-plugin'), config)
+    }
+    if (config.get('useGraphql')) {
+      server.register(require('@nearform/trail-fastify-graphql-plugin'))
+    }
 
     await addApiRoute(server, 'trails', {
       method: 'GET',

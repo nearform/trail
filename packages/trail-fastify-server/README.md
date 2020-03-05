@@ -22,6 +22,13 @@ npx run trail-fastify-server
 
 This will start a server on `localhost:8080`. Swagger UI documentation is accessible at `http://localhost:8080/documentation`.
 
+## Configuration
+
+The server takes the following configuration options.
+
+* `useRESTAPI`: Flag indicating whether to start with the Trail's REST API. Defaults to `true`.
+* `useGraphql`: Flag indicating whether to start with the graphql query endpoint. Defaults to `true`.
+
 ## License
 
 Copyright nearForm Ltd 2020. Licensed under [MIT][license].
