@@ -20,9 +20,9 @@ const defaultDBPoolSettings = {
 class TrailsManager {
   constructor (opts) {
     const {
-        logger = pino(),
-        db = {},
-        pool = new Pool({ ...defaultDBPoolSettings, ...db })
+      logger = pino(),
+      db = {},
+      pool = new Pool({ ...defaultDBPoolSettings, ...db })
     } = opts
     this.logger = logger
     this.dbPool = pool
