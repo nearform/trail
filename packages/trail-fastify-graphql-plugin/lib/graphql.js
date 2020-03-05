@@ -163,7 +163,7 @@ function makeResolvers (opts) {
   const {
     logger,
     pool,
-    trailsManager = new TrailsManager(logger, pool)
+    trailsManager = new TrailsManager({ logger, pool })
   } = opts
 
   return {

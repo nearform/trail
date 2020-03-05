@@ -69,7 +69,8 @@ function formatValidationErrorResponse (error, context) {
 }
 
 async function trail (server, options) {
-  const trailsManager = new TrailsManager(undefined, options.pool)
+  const { pool } = options
+  const trailsManager = new TrailsManager({ pool })
 
   server.decorate('trailCore', trailsManager)
   server.decorateReply('trailCore', trailsManager)

@@ -54,7 +54,7 @@ const getTrail = async (test, id) => {
 
 describe('GraphQL', () => {
   before(() => {
-    const trailsManager = new TrailsManager()
+    const trailsManager = new TrailsManager({ db: { database: 'trails_test' } })
     const execQuery = makeQueryExecutor({ trailsManager })
     this.subject = { trailsManager, execQuery }
   })
