@@ -17,9 +17,16 @@ const sampleTrail = function () {
   return { id: null, when: date, who: 'who', what: { id: 'what', additional: true }, subject: 'subject' }
 }
 
+const makeTrailsManager = opts => new TrailsManager({
+  db: {
+    database: 'trails_test'
+  },
+  ...opts
+})
+
 describe('TrailsManager', () => {
   before(() => {
-    this.subject = new TrailsManager()
+    this.subject = makeTrailsManager()
   })
 
   after(async () => {
@@ -70,7 +77,7 @@ describe('TrailsManager', () => {
     })
 
     test('should raise an error when db pool is empty', async () => {
-      const badSubject = new TrailsManager('logger', null)
+      const badSubject = makeTrailsManager({ logger: 'logger', pool: null })
 
       await expect(badSubject.performDatabaseOperations(client => client.query('TRUNCATE trails'))).to.reject(Error, 'Cannot read property \'connect\' of null')
     })
@@ -78,7 +85,7 @@ describe('TrailsManager', () => {
 
   describe('.close', () => {
     test('should raise an error when something bad happens', async () => {
-      const badSubject = new TrailsManager(null, null)
+      const badSubject = makeTrailsManager({ logger: null, pool: null })
 
       await expect(badSubject.close()).to.reject(TypeError, "Cannot read property 'end' of null")
     })
@@ -288,7 +295,7 @@ describe('TrailsManager', () => {
     })
 
     test('should raise an error when something bad happens', async () => {
-      const badSubject = new TrailsManager(null, null)
+      const badSubject = makeTrailsManager({ logger: null, pool: null })
 
       await expect(badSubject.insert(sampleTrail())).to.reject(TypeError, "Cannot read property 'connect' of null")
     })
@@ -331,7 +338,7 @@ describe('TrailsManager', () => {
     test('should raise an error when something bad happens', async () => {
       const id = await this.subject.insert(sampleTrail())
 
-      const badSubject = new TrailsManager(null, null)
+      const badSubject = makeTrailsManager({ logger: null, pool: null })
 
       await expect(badSubject.get(id)).to.reject(TypeError, "Cannot read property 'connect' of null")
     })
@@ -370,7 +377,7 @@ describe('TrailsManager', () => {
       const date = DateTime.fromISO('2018-04-11T07:00:00.123-09:00', { setZone: true })
       const id = await this.subject.insert(sampleTrail())
 
-      const badSubject = new TrailsManager(null, null)
+      const badSubject = makeTrailsManager({ logger: null, pool: null })
 
       await expect(badSubject.update(
         id,
@@ -397,7 +404,7 @@ describe('TrailsManager', () => {
     test('should raise an error when something bad happens', async () => {
       const id = await this.subject.insert(sampleTrail())
 
-      const badSubject = new TrailsManager(null, null)
+      const badSubject = makeTrailsManager({ logger: null, pool: null })
 
       expect(badSubject.delete(id))
         .to.reject(TypeError, "Cannot read property 'connect' of null")
