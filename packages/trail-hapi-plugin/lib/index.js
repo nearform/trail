@@ -42,8 +42,12 @@ exports.plugin = {
 
   register: async (server, options) => {
     const whitelistedErrors = [404]
-    const { pool } = options
-    const trailsManager = new TrailsManager({ pool })
+    const {
+      logger,
+      db,
+      pool,
+      trailsManager = new TrailsManager({ logger, db, pool })
+    } = options
 
     server.decorate('server', 'trailCore', trailsManager)
     server.decorate('request', 'trailCore', trailsManager)
