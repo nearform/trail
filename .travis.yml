@@ -9,6 +9,18 @@ sudo: required
 env:
   global:
   - NODE_ENV=travis
+  - TRAIL_DB_HOST=localhost
+  - TRAIL_DB_PORT=5432
+  - TRAIL_DB_NAME=trails_test
+  - TRAIL_DB_USERNAME=postgres
+  - TRAIL_DB_PASSWORD=
+  - TRAIL_DB_POOL_SIZE=10
+  - TRAIL_DB_TIMEOUT=30000
+  - TRAIL_HTTP_HOST=localhost
+  - TRAIL_HTTP_PORT=8080
+  - TRAIL_LOG_LEVEL=warn
+  - TRAIL_DISABLE_REST_API=0
+  - TRAIL_DISABLE_GRAPHQL=0
 
 addons:
   postgresql: "9.6"
