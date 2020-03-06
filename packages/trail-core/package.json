@@ -40,6 +40,7 @@
   },
   "dependencies": {
     "@nearform/sql": "^1.0.1",
+    "dotenv": "^8.2.0",
     "luxon": "^1.22.0",
     "minimist": "^1.2.0",
     "pg": "^7.4.1",
