@@ -24,10 +24,33 @@ This will start a server on `localhost:8080`. Swagger UI documentation is access
 
 ## Configuration
 
-The server takes the following configuration options.
+The server looks for the following environment variables:
 
-* `useRESTAPI`: Flag indicating whether to start with the Trail's REST API. Defaults to `true`.
-* `useGraphql`: Flag indicating whether to start with the graphql query endpoint. Defaults to `true`.
+* `TRAIL_DB_HOST`: The hostname for the trail database.
+* `TRAIL_DB_PORT`: The port number for the trail database.
+* `TRAIL_DB_NAME`: The name of the trail database.
+* `TRAIL_DB_USERNAME`: The username for the trail database.
+* `TRAIL_DB_PASSWORD`: The password for the trail database.
+* `TRAIL_DB_POOL_SIZE`: The size of the trail DB pool.
+* `TRAIL_DB_TIMEOUT`: The trail database idle tieout, in milliseconds.
+* `TRAIL_HTTP_HOST`: The hostname the HTTP server is bound to.
+* `TRAIL_HTTP_PORT`: The port the HTTP server is bound to.
+* `TRAIL_USE_REST_API`: Flag indicating whether to mount the REST API.
+* `TRAIL_USE_GRAPHQL`: Flag indicating whether to mount the graphql endpoint.
+
+The server also takes the following command line options:
+
+* `--dbHost`: The hostname for the trail database.
+* `--dbPort`: The port number for the trail database.
+* `--dbName`: The name of the trail database.
+* `--dbUsername`: The username for the trail database.
+* `--dbPassword`: The password for the trail database.
+* `--dbPoolsize`: The size of the trail DB pool.
+* `--dbTimeout`: The trail database idle tieout, in milliseconds.
+* `--httpHost`: The hostname the HTTP server is bound to.
+* `--httpPort`: The port the HTTP server is bound to.
+* `--useRESTAPI`: Flag indicating whether to start with the Trail's REST API. Defaults to `true`.
+* `--useGraphql`: Flag indicating whether to start with the graphql query endpoint. Defaults to `true`.
 
 ## License
 
