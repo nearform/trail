@@ -23,7 +23,7 @@ exports.loadSettings = options => {
       case 'number':
         return Number(value)
       default:
-        return ''+value
+        return '' + value
     }
   }
 
@@ -35,6 +35,6 @@ exports.loadSettings = options => {
     username: resolve('dbUsername', 'TRAIL_DB_USERNAME', 'postgres'),
     password: resolve('dbPassword', 'TRAIL_DB_PASSWORD', 'postgres')
   }
-console.log(settings)
+  console.log(settings)
   return settings
 }
