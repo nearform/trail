@@ -45,8 +45,8 @@ exports.loadSettings = options => {
       level: resolve('logLevel', 'TRAIL_LOG_LEVEL', 'warn')
     },
     use: {
-      restAPI: resolve('useRESTAPI', 'TRAIL_USE_REST_API', true),
-      graphQL: resolve('useGraphQL', 'TRAIL_USE_GRAPHQL', true)
+      restAPI: !resolve('noRESTAPI', 'TRAIL_DISABLE_REST_API', false),
+      graphQL: !resolve('noGraphQL', 'TRAIL_DISABLE_GRAPHQL', false)
     }
   }
 
