@@ -39,10 +39,10 @@ For more information on the REST API, you can check the generated OpenAPI / Swag
 
 The plugin takes the following configuration options:
 
-*  `logger`: A logger to be passed to the trails manager.
-*  `db`: Database settings for the trails manager.
-*  `pool`: A pre-configured database pool to be used by the trails manager; used in preference to any specified database settings.
-*  `trailsManager`: A pre-configured trails manager instance; used in preference to any of the previous settings.
+*   `logger`: A logger to be passed to the trails manager.
+*   `db`: Database settings for the trails manager.
+*   `pool`: A pre-configured database pool to be used by the trails manager; used in preference to any specified database settings.
+*   `trailsManager`: A pre-configured trails manager instance; used in preference to any of the previous settings.
 
 ## License
 
