@@ -3,12 +3,12 @@
 'use strict'
 
 const { Client } = require('pg')
-const config = require('./config')
+const { loadSettings } = require('./settings')
 
 // Gather arguments
 
 async function run () {
-  const { host, port, database, username: user, password, idleTimeoutMillis } = config()
+  const { host, port, database, username: user, password, idleTimeoutMillis } = loadSettings()
   const client = new Client({ host, port, database: 'postgres', user, password, idleTimeoutMillis })
 
   await client.connect()

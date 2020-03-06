@@ -35,6 +35,6 @@ exports.loadSettings = options => {
     username: resolve('dbUsername', 'TRAIL_DB_USERNAME', 'postgres'),
     password: resolve('dbPassword', 'TRAIL_DB_PASSWORD', 'postgres')
   }
-  console.log(settings)
+
   return settings
 }
