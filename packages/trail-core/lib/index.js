@@ -22,7 +22,6 @@ class TrailsManager {
     const {
       logger = pino(),
       db = {},
-        xxx = { ...defaultDBPoolSettings, ...db },
       pool = new Pool({ ...defaultDBPoolSettings, ...db })
     } = opts
     this.logger = logger
