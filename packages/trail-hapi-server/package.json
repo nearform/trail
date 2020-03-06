@@ -46,8 +46,9 @@
     "@hapi/joi": "^17.1.0",
     "@nearform/trail-core": "^3.0.0",
     "@nearform/trail-hapi-plugin": "^3.0.0",
-    "config": "^3.2.5",
+    "dotenv": "^8.2.0",
     "hapi-pino": "^6.5.0",
+    "minimist": "^1.2.0",
     "swagger-ui-dist": "^3.13.6"
   },
   "devDependencies": {

@@ -1,17 +1,21 @@
 'use strict'
 
 const Joi = require('@hapi/joi')
-const config = require('config')
 const { errorsSchemas } = require('@nearform/trail-hapi-plugin/lib/schemas/errors')
 const { addApiRoute } = require('@nearform/trail-hapi-plugin/lib/api')
 
-module.exports = async function () {
+const { loadSettings } = require('./settings')
+
+module.exports = async function (options) {
+  const settings = loadSettings(options)
+
   // If forked as child, send output message via ipc to parent, otherwise output to console
   const logMessage = process.send ? process.send : console.log
 
+  const { host, port } = settings.http
   const server = require('@hapi/hapi').Server({
-    host: config.get('hapi.host'),
-    port: parseInt(config.get('hapi.port'), 0),
+    host,
+    port,
     routes: {
       files: {
         relativeTo: require('swagger-ui-dist').getAbsoluteFSPath()
@@ -26,7 +30,7 @@ module.exports = async function () {
     await server.register([
       {
         plugin: require('hapi-pino'),
-        options: config.get('logger.pino')
+        options: settings.logger
       },
       {
         plugin: require('./swagger')
@@ -36,7 +40,7 @@ module.exports = async function () {
       },
       {
         plugin: require('@nearform/trail-hapi-plugin'),
-        options: { config }
+        options: { db: settings.db }
       }
     ])
 
