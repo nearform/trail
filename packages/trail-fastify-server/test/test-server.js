@@ -1,7 +1,7 @@
 const serverFactory = require('../lib/index')
 
 const options = {
-    dbName: 'trails_test'
+  dbName: 'trails_test'
 }
 
 module.exports = (function () {
@@ -9,7 +9,6 @@ module.exports = (function () {
   const servers = []
 
   const build = async function (additionalConfig) {
-      console.error('BUILD')
     const server = await serverFactory({ ...options, ...additionalConfig })
     servers.push(server)
     return server

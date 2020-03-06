@@ -22,10 +22,10 @@ module.exports = async function (options) {
     })
     server.register(require('./swagger'))
     if (settings.use.restAPI) {
-      server.register(require('@nearform/trail-fastify-plugin'))
+      server.register(require('@nearform/trail-fastify-plugin'), { db: settings.db })
     }
     if (settings.use.graphQL) {
-      server.register(require('@nearform/trail-fastify-graphql-plugin'))
+      server.register(require('@nearform/trail-fastify-graphql-plugin'), { db: settings.db })
     }
 
     await addApiRoute(server, 'trails', {
