@@ -12,11 +12,15 @@ async function graphql (server, options) {
     graphiql,
     path,
     prefix,
-    // Allow a trails manager instance to be provided.
+    // Trails manager db + logger settings.
+    logger,
+    db,
+    pool,
+    // A pre-configured trails manager instance.
     trailsManager
   } = options
   // Compile the schema.
-  const resolvers = makeResolvers({ trailsManager })
+  const resolvers = makeResolvers({ logger, db, pool, trailsManager })
   const schema = makeExecutableSchema({ typeDefs, resolvers })
   // Register the gql plugin.
   server.register(gql, { schema, graphiql, path, prefix })

@@ -30,6 +30,15 @@ main().catch(console.error)
 
 Graphql queries can then be submitted to the `/graphql` path as either GET or POST requests. If using a GET request then specify the query to be executed in a request parameter named `query`. If using a POST request then the query can be specified in the request body as either JSON or graphql. See the [fastify-gql][fastify-gql] module for details.
 
+## Configuration
+
+The plugin takes the following configuration options:
+
+* `logger`: A logger to be passed to the trails manager.
+* `db`: Database settings for the trails manager.
+* `pool`: A pre-configured database pool to be used by the trails manager; used in preference to any specified database settings.
+* `trailsManager`: A pre-configured trails manager instance; used in preference to any of the previous settings.
+
 ## Graphql schema
 
 ### Queries
