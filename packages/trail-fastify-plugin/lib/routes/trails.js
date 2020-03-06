@@ -24,7 +24,7 @@ module.exports = async function (fastify, options) {
 
           ]
         }
-        return reply.send(spec)
+        return reply.send(doc)
       }
     })
   }
