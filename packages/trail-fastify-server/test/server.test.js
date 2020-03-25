@@ -22,7 +22,6 @@ describe('Server', () => {
   })
 
   after(async () => {
-    // await testServer.stopAll()
     stubs.map(c => c.restore())
   })
 
