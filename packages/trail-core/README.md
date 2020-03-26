@@ -12,15 +12,32 @@ To install via npm:
 npm install @nearform/trail-core
 ```
 
+Trail requires an instance of Postgres (version 9.5+) to function correctly. For simplicity, a preconfigured `docker-compose` file has been provided:
+
+```
+docker-compose up
+```
+
+The initial tables can be created by executing:
+
+```
+npx trail-database-init --dbName=trails_test
+```
+
 ## Usage
 
 ```javascript
-const {TrailsManager} = require('@nearform/trail')
+const { TrailsManager } = require('@nearform/trail')
 
 const main = async function() {
   const manager = new TrailsManager()
 
-  const id = await manager.insert({when: '2018-05-01T12:00:00.123', who: 'user:1', what: 'open', subject: 'page:1'})
+  const id = await manager.insert({
+    when: '2018-05-01T12:00:00.123',
+    who: 'user:1',
+    what: 'open',
+    subject: 'page:1',
+  })
   const trail = await manager.get(id)
   console.log(trail.who)
 
@@ -117,6 +134,37 @@ The `page` and `pageSize` attributes can be used to control pagination. They mus
 The `desc` can be set to `true` to sort results by descending order.
 
 Returns an array of found id (depending on the `type` attribute), ordered alphabetically.
+
+## CLI
+
+### `trail-database-init`
+
+Command used to create initial tables required by Trail.
+
+```
+npx trail-database-init
+```
+
+* `--dbHost` (default: 'localhost') - Postgres hostname (or use `TRAIL_DB_HOST` env variable)
+* `--dbPort` (default: 5432) - Postgres port (or use `TRAIL_DB_PORT` env variable)
+* `--dbUsername` (default: 'postgres') - Postgres username (or use `TRAIL_DB_USERNAME` env variable)
+* `--dbPassword` (default: 'postgres') - Postgres password (or use `TRAIL_DB_PASSWORD` env variable)
+* `--dbName` (default: 'trails') - Trail database name (or use `TRAIL_DB_NAME` env variable)
+
+### `trail-database-migrate`
+
+Command used to run any database migrations manually.
+
+```
+npx trail-database-migrate --version=<version>
+```
+
+* `--version` - Migration version (or use `TRAIL_MIGRATE_VERSION` env variable)
+* `--dbHost` (default: 'localhost') - Postgres hostname (or use `TRAIL_DB_HOST` env variable)
+* `--dbPort` (default: 5432) - Postgres port (or use `TRAIL_DB_PORT` env variable)
+* `--dbUsername` (default: 'postgres') - Postgres username (or use `TRAIL_DB_USERNAME` env variable)
+* `--dbPassword` (default: 'postgres') - Postgres password (or use `TRAIL_DB_PASSWORD` env variable)
+* `--dbName` (default: 'trails') - Trail database name (or use `TRAIL_DB_NAME` env variable)
 
 ## License
 

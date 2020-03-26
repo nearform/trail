@@ -2,7 +2,7 @@
 
 [![travis][travis-badge]][travis-url]
 
-Trail is a audit trail log service. It supports logging all kind of actions with a flexible model scheme.
+Trail is an audit trail log service. It supports logging all kind of actions with a flexible model scheme.
 
 For information about the model scheme, see the [trail-core package README][trail-core-readme].
 This repository is home to Trail's three main modules:

@@ -35,9 +35,6 @@
     "test": "lerna run test",
     "clean": "lerna clean"
   },
-  "bin": {
-    "migrate": "./packages/trail-core/database/migrate.js"
-  },
   "devDependencies": {
     "@hapi/lab": "^22.0.3",
     "code": "^5.2.0",

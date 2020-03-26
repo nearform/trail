@@ -29,6 +29,10 @@
     "access": "public"
   },
   "main": "lib/index.js",
+  "bin": {
+    "trail-database-init": "./database/init.js",
+    "trail-database-migrate": "./database/migrate.js"
+  },
   "scripts": {
     "coverage": "lab -c test",
     "depcheck": "npx depcheck --ignores=config",
