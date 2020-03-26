@@ -41,7 +41,6 @@
     "@hapi/hapi": "^19.1.0",
     "@hapi/joi": "^17.1.0",
     "@nearform/trail-core": "^3.0.0",
-    "config": "^3.2.5",
     "joi-to-swagger": "^4.0.0",
     "lodash": "^4.17.15",
     "luxon": "^1.2.0"

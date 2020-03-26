@@ -30,6 +30,20 @@ const main = async function() {
 main().catch(console.error)
 ```
 
+## Configuration options
+
+The following configuration options can be passed to the `TrailsManager` constructor:
+
+*   `logger`: A logger (e.g. pino instance).
+*   `db`: Database pool configuration settings. Can include any of the following:
+    *   `host`: The database host; defaults to `localhost`.
+    *   `port`: The database port; defaults to `5432`.
+    *   `database`: The database name; defaults to `trails`.
+    *   `user`: The database username; defaults to `postgres`.
+    *   `password`: The database password; defaults to `postgres`.
+    *   `max`: The maximum pool size; defaults to `10`.
+    *   `idleTimeoutMillis`: The timeout period; defaults to `30000`.
+
 ## The trail object
 
 The trail object is a plain object with the following attributes:

@@ -1,11 +1,8 @@
 'use strict'
 
-const config = require('config')
 const S = require('fluent-schema')
 
 const { errorsSchemas } = require('./errors')
-const host = config.get('fastify.host')
-const port = config.get('fastify.port')
 
 const namedObject = function (name) {
   return S.object()
@@ -141,12 +138,6 @@ const spec = {
     },
     version: require('../../package').version
   },
-  servers: [
-    {
-      url: `http://${[host, port].join(':')}/`,
-      description: 'Current API server'
-    }
-  ],
   tags: [
     {
       name: 'trails',

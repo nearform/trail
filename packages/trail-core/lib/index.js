@@ -7,27 +7,25 @@ const { Pool } = require('pg')
 const defaultPageSize = 25
 const { parseDate, convertToTrail } = require('./trail')
 
+const defaultDBPoolSettings = {
+  host: 'localhost',
+  port: 5432,
+  database: 'trails',
+  user: 'postgres',
+  password: 'postgres',
+  max: 10,
+  idleTimeoutMillis: 30000
+}
+
 class TrailsManager {
-  constructor (logger, pool) {
-    this.logger = logger || pino()
-
-    if (typeof pool === 'undefined') {
-      const config = require('config')
-
-      this.dbConnectionInfo = {
-        host: config.get('db.host'),
-        port: config.get('db.port'),
-        database: config.get('db.database'),
-        user: config.get('db.username'),
-        password: config.get('db.password'),
-        max: config.get('db.poolSize'),
-        idleTimeoutMillis: config.get('db.idleTimeoutMillis')
-      }
-
-      this.dbPool = new Pool(this.dbConnectionInfo)
-    } else {
-      this.dbPool = pool
-    }
+  constructor (opts) {
+    const {
+      logger = pino(),
+      db = {},
+      pool = new Pool({ ...defaultDBPoolSettings, ...db })
+    } = opts
+    this.logger = logger
+    this.dbPool = pool
   }
 
   async close () {

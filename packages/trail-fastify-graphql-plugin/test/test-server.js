@@ -12,7 +12,7 @@ module.exports = (function () {
   const build = async function (opts = {}) {
     const server = fastify({ logger: false })
     try {
-      const trailsManager = new TrailsManager()
+      const trailsManager = new TrailsManager({ db: { database: 'trails_test' } })
       await server.register(require('../lib'), { trailsManager, ...opts })
       server.decorate('trailCore', trailsManager)
       await server.listen(port++, '127.0.0.1')

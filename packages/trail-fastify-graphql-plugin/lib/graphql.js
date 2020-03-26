@@ -162,8 +162,9 @@ const typeDefs = `
 function makeResolvers (opts) {
   const {
     logger,
+    db,
     pool,
-    trailsManager = new TrailsManager(logger, pool)
+    trailsManager = new TrailsManager({ logger, db, pool })
   } = opts
 
   return {

@@ -16,7 +16,17 @@ module.exports = {
         method: 'GET',
         path,
         handler (request, h) {
-          return spec
+          const { info: { host, port } } = server
+          const doc = {
+            ...spec,
+            servers: [
+              {
+                url: `http://${[host, port].join(':')}/`,
+                description: 'Current API server'
+              }
+            ]
+          }
+          return doc
         }
       })
     }

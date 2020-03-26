@@ -1,12 +1,9 @@
 'use strict'
 
-const config = require('config')
 const Joi = require('@hapi/joi')
 const j2s = require('joi-to-swagger')
 
 const { errorsSchemas } = require('./errors')
-const host = config.get('hapi.host')
-const port = config.get('hapi.port')
 
 const namedObject = function (name) {
   return Joi.object()
@@ -182,12 +179,6 @@ const spec = {
     },
     version: require('../../package').version
   },
-  servers: [
-    {
-      url: `http://${[host, port].join(':')}/`,
-      description: 'Current API server'
-    }
-  ],
   tags: [
     {
       name: 'trails',

@@ -13,7 +13,18 @@ module.exports = async function (fastify, options) {
       method: 'GET',
       path,
       handler (request, reply) {
-        return reply.send(spec)
+        const { address, port } = fastify.server.address()
+        const doc = {
+          ...spec,
+          servers: [
+            {
+              url: `http://${[address, port].join(':')}/`,
+              description: 'Current API server'
+            }
+
+          ]
+        }
+        return reply.send(doc)
       }
     })
   }

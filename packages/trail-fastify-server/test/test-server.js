@@ -1,11 +1,15 @@
 const serverFactory = require('../lib/index')
 
+const options = {
+  dbName: 'trails_test'
+}
+
 module.exports = (function () {
   let defaultServer = null
   const servers = []
 
   const build = async function (additionalConfig) {
-    const server = await serverFactory()
+    const server = await serverFactory({ ...options, ...additionalConfig })
     servers.push(server)
     return server
   }

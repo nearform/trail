@@ -2,12 +2,12 @@
 
 'use strict'
 
-const config = require('./config')
+const { loadSettings } = require('./settings')
 const Postgrator = require('postgrator')
 const path = require('path')
 
 async function run () {
-  const { version, host, port, database, username, password } = config()
+  const { version, host, port, database, username, password } = loadSettings()
   const migrationDirectory = path.join(__dirname, '/migrations')
   if (!version) throw new Error('Please provide the version to migrate to')
 

@@ -2,11 +2,14 @@
 
 const S = require('fluent-schema')
 const fastify = require('fastify')
-const config = require('config')
 const { errorsSchemas } = require('@nearform/trail-fastify-plugin/lib/schemas/errors')
 const { addApiRoute } = require('@nearform/trail-fastify-plugin/lib/api')
 
-module.exports = async function () {
+const { loadSettings } = require('./settings')
+
+module.exports = async function (options) {
+  const settings = loadSettings(options)
+
   // If forked as child, send output message via ipc to parent, otherwise output to console
   const logMessage = process.send ? process.send : console.log
 
@@ -18,11 +21,11 @@ module.exports = async function () {
       root: require('swagger-ui-dist').getAbsoluteFSPath()
     })
     server.register(require('./swagger'))
-    if (config.get('useRESTAPI')) {
-      server.register(require('@nearform/trail-fastify-plugin'), config)
+    if (settings.use.restAPI) {
+      server.register(require('@nearform/trail-fastify-plugin'), { db: settings.db })
     }
-    if (config.get('useGraphql')) {
-      server.register(require('@nearform/trail-fastify-graphql-plugin'))
+    if (settings.use.graphQL) {
+      server.register(require('@nearform/trail-fastify-graphql-plugin'), { db: settings.db })
     }
 
     await addApiRoute(server, 'trails', {
@@ -50,8 +53,7 @@ module.exports = async function () {
       }
     })
 
-    const host = config.get('fastify.host')
-    const port = parseInt(config.get('fastify.port'), 0)
+    const { host, port } = settings.http
     const addr = await server.listen(port, host)
 
     logMessage(`Server running at: ${addr}`)
