@@ -8,21 +8,15 @@ trail-core is the core package. It is responsible for manipulating audit trails 
 
 To install via npm:
 
-```
-npm install @nearform/trail-core
-```
+    npm install @nearform/trail-core
 
 Trail requires an instance of Postgres (version 9.5+) to function correctly. For simplicity, a preconfigured `docker-compose` file has been provided:
 
-```
-docker-compose up
-```
+    docker-compose up
 
 The initial tables can be created by executing:
 
-```
-npx trail-database-init --dbName=trails_test
-```
+    npx trail-database-init --dbName=trails_test
 
 ## Usage
 
@@ -51,27 +45,27 @@ main().catch(console.error)
 
 The following configuration options can be passed to the `TrailsManager` constructor:
 
-*   `logger`: A logger (e.g. pino instance).
-*   `db`: Database pool configuration settings. Can include any of the following:
-    *   `host`: The database host; defaults to `localhost`.
-    *   `port`: The database port; defaults to `5432`.
-    *   `database`: The database name; defaults to `trails`.
-    *   `user`: The database username; defaults to `postgres`.
-    *   `password`: The database password; defaults to `postgres`.
-    *   `max`: The maximum pool size; defaults to `10`.
-    *   `idleTimeoutMillis`: The timeout period; defaults to `30000`.
+-   `logger`: A logger (e.g. pino instance).
+-   `db`: Database pool configuration settings. Can include any of the following:
+    -   `host`: The database host; defaults to `localhost`.
+    -   `port`: The database port; defaults to `5432`.
+    -   `database`: The database name; defaults to `trails`.
+    -   `user`: The database username; defaults to `postgres`.
+    -   `password`: The database password; defaults to `postgres`.
+    -   `max`: The maximum pool size; defaults to `10`.
+    -   `idleTimeoutMillis`: The timeout period; defaults to `30000`.
 
 ## The trail object
 
 The trail object is a plain object with the following attributes:
 
-*   `when`: **MANDATORY** - A timestamp. When writing, it can be a Javascript date, a string in the [RFC3339][rfc3339] (basically ISO8601) format or a [luxon][luxon] DateTime. In all case, the timestamp is converted to UTC timezone. When reading, a UTC luxon DateTime will be returned.
-*   `who`: **MANDATORY** - The actor who performed the action. See below for the description of its type.
-*   `what`: **MANDATORY** - The action that was performed. See below for the description of its type.
-*   `subject`: **MANDATORY** - The subject the action was performed on. See below for the description of its type.
-*   `where`: A optional object describing the location where the action was performed.
-*   `why`: A optional object describing the reason why the action was performed.
-*   `meta`: Additional metadata for this trail.
+-   `when`: **MANDATORY** - A timestamp. When writing, it can be a Javascript date, a string in the [RFC3339][rfc3339] (basically ISO8601) format or a [luxon][luxon] DateTime. In all case, the timestamp is converted to UTC timezone. When reading, a UTC luxon DateTime will be returned.
+-   `who`: **MANDATORY** - The actor who performed the action. See below for the description of its type.
+-   `what`: **MANDATORY** - The action that was performed. See below for the description of its type.
+-   `subject`: **MANDATORY** - The subject the action was performed on. See below for the description of its type.
+-   `where`: A optional object describing the location where the action was performed.
+-   `why`: A optional object describing the reason why the action was performed.
+-   `meta`: Additional metadata for this trail.
 
 The `who`, `what` and `subject` attributes are objects containing at least the `id` string attribute. When creating or updating a record, you can specify just a string.
 It will be automatically converted to a object containing only the `id` attribute.
@@ -141,37 +135,37 @@ Returns an array of found id (depending on the `type` attribute), ordered alphab
 
 Command used to create initial tables required by Trail.
 
-```
-npx trail-database-init
-```
+    npx trail-database-init
 
-* `--dbHost` (default: 'localhost') - Postgres hostname (or use `TRAIL_DB_HOST` env variable)
-* `--dbPort` (default: 5432) - Postgres port (or use `TRAIL_DB_PORT` env variable)
-* `--dbUsername` (default: 'postgres') - Postgres username (or use `TRAIL_DB_USERNAME` env variable)
-* `--dbPassword` (default: 'postgres') - Postgres password (or use `TRAIL_DB_PASSWORD` env variable)
-* `--dbName` (default: 'trails') - Trail database name (or use `TRAIL_DB_NAME` env variable)
+-   `--dbHost` (default: 'localhost') - Postgres hostname (or use `TRAIL_DB_HOST` env variable)
+-   `--dbPort` (default: 5432) - Postgres port (or use `TRAIL_DB_PORT` env variable)
+-   `--dbUsername` (default: 'postgres') - Postgres username (or use `TRAIL_DB_USERNAME` env variable)
+-   `--dbPassword` (default: 'postgres') - Postgres password (or use `TRAIL_DB_PASSWORD` env variable)
+-   `--dbName` (default: 'trails') - Trail database name (or use `TRAIL_DB_NAME` env variable)
 
 ### `trail-database-migrate`
 
 Command used to run any database migrations manually.
 
-```
-npx trail-database-migrate --version=<version>
-```
+    npx trail-database-migrate --version=<version>
 
-* `--version` - Migration version (or use `TRAIL_MIGRATE_VERSION` env variable)
-* `--dbHost` (default: 'localhost') - Postgres hostname (or use `TRAIL_DB_HOST` env variable)
-* `--dbPort` (default: 5432) - Postgres port (or use `TRAIL_DB_PORT` env variable)
-* `--dbUsername` (default: 'postgres') - Postgres username (or use `TRAIL_DB_USERNAME` env variable)
-* `--dbPassword` (default: 'postgres') - Postgres password (or use `TRAIL_DB_PASSWORD` env variable)
-* `--dbName` (default: 'trails') - Trail database name (or use `TRAIL_DB_NAME` env variable)
+-   `--version` - Migration version (or use `TRAIL_MIGRATE_VERSION` env variable)
+-   `--dbHost` (default: 'localhost') - Postgres hostname (or use `TRAIL_DB_HOST` env variable)
+-   `--dbPort` (default: 5432) - Postgres port (or use `TRAIL_DB_PORT` env variable)
+-   `--dbUsername` (default: 'postgres') - Postgres username (or use `TRAIL_DB_USERNAME` env variable)
+-   `--dbPassword` (default: 'postgres') - Postgres password (or use `TRAIL_DB_PASSWORD` env variable)
+-   `--dbName` (default: 'trails') - Trail database name (or use `TRAIL_DB_NAME` env variable)
 
 ## License
 
 Copyright nearForm Ltd 2018. Licensed under [MIT][license].
 
 [npm-url]: https://npmjs.org/package/@nearform/trail-core
+
 [npm-badge]: https://img.shields.io/npm/v/@nearform/trail-core.svg
+
 [luxon]: https://moment.github.io/luxon/
+
 [rfc3339]: https://tools.ietf.org/html/rfc3339
+
 [license]: ./LICENSE.md
