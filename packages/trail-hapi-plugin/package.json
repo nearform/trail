@@ -46,7 +46,7 @@
     "luxon": "^1.2.0"
   },
   "devDependencies": {
-    "@hapi/lab": "^22.0.3",
+    "@hapi/lab": "^22.0.4",
     "code": "^5.2.0",
     "sinon": "^8.1.1"
   }
