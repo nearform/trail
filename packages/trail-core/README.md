@@ -12,7 +12,7 @@ To install via npm:
 
 Trail requires an instance of Postgres (version 9.5+) to function correctly. For simplicity, a preconfigured `docker-compose` file has been provided:
 
-    docker-compose up
+    docker-compose --file node_modules/@nearform/trail-core/docker-compose.yml up
 
 The initial tables can be created by executing:
 
