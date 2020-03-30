@@ -111,6 +111,18 @@ To create coverage reports:
 npm run coverage
 ```
 
+## Publishing
+
+This repository contains multiple independently versioned packages and is managed by [Lerna](https://github.com/lerna/lerna).
+
+In order to publish packages that have changed since the last release use the following command:
+
+```
+lerna publish
+```
+
+Lerna will then prompt you to specify the desired version number for each package, update the `package.json` files for you and publish the packages to npm.
+
 ## License
 
 Copyright nearForm Ltd 2018. Licensed under [MIT][license].
