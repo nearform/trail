@@ -1,6 +1,6 @@
 {
   "name": "@nearform/trail-fastify-server",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Server running Fastify plugin for the audit trail logging service",
   "license": "MIT",
   "author": "nearForm Ltd",
@@ -41,8 +41,8 @@
     "test": "lab test --globals __extends,__assign,__rest,__decorate,__param,__metadata,__awaiter,__generator,__exportStar,__values,__read,__spread,__spreadArrays,__await,__asyncGenerator,__asyncDelegator,__asyncValues,__makeTemplateObject,__importStar,__importDefault,__classPrivateFieldGet,__classPrivateFieldSet"
   },
   "dependencies": {
-    "@nearform/trail-fastify-graphql-plugin": "^3.0.0",
-    "@nearform/trail-fastify-plugin": "^3.0.0",
+    "@nearform/trail-fastify-graphql-plugin": "^4.0.0",
+    "@nearform/trail-fastify-plugin": "^4.0.0",
     "dotenv": "^8.2.0",
     "fastify": "^2.12.0",
     "fastify-static": "^2.6.0",
