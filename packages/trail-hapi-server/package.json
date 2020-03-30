@@ -48,11 +48,11 @@
     "@nearform/trail-hapi-plugin": "^3.0.0",
     "dotenv": "^8.2.0",
     "hapi-pino": "^6.5.0",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.5",
     "swagger-ui-dist": "^3.13.6"
   },
   "devDependencies": {
-    "@hapi/lab": "^22.0.3",
+    "@hapi/lab": "^22.0.4",
     "code": "^5.2.0",
     "sinon": "^8.1.1"
   }

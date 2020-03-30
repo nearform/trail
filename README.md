@@ -2,7 +2,7 @@
 
 [![travis][travis-badge]][travis-url]
 
-Trail is a audit trail log service. It supports logging all kind of actions with a flexible model scheme.
+Trail is an audit trail log service. It supports logging all kind of actions with a flexible model scheme.
 
 For information about the model scheme, see the [trail-core package README][trail-core-readme].
 This repository is home to Trail's three main modules:
@@ -110,6 +110,18 @@ To create coverage reports:
 ```
 npm run coverage
 ```
+
+## Publishing
+
+This repository contains multiple independently versioned packages and is managed by [Lerna](https://github.com/lerna/lerna).
+
+In order to publish packages that have changed since the last release use the following command:
+
+```
+lerna publish
+```
+
+Lerna will then prompt you to specify the desired version number for each package, update the `package.json` files for you and publish the packages to npm.
 
 ## License
 
