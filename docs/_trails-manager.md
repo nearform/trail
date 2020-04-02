@@ -1,24 +1,3 @@
-# @nearform/trail-core
-
-[![npm][npm-badge]][npm-url]
-
-trail-core is the core package. It is responsible for manipulating audit trails entries.
-
-## Install
-
-To install via npm:
-
-    npm install @nearform/trail-core
-
-Trail requires an instance of Postgres (version 9.5+) to function correctly. For simplicity, a preconfigured `docker-compose` file has been provided:
-
-    docker-compose --file node_modules/@nearform/trail-core/docker-compose.yml up
-
-The initial tables can be created by executing:
-
-    npx trail-database-init --dbName=trails_test
-    npx trail-database-migrate --dbName=trails_test
-
 ## Usage
 
 ```javascript
@@ -129,44 +108,3 @@ The `page` and `pageSize` attributes can be used to control pagination. They mus
 The `desc` can be set to `true` to sort results by descending order.
 
 Returns an array of found id (depending on the `type` attribute), ordered alphabetically.
-
-## CLI
-
-### `trail-database-init`
-
-Command used to create initial tables required by Trail.
-
-    npx trail-database-init
-
--   `--dbHost` (default: 'localhost') - Postgres hostname (or use `TRAIL_DB_HOST` env variable)
--   `--dbPort` (default: 5432) - Postgres port (or use `TRAIL_DB_PORT` env variable)
--   `--dbUsername` (default: 'postgres') - Postgres username (or use `TRAIL_DB_USERNAME` env variable)
--   `--dbPassword` (default: 'postgres') - Postgres password (or use `TRAIL_DB_PASSWORD` env variable)
--   `--dbName` (default: 'trails') - Trail database name (or use `TRAIL_DB_NAME` env variable)
-
-### `trail-database-migrate`
-
-Command used to run any database migrations manually.
-
-    npx trail-database-migrate --version=<version>
-
--   `--version` - Migration version (or use `TRAIL_MIGRATE_VERSION` env variable)
--   `--dbHost` (default: 'localhost') - Postgres hostname (or use `TRAIL_DB_HOST` env variable)
--   `--dbPort` (default: 5432) - Postgres port (or use `TRAIL_DB_PORT` env variable)
--   `--dbUsername` (default: 'postgres') - Postgres username (or use `TRAIL_DB_USERNAME` env variable)
--   `--dbPassword` (default: 'postgres') - Postgres password (or use `TRAIL_DB_PASSWORD` env variable)
--   `--dbName` (default: 'trails') - Trail database name (or use `TRAIL_DB_NAME` env variable)
-
-## License
-
-Copyright nearForm Ltd 2018. Licensed under [MIT][license].
-
-[npm-url]: https://npmjs.org/package/@nearform/trail-core
-
-[npm-badge]: https://img.shields.io/npm/v/@nearform/trail-core.svg
-
-[luxon]: https://moment.github.io/luxon/
-
-[rfc3339]: https://tools.ietf.org/html/rfc3339
-
-[license]: ./LICENSE.md

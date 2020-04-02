@@ -20,7 +20,7 @@ npm install @nearform/trail-hapi-server
 npx run trail-hapi-server
 ```
 
-This will start a server on `localhost:8080`. Swagger UI documentation is accessible at `http://localhost:8080/documentation`.
+This will start a server on `localhost:8080`. Swagger UI documentation is accessible at `http://localhost:8080/documentation/`.
 
 ## Configuration
 

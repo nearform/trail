@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 'use strict'
 
 // If forked as child, send output message via ipc to parent, otherwise output to console

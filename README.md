@@ -60,7 +60,7 @@ The Swagger API documentation can be accessed from trail itself. Simply start th
 npm run start
 ```
 
-and then go to [`http://localhost:8080/documentation`][swagger-link]
+and then go to [`http://localhost:8080/documentation/`][swagger-link]
 
 The Swagger documentation also gives the ability to execute calls to the API and see their results.
 
@@ -136,5 +136,5 @@ Copyright nearForm Ltd 2018. Licensed under [MIT][license].
 [node]: https://nodejs.org/it/
 [hapi]: https://hapijs.com/
 [postgrator]: https://github.com/rickbergfalk/postgrator
-[swagger-link]: http://localhost:8080/documentation
+[swagger-link]: http://localhost:8080/documentation/
 [license]: ./LICENSE.md
