@@ -1,14 +1,14 @@
 #### Queries
 
-*   `trail(id: Int!)` — Fetch a trail record by ID.
-*   `trails(from: Date!, to: Date!, ...)` — Search for trail records within a specified date range, and optionally filter by additional values.
-*   `enumerateTrails(from: Date!, to: Date!, type: TrailType!, ...)` — Return an enumeration of trails of the specified type, within the specified date range.
+-   `trail(id: Int!)` — Fetch a trail record by ID.
+-   `trails(from: Date!, to: Date!, ...)` — Search for trail records within a specified date range, and optionally filter by additional values.
+-   `enumerateTrails(from: Date!, to: Date!, type: TrailType!, ...)` — Return an enumeration of trails of the specified type, within the specified date range.
 
 #### Mutations
 
-*   `insertTrail(when: Date!, who: StringWithAttrs!, what: StringWithAttrs!, subject: StringWithAttrs!, where: JSON, why: JSON, meta: JSON)` — Insert a new trail record.
-*   `updateTrail(id: Int!, when: Date!, who: StringWithAttrs!, what: StringWithAttrs!, subject: StringWithAttrs!, where: JSON, why: JSON, meta: JSON)` — Update a trail record.
-*   `deleteTrail(id: Int!)` — Delete a trail record.
+-   `insertTrail(when: Date!, who: StringWithAttrs!, what: StringWithAttrs!, subject: StringWithAttrs!, where: JSON, why: JSON, meta: JSON)` — Insert a new trail record.
+-   `updateTrail(id: Int!, when: Date!, who: StringWithAttrs!, what: StringWithAttrs!, subject: StringWithAttrs!, where: JSON, why: JSON, meta: JSON)` — Update a trail record.
+-   `deleteTrail(id: Int!)` — Delete a trail record.
 
 ##### String values
 
@@ -16,8 +16,8 @@ Some trail record fields support attributed string values (indicated by the `Str
 
 When writing fields of this type, the value can be specified either as an object with an `id` property (specifying the string value) and additional properties which specify the string's attributes; or as a simple string value when no additional attributes are needed:
 
-*   String with attributes: `{ id: "the string", attr0: "this", attr1: 1 }`
-*   String with no attributes: `"the string"` - equivalent to `{ id: "the string" }`
+-   String with attributes: `{ id: "the string", attr0: "this", attr1: 1 }`
+-   String with no attributes: `"the string"` - equivalent to `{ id: "the string" }`
 
 #### Usage
 

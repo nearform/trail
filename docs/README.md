@@ -4,40 +4,34 @@ Trail is a modular and flexible **audit trail log service**.
 
 ## Features
 
-* Run as stand-alone server or extend existing service
-* **Postgres** backend with **flexible schema**
-* **REST** and **GraphQL** interfaces
-* Support for **Fastify** and **Hapi** frameworks
+-   Run as stand-alone server or extend existing service
+-   **Postgres** backend with **flexible schema**
+-   **REST** and **GraphQL** interfaces
+-   Support for **Fastify** and **Hapi** frameworks
 
 ## Requirements
 
-* Node.js 12.0.0+
-* Postgres 9.5+
-* The Hapi plugin and server packages require Hapi 19+
+-   Node.js 12.0.0+
+-   Postgres 9.5+
+-   The Hapi plugin and server packages require Hapi 19+
 
 ## Quick start
 
-1. Install Trail server (Fastify or Hapi) via npm:
+1.  Install Trail server (Fastify or Hapi) via npm:
 
-    ```
-    npm install @nearform/trail-fastify-server
-    ```
+        npm install @nearform/trail-fastify-server
 
-2. Start Postgres and create database with required tables:
+2.  Start Postgres and create database with required tables:
 
-    ```
-    docker-compose --file node_modules/@nearform/trail-core/docker-compose.yml up --detach
-    npx trail-database-init
-    npx trail-database-migrate --version=max
-    ```
+        docker-compose --file node_modules/@nearform/trail-core/docker-compose.yml up --detach
+        npx trail-database-init
+        npx trail-database-migrate --version=max
 
-3. Start Trail server:
+3.  Start Trail server:
 
-    ```
-    npx trail-fastify-server
-    ```
+        npx trail-fastify-server
 
-4. Create your first audit record:
+4.  Create your first audit record:
 
     ```javascript
     const response = await fetch('http://localhost:8080/trails', {
@@ -60,8 +54,8 @@ Before being able to create an audit trail you need to setup an instance of the 
 
 You can run Trail as a standalone server using Fastify or Hapi:
 
-* [`@nearform/trail-fastify-server`](/trail-fastify-server.md) — Ready to use Trail server using Fastify framework
-* [`@nearform/trail-hapi-server`](/trail-hapi-server.md) — Ready to use Trail server using Hapi framework
+-   [`@nearform/trail-fastify-server`](/trail-fastify-server.md) — Ready to use Trail server using Fastify framework
+-   [`@nearform/trail-hapi-server`](/trail-hapi-server.md) — Ready to use Trail server using Hapi framework
 
 See the respective module documentation for details on how to set this up.
 
@@ -69,9 +63,9 @@ See the respective module documentation for details on how to set this up.
 
 Alternatively you can add Trail endpoints to an existing Fastify or Hapi service using the plugins provided:
 
-* [`@nearform/trail-fastify-plugin`](/trail-fastify-plugin.md) — Fastify plugin that exposes the Trail REST API
-* [`@nearform/trail-fastify-graphql-plugin`](/trail-fastify-graphql-plugin.md) — Fastify plugin that exposes the Trail GraphQL endpoint
-* [`@nearform/trail-hapi-plugin`](/trail-hapi-plugin.md) — Hapi plugin that exposes the Trail REST API
+-   [`@nearform/trail-fastify-plugin`](/trail-fastify-plugin.md) — Fastify plugin that exposes the Trail REST API
+-   [`@nearform/trail-fastify-graphql-plugin`](/trail-fastify-graphql-plugin.md) — Fastify plugin that exposes the Trail GraphQL endpoint
+-   [`@nearform/trail-hapi-plugin`](/trail-hapi-plugin.md) — Hapi plugin that exposes the Trail REST API
 
 See the respective module documentation for details on how to set this up.
 
@@ -81,12 +75,12 @@ Once your Trail server is running you can integrate it using REST or GraphQL.
 
 ### REST API
 
-[filename](_rest-api.md ':include')
+[filename](_rest-api.md ":include")
 
 ### GraphQL API
 
-[filename](_graphql-api.md ':include')
+[filename](_graphql-api.md ":include")
 
 ## License
 
-[filename](_license.md ':include')
+[filename](_license.md ":include")

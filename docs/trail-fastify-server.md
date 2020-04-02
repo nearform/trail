@@ -6,19 +6,15 @@
 
 To install via npm:
 
-```
-npm install @nearform/trail-fastify-server
-```
+    npm install @nearform/trail-fastify-server
 
 ### Database setup
 
-[filename](_database.md ':include')
+[filename](_database.md ":include")
 
 ## Usage
 
-```
-npx trail-fastify-server
-```
+    npx trail-fastify-server
 
 This will start a server on `localhost:8080`. 
 
@@ -30,14 +26,12 @@ Swagger documentation will be accessible at `http://localhost:8080/documentation
 
 Starts the Trail server with given options:
 
-```
-npx trail-fastify-server [options]
-```
+    npx trail-fastify-server [options]
 
 ##### Options
 
 | Option                    | Environment variable     | Description                                                     | Default     |
-|---------------------------|--------------------------|-----------------------------------------------------------------|-------------|
+| ------------------------- | ------------------------ | --------------------------------------------------------------- | ----------- |
 | `--httpHost <host>`       | `TRAIL_HTTP_HOST`        | The hostname the HTTP server is bound to                        | `localhost` |
 | `--httpPort <port>`       | `TRAIL_HTTP_PORT`        | The port the HTTP server is bound to                            | `8080`      |
 | `--noRESTAPI`             | `TRAIL_DISABLE_REST_API` | Switch indicating whether to disable the Trail's REST API       | `false`     |
@@ -56,13 +50,11 @@ Command line options take precedence over environment variables.
 
 ##### Examples
 
-```
-npx trail-fastify-server --httpPort 80
-TRAIL_DB_USERNAME=<username> TRAIL_DB_PASSWORD=<password> npx trail-fastify-server
-```
+    npx trail-fastify-server --httpPort 80
+    TRAIL_DB_USERNAME=<username> TRAIL_DB_PASSWORD=<password> npx trail-fastify-server
 
-[filename](_commands.md ':include')
+[filename](_commands.md ":include")
 
 ## License
 
-[filename](_license.md ':include')
+[filename](_license.md ":include")
