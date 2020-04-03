@@ -1,29 +1,28 @@
-# @nearform/trail-hapi-plugin
+# Fastify Plugin
 
-[![npm][npm-badge]][npm-url]
+`trail-fastify-plugin` is a plugin to add the trail REST API to a Fastify server.
 
-trail-hapi-plugin is a plugin to add the trail REST API to a [Hapi][hapi] server.
-
-## Install
+## Installation
 
 To install via npm:
 
-    npm install @nearform/trail-hapi-plugin
+    npm install @nearform/trail-fastify-plugin
+
+### Database setup
+
+[filename](_database.md ":include")
 
 ## Usage
 
 ```javascript
+const Fastify = require('fastify')
+
 const main = async function() {
-  const server = require('hapi').Server({host: 'localhost', port: 80})
+  const fastify = Fastify()
 
-  await server.register([
-    {
-      plugin: require('@nearform/trail-hapi-plugin'),
-    }
-  ])
+  fastify.register(require('@nearform/trail-fastify-plugin'))
 
-  await server.start()
-  logMessage(`Server running at: ${server.info.uri}`)
+  await fastify.listen(3000, console.log)
 }
 
 main().catch(console.error)
@@ -44,12 +43,4 @@ The plugin takes the following configuration options:
 
 ## License
 
-Copyright nearForm Ltd 2018. Licensed under [MIT][license].
-
-[npm-url]: https://npmjs.org/package/@nearform/trail-hapi-plugin
-
-[npm-badge]: https://img.shields.io/npm/v/@nearform/trail-hapi-plugin.svg
-
-[hapi]: https://hapijs.com/
-
-[license]: ./LICENSE.md
+[filename](_license.md ":include")

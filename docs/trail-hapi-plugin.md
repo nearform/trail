@@ -1,14 +1,16 @@
-# @nearform/trail-hapi-plugin
+# Fastify Plugin
 
-[![npm][npm-badge]][npm-url]
+`trail-hapi-plugin` is a plugin to add the trail REST API to a Fastify server.
 
-trail-hapi-plugin is a plugin to add the trail REST API to a [Hapi][hapi] server.
-
-## Install
+## Installation
 
 To install via npm:
 
     npm install @nearform/trail-hapi-plugin
+
+### Database setup
+
+[filename](_database.md ":include")
 
 ## Usage
 
@@ -44,12 +46,4 @@ The plugin takes the following configuration options:
 
 ## License
 
-Copyright nearForm Ltd 2018. Licensed under [MIT][license].
-
-[npm-url]: https://npmjs.org/package/@nearform/trail-hapi-plugin
-
-[npm-badge]: https://img.shields.io/npm/v/@nearform/trail-hapi-plugin.svg
-
-[hapi]: https://hapijs.com/
-
-[license]: ./LICENSE.md
+[filename](_license.md ":include")

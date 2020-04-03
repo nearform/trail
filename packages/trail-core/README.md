@@ -17,6 +17,7 @@ Trail requires an instance of Postgres (version 9.5+) to function correctly. For
 The initial tables can be created by executing:
 
     npx trail-database-init --dbName=trails_test
+    npx trail-database-migrate --dbName=trails_test
 
 ## Usage
 

@@ -8,9 +8,7 @@ trail-fastify-graphql-plugin is a [Fastify][fastify] plugin which adds a graphql
 
 To install via npm:
 
-```
-npm install @nearform/trail-fastify-graphql-plugin
-```
+    npm install @nearform/trail-fastify-graphql-plugin
 
 ## Usage
 
@@ -34,10 +32,10 @@ Graphql queries can then be submitted to the `/graphql` path as either GET or PO
 
 The plugin takes the following configuration options:
 
-*   `logger`: A logger to be passed to the trails manager.
-*   `db`: Database settings for the trails manager.
-*   `pool`: A pre-configured database pool to be used by the trails manager; used in preference to any specified database settings.
-*   `trailsManager`: A pre-configured trails manager instance; used in preference to any of the previous settings.
+-   `logger`: A logger to be passed to the trails manager.
+-   `db`: Database settings for the trails manager.
+-   `pool`: A pre-configured database pool to be used by the trails manager; used in preference to any specified database settings.
+-   `trailsManager`: A pre-configured trails manager instance; used in preference to any of the previous settings.
 
 ## Graphql schema
 
@@ -45,17 +43,17 @@ The plugin takes the following configuration options:
 
 The schema provides the following queries:
 
-*   `trail(id: Int!)`: Fetch a trail record by ID.
-*   `trails(from: Date!, to: Date!, ...)`: Search for trail records within a specified date range, and optionally filter by additional values.
-*   `enumerateTrails(from: Date!, to: Date!, type: TrailType!, ...)`: Return an enumeration of trails of the specified type, within the specified date range.
+-   `trail(id: Int!)`: Fetch a trail record by ID.
+-   `trails(from: Date!, to: Date!, ...)`: Search for trail records within a specified date range, and optionally filter by additional values.
+-   `enumerateTrails(from: Date!, to: Date!, type: TrailType!, ...)`: Return an enumeration of trails of the specified type, within the specified date range.
 
 ### Mutations
 
 The schema provides the following mutations:
 
-*   `insertTrail(when: Date!, who: StringWithAttrs!, what: StringWithAttrs!, subject: StringWithAttrs!, where: JSON, why: JSON, meta: JSON)`: Insert a new trail record.
-*   `updateTrail(id: Int!, when: Date!, who: StringWithAttrs!, what: StringWithAttrs!, subject: StringWithAttrs!, where: JSON, why: JSON, meta: JSON)`: Update a trail record.
-*   `deleteTrail(id: Int!)`: Delete a trail record.
+-   `insertTrail(when: Date!, who: StringWithAttrs!, what: StringWithAttrs!, subject: StringWithAttrs!, where: JSON, why: JSON, meta: JSON)`: Insert a new trail record.
+-   `updateTrail(id: Int!, when: Date!, who: StringWithAttrs!, what: StringWithAttrs!, subject: StringWithAttrs!, where: JSON, why: JSON, meta: JSON)`: Update a trail record.
+-   `deleteTrail(id: Int!)`: Delete a trail record.
 
 ### String values
 
@@ -63,8 +61,8 @@ Some trail record fields support attributed string values (indicated by the `Str
 
 For example:
 
-*   String with attributes: `{ id: "the string", attr0: "this", attr1: 1 }`
-*   String with no attributes: `"the string"` - equivalent to `{ id: "the string" }`
+-   String with attributes: `{ id: "the string", attr0: "this", attr1: 1 }`
+-   String with no attributes: `"the string"` - equivalent to `{ id: "the string" }`
 
 ## Sample queries
 
@@ -157,7 +155,11 @@ mutation {
 Copyright nearForm Ltd 2020. Licensed under [MIT][license].
 
 [npm-url]: https://npmjs.org/package/@nearform/trail-fastify-plugin
+
 [npm-badge]: https://img.shields.io/npm/v/@nearform/trail-fastify-plugin.svg
+
 [fastify]: https://www.fastify.io/
+
 [fastify-gql]: https://github.com/mcollina/fastify-gql
+
 [license]: ./LICENSE.md
