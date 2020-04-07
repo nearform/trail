@@ -10,7 +10,7 @@ To install via npm:
 
 ### Database setup
 
-[filename](_database.md ":include")
+[filename](_database.md ':include')
 
 ## Usage
 
@@ -43,4 +43,4 @@ The plugin takes the following configuration options:
 
 ## License
 
-[filename](_license.md ":include")
+[filename](_license.md ':include')
