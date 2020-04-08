@@ -20,7 +20,6 @@
   },
   "scripts": {
     "depcheck": "lerna run depcheck",
-    "doc:lint": "remark .",
     "coverage": "lerna run coverage",
     "lint": "standard",
     "outdated:all": "npm outdated || echo 'Outdated packages found.'; lerna exec \"npm outdated || echo 'Outdated packages found.'\"",
@@ -29,7 +28,7 @@
     "pg:travis:init": "cd packages/trail-core && npm run pg:travis:init",
     "pg:migrate": "cd packages/trail-core && npm run pg:migrate",
     "postinstall": "lerna bootstrap",
-    "sanity:environment": "npm run doc:lint && npm run lint && npm run depcheck",
+    "sanity:environment": "npm run lint && npm run depcheck",
     "sanity": "npm run sanity:environment && npm run test",
     "start": "cd packages/trail-hapi-server && npm run start",
     "test": "lerna run test",
@@ -43,17 +42,9 @@
     "js-yaml": "^3.13.1",
     "lerna": "^3.20.2",
     "lodash": "^4.17.12",
-    "remark-cli": "^7.0.1",
-    "remark-lint": "^6.0.5",
-    "remark-preset-lint-recommended": "^3.0.3",
     "sinon": "^8.1.1",
     "standard": "^14.3.1",
     "swagger-gen": "^1.1.3"
-  },
-  "remarkConfig": {
-    "plugins": [
-      "remark-preset-lint-recommended"
-    ]
   },
   "standard": {
     "ignore": [
