@@ -30,7 +30,9 @@
     "coverage": "todo -c test",
     "coverage:watch": "jest -i --coverage --watch",
     "depcheck": "npx depcheck --ignores=config",
-    "test": "lab test"
+    "test": "lab test",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "@hapi/boom": "^9.0.0",
@@ -40,11 +42,13 @@
     "fastify-plugin": "^1.6.0",
     "fluent-schema": "^0.10.0",
     "lodash": "^4.17.15",
-    "luxon": "^1.2.0"
+    "luxon": "^1.2.0",
+    "snyk": "^1.316.1"
   },
   "devDependencies": {
     "@hapi/lab": "^22.0.4",
     "code": "^5.2.0",
     "sinon": "^8.1.1"
-  }
+  },
+  "snyk": true
 }
