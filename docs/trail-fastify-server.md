@@ -10,7 +10,7 @@ To install via npm:
 
 ### Database setup
 
-[filename](_database.md ":include")
+[filename](_database.md ':include')
 
 ## Usage
 
@@ -53,8 +53,8 @@ Command line options take precedence over environment variables.
     npx trail-fastify-server --httpPort 80
     TRAIL_DB_USERNAME=<username> TRAIL_DB_PASSWORD=<password> npx trail-fastify-server
 
-[filename](_commands.md ":include")
+[filename](_commands.md ':include')
 
 ## License
 
-[filename](_license.md ":include")
+[filename](_license.md ':include')
