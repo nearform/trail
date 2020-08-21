@@ -59,7 +59,7 @@ describe('Trails graphql HTTP operations', () => {
 
       expect(trails[0]).to.include({
         id: id,
-        when: DateTime.fromISO('2016-01-02T15:04:05.123', { zone: 'utc' }).toISO(),
+        when: DateTime.fromISO('2016-01-02T15:04:05.123Z', { zone: 'utc' }).toISO(),
         who: {
           id: '1',
           attributes: {}
@@ -138,7 +138,7 @@ describe('Trails graphql HTTP operations', () => {
 
   describe('POST /graphql - insert mutations', async () => {
     test('create new trail from graphql payload and return with 201', async () => {
-      const when = '2016-01-02T15:04:05.123'
+      const when = '2016-01-02T15:04:05.123Z'
       const who = 'me'
       const what = 'FOO'
       const subject = 'FOO'
@@ -189,7 +189,7 @@ describe('Trails graphql HTTP operations', () => {
     })
 
     test('create new trail from json payload with variables and return with 200', async () => {
-      const when = '2016-01-02T15:04:05.123'
+      const when = '2016-01-02T15:04:05.123Z'
       const who = 'me'
       const what = 'FOO'
       const subject = 'FOO'
@@ -346,7 +346,7 @@ describe('Trails graphql HTTP operations with prefix path', () => {
 
       expect(trails[0]).to.include({
         id: id,
-        when: DateTime.fromISO('2016-01-02T15:04:05.123', { zone: 'utc' }).toISO(),
+        when: DateTime.fromISO('2016-01-02T15:04:05.123Z', { zone: 'utc' }).toISO(),
         who: {
           id: '1',
           attributes: {}
@@ -370,7 +370,7 @@ describe('Trails graphql HTTP operations with prefix path', () => {
 
   describe(`POST ${prefix}/graphql - insert mutations`, async () => {
     test('create new trail from graphql payload and return with 201', async () => {
-      const when = '2016-01-02T15:04:05.123'
+      const when = '2016-01-02T15:04:05.123Z'
       const who = 'me'
       const what = 'FOO'
       const subject = 'FOO'
