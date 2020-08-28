@@ -32,7 +32,7 @@ exports.loadSettings = options => {
       host: resolve('dbHost', 'TRAIL_DB_HOST', 'localhost'),
       port: resolve('dbPort', 'TRAIL_DB_PORT', '5432'),
       database: resolve('dbName', 'TRAIL_DB_NAME', 'trails'),
-      username: resolve('dbUsername', 'TRAIL_DB_USERNAME', 'postgres'),
+      user: resolve('dbUsername', 'TRAIL_DB_USERNAME', 'postgres'),
       password: resolve('dbPassword', 'TRAIL_DB_PASSWORD', 'postgres'),
       poolSize: resolve('dbPoolsize', 'TRAIL_DB_POOLSIZE', 10),
       timeout: resolve('dbTimeout', 'TRAIL_DB_TIMEOUT', 30000)
