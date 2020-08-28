@@ -1,6 +1,6 @@
 {
   "name": "@nearform/trail-fastify-graphql-plugin",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Fastify plugin providing graphql endpoints for the audit trail logging service",
   "license": "MIT",
   "author": "nearForm Ltd",

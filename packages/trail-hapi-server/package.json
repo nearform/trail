@@ -1,6 +1,6 @@
 {
   "name": "@nearform/trail-hapi-server",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Server running Hapi plugin for the audit trail logging service",
   "license": "MIT",
   "author": "nearForm Ltd",
