@@ -38,20 +38,20 @@
     "coverage": "lab -l -c test",
     "depcheck": "npx depcheck --ignores=config",
     "start": "node start.js",
-    "test": "lab test --globals __extends,__assign,__rest,__decorate,__param,__metadata,__awaiter,__generator,__exportStar,__values,__read,__spread,__spreadArrays,__await,__asyncGenerator,__asyncDelegator,__asyncValues,__makeTemplateObject,__importStar,__importDefault,__classPrivateFieldGet,__classPrivateFieldSet"
+    "test": "lab test --globals __core-js_shared__,CSS,regeneratorRuntime,__createBinding,__extends,__assign,__rest,__decorate,__param,__metadata,__awaiter,__generator,__exportStar,__values,__read,__spread,__spreadArrays,__await,__asyncGenerator,__asyncDelegator,__asyncValues,__makeTemplateObject,__importStar,__importDefault,__classPrivateFieldGet,__classPrivateFieldSet"
   },
   "dependencies": {
     "@nearform/trail-fastify-graphql-plugin": "^4.0.2",
     "@nearform/trail-fastify-plugin": "^4.0.1",
     "dotenv": "^8.2.0",
-    "fastify": "^2.12.0",
-    "fastify-static": "^2.6.0",
+    "fastify": "^3.3.0",
+    "fastify-static": "^3.2.0",
     "fluent-schema": "^0.10.0",
     "minimist": "^1.2.5",
-    "swagger-ui-dist": "^3.13.6"
+    "swagger-ui-dist": "^3.32.5"
   },
   "devDependencies": {
-    "@hapi/lab": "^22.0.4",
+    "@hapi/lab": "^22.0.5",
     "code": "^5.2.0",
     "sinon": "^8.1.1"
   }
