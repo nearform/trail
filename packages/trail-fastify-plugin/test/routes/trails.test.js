@@ -182,7 +182,7 @@ describe('Trails REST operations', () => {
         error: 'Unprocessable Entity',
         message: 'Invalid input data.',
         reasons: {
-          from: 'must be a valid UTC timestamp in the format YYYY-MM-DDTHH:MM:SS.sss (example: 2018-07-06T12:34:56.123)',
+          from: 'must be a valid UTC timestamp in the format YYYY-MM-DDTHH:MM:SS.sss (example: 2018-07-06T12:34:56.123)'
         }
       })
     })
