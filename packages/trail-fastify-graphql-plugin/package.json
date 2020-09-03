@@ -39,9 +39,9 @@
     "@nearform/trail-core": "^4.0.1",
     "config": "^3.2.5",
     "fastify": "^3.3.0",
-    "fastify-gql": "^5.6.0",
+    "fastify-gql": "^3.0.6",
     "fastify-plugin": "^2.3.3",
-    "graphql": "^15.0.0",
+    "graphql": "^14.6.0",
     "graphql-jit": "0.4.2",
     "graphql-tools": "4.0.7",
     "luxon": "^1.25.0"

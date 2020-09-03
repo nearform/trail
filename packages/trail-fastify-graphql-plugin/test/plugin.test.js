@@ -99,7 +99,7 @@ describe('Trails graphql HTTP operations', () => {
       expect(JSON.parse(response.payload)).to.include({
         errors: [
           {
-            message: 'Syntax Error: Expected Name, found <EOF>.',
+            message: 'Syntax Error: Expected Name, found <EOF>',
             locations: [{ line: 1, column: 100 }]
           }
         ],
@@ -127,7 +127,7 @@ describe('Trails graphql HTTP operations', () => {
       expect(JSON.parse(response.payload)).to.include({
         errors: [
           {
-            message: 'Syntax Error: Expected Name, found <EOF>.',
+            message: 'Syntax Error: Expected Name, found <EOF>',
             locations: [{ line: 1, column: 107 }]
           }
         ],
