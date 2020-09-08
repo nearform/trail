@@ -41,19 +41,19 @@
     "test": "lab test --globals __core-js_shared__,CSS,regeneratorRuntime,__extends,__assign,__rest,__decorate,__param,__metadata,__awaiter,__generator,__exportStar,__values,__read,__spread,__spreadArrays,__await,__asyncGenerator,__asyncDelegator,__asyncValues,__makeTemplateObject,__importStar,__importDefault,__classPrivateFieldGet,__classPrivateFieldSet"
   },
   "dependencies": {
-    "@hapi/hapi": "^19.2.0",
+    "@hapi/hapi": "^20.0.0",
     "@hapi/inert": "^6.0.2",
     "@hapi/joi": "^17.1.0",
     "@nearform/trail-core": "^4.0.1",
     "@nearform/trail-hapi-plugin": "^4.0.1",
     "dotenv": "^8.2.0",
-    "hapi-pino": "^6.5.0",
+    "hapi-pino": "^8.3.0",
     "minimist": "^1.2.5",
     "swagger-ui-dist": "^3.32.5"
   },
   "devDependencies": {
-    "@hapi/lab": "^22.0.5",
+    "@hapi/lab": "^23.0.0",
     "code": "^5.2.0",
-    "sinon": "^8.1.1"
+    "sinon": "^9.0.3"
   }
 }
