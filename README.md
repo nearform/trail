@@ -1,6 +1,6 @@
 # Trail
 
-[![travis][travis-badge]](https://travis-ci.org/nearform/trail)
+[![Build Status](https://travis-ci.org/nearform/trail.svg?branch=master)](https://travis-ci.org/nearform/trail)
 
 Trail is a modular and flexible **audit trail log service**. 
 
