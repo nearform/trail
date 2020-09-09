@@ -1,7 +1,7 @@
 'use strict'
 
 const { notFound } = require('@hapi/boom')
-const Joi = require('@hapi/joi')
+const Joi = require('joi')
 
 const { errorsSchemas } = require('../schemas/errors')
 const { spec, components, trailSchema } = require('../schemas/trails')

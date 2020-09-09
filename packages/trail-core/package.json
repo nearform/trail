@@ -47,13 +47,13 @@
     "dotenv": "^8.2.0",
     "luxon": "^1.25.0",
     "minimist": "^1.2.5",
-    "pg": "^7.4.1",
-    "pino": "^5.16.0",
-    "postgrator": "^3.11.1"
+    "pg": "^8.3.3",
+    "pino": "^6.6.0",
+    "postgrator": "^4.0.1"
   },
   "devDependencies": {
-    "@hapi/lab": "^22.0.5",
+    "@hapi/lab": "^23.0.0",
     "code": "^5.2.0",
-    "sinon": "^8.1.1"
+    "sinon": "^9.0.3"
   }
 }

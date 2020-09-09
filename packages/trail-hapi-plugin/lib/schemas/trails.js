@@ -1,6 +1,6 @@
 'use strict'
 
-const Joi = require('@hapi/joi')
+const Joi = require('joi')
 const j2s = require('joi-to-swagger')
 
 const { errorsSchemas } = require('./errors')

@@ -14,7 +14,7 @@ module.exports = (function () {
       ...additionalConfig
     })
 
-    server.validator(require('@hapi/joi'))
+    server.validator(require('joi'))
 
     await server.register({ plugin: require('../lib/index'), options: { db: { database: 'trails_test' } } })
     await server.start()

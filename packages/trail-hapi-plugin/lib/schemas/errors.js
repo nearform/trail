@@ -1,6 +1,6 @@
 'use strict'
 
-const Joi = require('@hapi/joi')
+const Joi = require('joi')
 
 const errorsMessages = {
   'json.format': 'The body payload is not a valid JSON.',
