@@ -35,15 +35,15 @@
   "dependencies": {
     "@hapi/boom": "^9.0.0",
     "@nearform/trail-core": "^4.0.1",
-    "ajv": "^6.11.0",
-    "fastify": "^2.12.0",
-    "fastify-plugin": "^1.6.0",
+    "ajv": "^6.12.4",
+    "fastify": "^3.3.0",
+    "fastify-plugin": "^2.3.3",
     "fluent-schema": "^0.10.0",
-    "lodash": "^4.17.15",
-    "luxon": "^1.2.0"
+    "lodash": "^4.17.20",
+    "luxon": "^1.25.0"
   },
   "devDependencies": {
-    "@hapi/lab": "^22.0.4",
+    "@hapi/lab": "^22.0.5",
     "code": "^5.2.0",
     "sinon": "^8.1.1"
   }

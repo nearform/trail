@@ -42,7 +42,7 @@ describe('Server', () => {
         expect(response.statusCode).to.equal(200)
         const payload = JSON.parse(response.payload)
 
-        expect(payload.uptime).to.match(/^(\d+.\d{3} s)$/)
+        expect(payload.uptime).to.match(/^(\d+.\d+ s)$/)
       })
     })
   })

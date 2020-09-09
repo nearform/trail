@@ -40,18 +40,18 @@
   },
   "dependencies": {
     "@hapi/boom": "^9.0.0",
-    "@hapi/hapi": "^19.1.0",
-    "@hapi/joi": "^17.1.0",
+    "@hapi/hapi": "^20.0.0",
     "@nearform/trail-core": "^4.0.1",
-    "joi-to-swagger": "^4.0.0",
-    "lodash": "^4.17.15",
-    "luxon": "^1.2.0",
-    "snyk": "^1.316.1"
+    "joi": "^17.1.0",
+    "joi-to-swagger": "^5.0.1",
+    "lodash": "^4.17.20",
+    "luxon": "^1.25.0",
+    "snyk": "^1.391.1"
   },
   "devDependencies": {
-    "@hapi/lab": "^22.0.4",
-    "code": "^5.2.0",
-    "sinon": "^8.1.1"
+    "@hapi/code": "^8.0.2",
+    "@hapi/lab": "^23.0.0",
+    "sinon": "^9.0.3"
   },
   "snyk": true
 }
