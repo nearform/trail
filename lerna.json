@@ -7,6 +7,9 @@
   "command": {
     "run": {
       "concurrency": 1
+    },
+    "version": {
+      "allowBranch": "master"
     }
   }
 }
