@@ -91,8 +91,8 @@ describe('Trails REST operations', () => {
         what: '2',
         subject: '3',
         where: { ip: 'localhost' },
-        why: { ticket: '4'},
-        meta: { result: 'success'}
+        why: { ticket: '4' },
+        meta: { result: 'success' }
       })
 
       const response = await server.inject({
@@ -119,8 +119,8 @@ describe('Trails REST operations', () => {
           attributes: {}
         },
         where: { ip: 'localhost' },
-        why: { ticket: '4'},
-        meta: { result: 'success'}
+        why: { ticket: '4' },
+        meta: { result: 'success' }
       })
 
       await server.trailCore.delete(id)
@@ -374,8 +374,8 @@ describe('Trails REST operations', () => {
         what: { id: 'FOO', abc: 'cde' },
         subject: 'FOO',
         where: { ip: 'localhost' },
-        why: { ticket: '4'},
-        meta: { result: 'success'}
+        why: { ticket: '4' },
+        meta: { result: 'success' }
       })
 
       const response = await server.inject({
@@ -403,8 +403,8 @@ describe('Trails REST operations', () => {
           attributes: {}
         },
         where: { ip: 'localhost' },
-        why: { ticket: '4'},
-        meta: { result: 'success'}
+        why: { ticket: '4' },
+        meta: { result: 'success' }
       })
 
       await server.trailCore.delete(id)
