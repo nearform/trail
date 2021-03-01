@@ -402,7 +402,7 @@ describe('Trails REST operations', () => {
           id: 'FOO',
           attributes: {}
         },
-				where: { ip: 'localhost' },
+        where: { ip: 'localhost' },
         why: { ticket: '4'},
         meta: { result: 'success'}
       })
