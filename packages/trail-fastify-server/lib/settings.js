@@ -43,7 +43,8 @@ exports.loadSettings = options => {
     },
     use: {
       restAPI: resolve('useRESTAPI', 'TRAIL_USE_REST_API', true),
-      graphQL: resolve('useGraphQL', 'TRAIL_USE_GRAPHQL', true)
+      graphQL: resolve('useGraphQL', 'TRAIL_USE_GRAPHQL', true),
+      corsPlugin: resolve('useCORS', 'TRAIL_USE_CORS', false)
     }
   }
 
