@@ -82,6 +82,50 @@ describe('Trails REST operations', () => {
       await server.trailCore.delete(id)
     })
 
+    test('it should search trails, include data for where,why,meta fields and return it with 200', async () => {
+      await server.trailCore.performDatabaseOperations(client => client.query('TRUNCATE trails'))
+
+      const id = await server.trailCore.insert({
+        when: '2021-03-01T18:04:05.123+03:00',
+        who: '1',
+        what: '2',
+        subject: '3',
+        where: { ip: 'localhost' },
+        why: { ticket: '4' },
+        meta: { result: 'success' }
+      })
+
+      const response = await server.inject({
+        method: 'GET',
+        url: `/trails?from=${encodeURIComponent('2021-03-01T18:04:05.123+03:00')}&to=${encodeURIComponent('2021-03-01T18:04:05.123+03:00')}`
+      })
+
+      expect(response.statusCode).to.equal(200)
+      const trails = JSON.parse(response.payload)
+
+      expect(trails[0]).to.include({
+        id: id,
+        when: DateTime.fromISO('2021-03-01T15:04:05.123', { zone: 'utc' }).toISO(),
+        who: {
+          id: '1',
+          attributes: {}
+        },
+        what: {
+          id: '2',
+          attributes: {}
+        },
+        subject: {
+          id: '3',
+          attributes: {}
+        },
+        where: { ip: 'localhost' },
+        why: { ticket: '4' },
+        meta: { result: 'success' }
+      })
+
+      await server.trailCore.delete(id)
+    })
+
     test('it should search trails and return a empty array when no records are found', async () => {
       await server.trailCore.performDatabaseOperations(client => client.query('TRUNCATE trails'))
 
@@ -318,6 +362,49 @@ describe('Trails REST operations', () => {
         where: {},
         why: {},
         meta: {}
+      })
+
+      await server.trailCore.delete(id)
+    })
+
+    test('it should retrieve a existing trail with all the field values and return it with 200', async () => {
+      const id = await server.trailCore.insert({
+        when: '2016-03-01T18:04:05.123+03:00',
+        who: 'me',
+        what: { id: 'FOO', abc: 'cde' },
+        subject: 'FOO',
+        where: { ip: 'localhost' },
+        why: { ticket: '4' },
+        meta: { result: 'success' }
+      })
+
+      const response = await server.inject({
+        method: 'GET',
+        url: `/trails/${id}`
+      })
+
+      expect(response.statusCode).to.equal(200)
+      const trail = JSON.parse(response.payload)
+
+      expect(trail).to.include({
+        when: DateTime.fromISO('2016-03-01T15:04:05.123', { zone: 'utc' }).toISO(),
+        who: {
+          id: 'me',
+          attributes: {}
+        },
+        what: {
+          id: 'FOO',
+          attributes: {
+            abc: 'cde'
+          }
+        },
+        subject: {
+          id: 'FOO',
+          attributes: {}
+        },
+        where: { ip: 'localhost' },
+        why: { ticket: '4' },
+        meta: { result: 'success' }
       })
 
       await server.trailCore.delete(id)

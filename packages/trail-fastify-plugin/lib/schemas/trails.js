@@ -116,9 +116,9 @@ const trailSchema = {
     .prop('who', namedObject('Trail actor'))
     .prop('what', namedObject('Trail subject'))
     .prop('subject', namedObject('Trail target'))
-    .prop('where', S.object().description('Trail where'))
-    .prop('why', S.object().description('Trail reason'))
-    .prop('meta', S.object().description('Trail meta'))
+    .prop('where', S.object().additionalProperties(true).description('Trail where'))
+    .prop('why', S.object().additionalProperties(true).description('Trail reason'))
+    .prop('meta', S.object().additionalProperties(true).description('Trail meta'))
     .required(['when', 'who', 'what', 'subject'])
 }
 
