@@ -31,6 +31,7 @@ The server looks for the following environment variables:
 -   `TRAIL_DB_TIMEOUT`: The trail database idle timeout, in milliseconds.
 -   `TRAIL_HTTP_HOST`: The hostname the HTTP server is bound to.
 -   `TRAIL_HTTP_PORT`: The port the HTTP server is bound to.
+-   `TRAIL_CORS_ORIGIN`: The value for Access-Control-Allow-Origin header as per fastify-cors plugin.
 -   `TRAIL_DISABLE_REST_API`: Switch indicating whether to disable the REST API.
 -   `TRAIL_DISABLE_GRAPHQL`: Switch indicating whether to disable the graphql endpoint.
 
@@ -47,6 +48,7 @@ The server also takes the following command line options:
 -   `--dbTimeout <ms>`: The trail database idle timeout, in milliseconds. Defaults to `30000`.
 -   `--httpHost <host>`: The hostname the HTTP server is bound to. Defaults to `localhost`.
 -   `--httpPort <port>`: The port the HTTP server is bound to. Defaults to `8080`.
+-   `--corsOrigin <origin>`: set value for `Access-Control-Allow-Origin` header. Defaults to ``.
 -   `--noRESTAPI`: Switch indicating whether to disable the Trail's REST API. Defaults to `false`.
 -   `--noGraphql`: Switch indicating whether to disable the graphql query endpoint. Defaults to `false`.
 

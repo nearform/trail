@@ -39,12 +39,12 @@ exports.loadSettings = options => {
     },
     http: {
       host: resolve('httpHost', 'TRAIL_HTTP_HOST', 'localhost'),
-      port: resolve('httpPort', 'TRAIL_HTTP_PORT', 8080)
+      port: resolve('httpPort', 'TRAIL_HTTP_PORT', 8080),
+      corsOrigin: resolve('corsOrigin', 'TRAIL_CORS_ORIGIN', '')
     },
     use: {
       restAPI: resolve('useRESTAPI', 'TRAIL_USE_REST_API', true),
-      graphQL: resolve('useGraphQL', 'TRAIL_USE_GRAPHQL', true),
-      corsPlugin: resolve('useCORS', 'TRAIL_USE_CORS', false)
+      graphQL: resolve('useGraphQL', 'TRAIL_USE_GRAPHQL', true)
     }
   }
 
