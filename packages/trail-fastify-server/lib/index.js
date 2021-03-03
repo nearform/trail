@@ -27,6 +27,7 @@ module.exports = async function (options) {
     if (settings.use.graphQL) {
       server.register(require('@nearform/trail-fastify-graphql-plugin'), { db: settings.db })
     }
+    server.register(require('fastify-cors'), { origin: settings.http.corsOrigin || false })
 
     await addApiRoute(server, 'trails', {
       method: 'GET',

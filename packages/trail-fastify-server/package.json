@@ -45,6 +45,7 @@
     "@nearform/trail-fastify-plugin": "^5.0.0",
     "dotenv": "^8.2.0",
     "fastify": "^3.3.0",
+    "fastify-cors": "^5.2.0",
     "fastify-static": "^3.2.0",
     "fluent-schema": "^0.10.0",
     "minimist": "^1.2.5",
