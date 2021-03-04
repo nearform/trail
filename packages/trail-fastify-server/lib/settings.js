@@ -19,7 +19,7 @@ exports.loadSettings = options => {
 
     switch (typeof defaultValue) {
       case 'boolean':
-        return Boolean(value)
+        return value !== 'false'
       case 'number':
         return Number(value)
       default:
