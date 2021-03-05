@@ -1,0 +1,64 @@
+name: ci
+
+on: [push, pull_request]
+
+env:
+  TRAIL_DB_HOST: localhost
+  TRAIL_DB_PORT: 5432
+  TRAIL_DB_NAME: trails_test
+  TRAIL_DB_USERNAME: postgres
+  TRAIL_DB_PASSWORD: postgres
+  TRAIL_DB_POOL_SIZE: 10
+  TRAIL_DB_TIMEOUT: 30000
+  TRAIL_HTTP_HOST: localhost
+  TRAIL_HTTP_PORT: 8080
+  TRAIL_LOG_LEVEL: warn
+  TRAIL_DISABLE_REST_API: 0
+  TRAIL_DISABLE_GRAPHQL: 0
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [12, 14]
+    
+    name: Node.js ${{ matrix.node }}
+    
+    services:
+      postgres:
+        image: postgres:9.6-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+        # will assign a random free host port
+        - 5432:5432
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node }}
+
+    - name: CI environment setup
+      run: |
+        npm i node-gyp 
+        sudo apt-get install -yqq libpq-dev postgresql-client
+
+    - name: Install deps
+      run: npm install
+    
+    - name: Run lerna bootstrap
+      run: npx lerna bootstrap
+
+    - name: Preparing database
+      run: npm run pg:travis:init
+
+    - name: Run sanity      
+      run: npm run sanity
