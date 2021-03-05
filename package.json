@@ -37,7 +37,7 @@
   "devDependencies": {
     "@hapi/lab": "^22.0.5",
     "code": "^5.2.0",
-    "depcheck": "^0.9.2",
+    "depcheck": "^1.4.0",
     "husky": "^4.2.5",
     "js-yaml": "^3.14.0",
     "lerna": "^3.22.1",
