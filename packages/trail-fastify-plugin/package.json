@@ -37,7 +37,7 @@
     "@nearform/trail-core": "^5.0.0",
     "ajv": "^6.12.4",
     "fastify": "^3.3.0",
-    "fastify-plugin": "^2.3.3",
+    "fastify-plugin": "^3.0.0",
     "fluent-schema": "^0.10.0",
     "lodash": "^4.17.20",
     "luxon": "^1.25.0"
