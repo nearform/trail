@@ -52,7 +52,7 @@
     "postgrator": "^4.0.1"
   },
   "devDependencies": {
-    "@hapi/lab": "^23.0.0",
+    "@hapi/lab": "^24.1.1",
     "code": "^5.2.0",
     "sinon": "^9.0.3"
   }
