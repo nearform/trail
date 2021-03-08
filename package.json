@@ -5,7 +5,8 @@
   "license": "MIT",
   "author": "nearForm Ltd",
   "contributors": [
-    "Paolo Insogna (https://github.com/ShogunPanda)", "Luis Faustino (https://github.com/dublx)"
+    "Paolo Insogna (https://github.com/ShogunPanda)",
+    "Luis Faustino (https://github.com/dublx)"
   ],
   "homepage": "https://github.com/nearform/trail#readme",
   "repository": {
@@ -39,7 +40,6 @@
     "code": "^5.2.0",
     "depcheck": "^1.4.0",
     "husky": "^4.2.5",
-    "js-yaml": "^3.14.0",
     "lerna": "^4.0.0",
     "lodash": "^4.17.20",
     "sinon": "^9.2.4",
