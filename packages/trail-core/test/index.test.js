@@ -217,6 +217,66 @@ describe('TrailsManager', () => {
       spy.restore()
     })
   })
+  describe('.searchCount', () => {
+    test('should return the right record counts', async () => {
+      await this.subject.performDatabaseOperations(client => client.query('TRUNCATE trails'))
+
+      const records = [
+        { when: '2018-01-01T12:34:56+00:00', who: 'dog cat fish', what: 'open morning', subject: 'window' },
+        { when: '2018-01-02T12:34:56+00:00', who: 'dog cat shark', what: 'open evening', subject: 'window' },
+        { when: '2018-01-03T12:34:56+00:00', who: 'wolf cat whale', what: 'open morning', subject: 'door' },
+        { when: '2018-01-04T12:34:56+00:00', who: 'hyena lion fish', what: 'close evening', subject: 'door' },
+        { when: '2018-01-05T12:34:56+00:00', who: 'hyena tiger whal', what: 'close night', subject: 'world' }
+      ]
+
+      const ids = await Promise.all(records.map(r => this.subject.insert(r)))
+
+      expect(parseInt(await this.subject.searchCount({ from: '2018-01-01T11:00:00+00:00', to: '2018-01-04T13:34:56+00:00', who: 'dog', sort: 'when' })))
+        .to.equal(2)
+
+      expect(parseInt(await this.subject.searchCount({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-04T13:34:56+00:00', what: 'evening', sort: 'id' })))
+        .to.equal(2)
+
+      expect(parseInt(await this.subject.searchCount({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-04T13:34:56+00:00', what: 'evening', sort: '-subject' })))
+        .to.equal(2)
+
+      expect(parseInt(await this.subject.searchCount({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-05T13:34:56+00:00', subject: 'world' })))
+        .to.equal(1)
+
+      expect(parseInt(await this.subject.searchCount({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-05T13:34:56+00:00', what: 'world' })))
+        .to.equal(0)
+
+      await Promise.all(ids.map(i => this.subject.delete(i)))
+    })
+
+    test('should return the record counts with case insensitiveness', async () => {
+      await this.subject.performDatabaseOperations(client => client.query('TRUNCATE trails'))
+
+      const records = [
+        { when: '2018-01-01T12:34:56+00:00', who: 'dog cat fish', what: 'open MORNing', subject: 'window' },
+        { when: '2018-01-02T12:34:56+00:00', who: 'dog cat shark', what: 'evening', subject: 'window' },
+        { when: '2018-01-03T12:34:56+00:00', who: 'wolf cat whale', what: 'open morning', subject: 'door' },
+        { when: '2018-01-04T12:34:56+00:00', who: 'hyena lion fish', what: 'evening', subject: 'DOOr' },
+        { when: '2018-01-05T12:34:56+00:00', who: 'hyena tiger whal', what: 'close night', subject: 'world' }
+      ]
+
+      const ids = await Promise.all(records.map(r => this.subject.insert(r)))
+
+      expect(parseInt(await this.subject.searchCount({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-04T13:34:56+00:00', subject: 'DOOr', sort: 'when', exactMatch: true, caseInsensitive: true })))
+        .to.equal(2)
+
+      expect(parseInt(await this.subject.searchCount({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-04T13:34:56+00:00', subject: 'DOOr', sort: 'when', exactMatch: true })))
+        .to.equal(1)
+
+      expect(parseInt(await this.subject.searchCount({ from: '2018-01-01T12:00:00+00:00', to: '2018-01-05T13:34:56+00:00', what: 'MORNing', sort: 'when', caseInsensitive: true })))
+        .to.equal(2)
+
+      expect(parseInt(await this.subject.searchCount({ from: '2018-01-01T12:00:00+00:00', to: '2018-01-05T13:34:56+00:00', what: 'MORNing', sort: 'when' })))
+        .to.equal(1)
+
+      await Promise.all(ids.map(i => this.subject.delete(i)))
+    })
+  })
 
   describe('.enumerate', () => {
     test('should return the right records', async () => {

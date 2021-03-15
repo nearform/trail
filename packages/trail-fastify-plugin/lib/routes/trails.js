@@ -35,14 +35,20 @@ module.exports = async function (fastify, options) {
     async handler (request, reply) {
       const { from, to, who, what, subject, page, pageSize, sort } = request.query
       const results = await reply.trailCore.search({ from, to, who, what, subject, page, pageSize, sort })
-      return results
+      const resultCount = await reply.trailCore.searchCount({ from, to, who, what, subject, page, pageSize, sort })
+      return { count: resultCount, data: results }
     },
     schema: {
       query: trailSchema.search,
       response: {
-        200: S.array()
-          .description('The search results.')
-          .items(trailSchema.response),
+        200: S.object()
+          .prop('count', S.number()
+            .description('The search result count')
+          )
+          .prop('data', S.array()
+            .description('The search results.')
+            .items(trailSchema.response)
+          ),
         422: errorsSchemas['422'],
         500: errorsSchemas['500']
       }
