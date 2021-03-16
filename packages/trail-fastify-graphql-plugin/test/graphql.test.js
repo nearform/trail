@@ -106,7 +106,7 @@ describe('GraphQL', () => {
       const from = records[0].when
       const to = records[records.length - 1].when
 
-      const { data: { trails : { count, data } } } = await this.subject.execQuery(`{
+      const { data: { trails: { count, data } } } = await this.subject.execQuery(`{
         trails(from: "${from}", to: "${to}") {
           count
           data {
