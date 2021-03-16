@@ -38,14 +38,17 @@ describe('Trails graphql HTTP operations', () => {
           from: "2014-01-02T18:04:05.123+03:00"
           to: "2018-01-02T18:04:05.123+03:00"
         ) {
-          id
-          when
-          who
-          what
-          subject
-          where
-          why
-          meta
+          count
+          data  {
+            id
+            when
+            who
+            what
+            subject
+            where
+            why
+            meta
+          }
         }
       }`)
 
@@ -55,9 +58,9 @@ describe('Trails graphql HTTP operations', () => {
       })
 
       expect(response.statusCode).to.equal(200)
-      const { data: { trails } } = JSON.parse(response.payload)
+      const { data: { trails : {count, data} } } = JSON.parse(response.payload)
 
-      expect(trails[0]).to.include({
+      expect(data[0]).to.include({
         id: id,
         when: DateTime.fromISO('2016-01-02T15:04:05.123Z', { zone: 'utc' }).toISO(),
         who: {
@@ -325,14 +328,17 @@ describe('Trails graphql HTTP operations with prefix path', () => {
           from: "2014-01-02T18:04:05.123+03:00"
           to: "2018-01-02T18:04:05.123+03:00"
         ) {
-          id
-          when
-          who
-          what
-          subject
-          where
-          why
-          meta
+          count,
+          data {
+            id
+            when
+            who
+            what
+            subject
+            where
+            why
+            meta
+          }
         }
       }`)
 
@@ -342,9 +348,9 @@ describe('Trails graphql HTTP operations with prefix path', () => {
       })
 
       expect(response.statusCode).to.equal(200)
-      const { data: { trails } } = JSON.parse(response.payload)
+      const { data: { trails : { count, data }} } = JSON.parse(response.payload)
 
-      expect(trails[0]).to.include({
+      expect(data[0]).to.include({
         id: id,
         when: DateTime.fromISO('2016-01-02T15:04:05.123Z', { zone: 'utc' }).toISO(),
         who: {

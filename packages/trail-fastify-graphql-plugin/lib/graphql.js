@@ -103,6 +103,11 @@ const typeDefs = `
     meta: JSON
   }
 
+  type Trails {
+    count: Int!
+    data: [Trail!]!
+  }
+
   type Query {
 
     trail(id: Int!): Trail
@@ -118,7 +123,7 @@ const typeDefs = `
       sort: SortOrder
       exactMatch: Boolean
       caseInsensitive: Boolean
-    ): [Trail!]!
+    ): Trails
 
     enumerateTrails(
       from: Date!

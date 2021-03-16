@@ -106,12 +106,15 @@ describe('GraphQL', () => {
       const from = records[0].when
       const to = records[records.length - 1].when
 
-      const { data: { trails } } = await this.subject.execQuery(`{
+      const { data: { trails : { count, data } } } = await this.subject.execQuery(`{
         trails(from: "${from}", to: "${to}") {
-          when
-          who
-          what
-          subject
+          count
+          data {
+            when
+            who
+            what
+            subject
+          }
         }
       }`)
 
@@ -122,7 +125,8 @@ describe('GraphQL', () => {
         })
         .reverse()
 
-      expect(trails).to.equal(expected)
+      expect(data).to.equal(expected)
+      expect(count).to.equal(records.length)
     })
 
     test('enumerate', async () => {
