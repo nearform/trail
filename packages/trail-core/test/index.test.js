@@ -92,7 +92,7 @@ describe('TrailsManager', () => {
   })
 
   describe('.search', () => {
-    test('should return the right records', async () => {
+    test('should return the right records with counts', async () => {
       await this.subject.performDatabaseOperations(client => client.query('TRUNCATE trails'))
 
       const records = [
@@ -105,22 +105,40 @@ describe('TrailsManager', () => {
 
       const ids = await Promise.all(records.map(r => this.subject.insert(r)))
 
-      expect((await this.subject.search({ from: '2018-01-01T11:00:00+00:00', to: '2018-01-04T13:34:56+00:00', who: 'dog', sort: 'when' }))
+      var trail = await this.subject.search({ from: '2018-01-01T11:00:00+00:00', to: '2018-01-04T13:34:56+00:00', who: 'dog', sort: 'when' })
+      expect(trail).to.be.object()
+      expect(parseInt(trail.count)).to.equal(2)
+      expect(trail.data
         .map(r => r.id)).to.equal([ids[0], ids[1]])
 
-      expect((await this.subject.search({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-04T13:34:56+00:00', what: 'evening', sort: 'id' }))
+      trail = await this.subject.search({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-04T13:34:56+00:00', what: 'evening', sort: 'id' })
+      expect(trail).to.be.object()
+      expect(parseInt(trail.count)).to.equal(2)
+      expect(trail.data
         .map(r => r.id)).to.equal([ids[1], ids[3]].sort())
 
-      expect((await this.subject.search({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-04T13:34:56+00:00', what: 'evening', sort: '-subject' }))
+      trail = await this.subject.search({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-04T13:34:56+00:00', what: 'evening', sort: '-subject' })
+      expect(trail).to.be.object()
+      expect(parseInt(trail.count)).to.equal(2)
+      expect(trail.data
         .map(r => r.id)).to.equal([ids[1], ids[3]])
 
-      expect((await this.subject.search({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-05T13:34:56+00:00', subject: 'world' }))
+      trail = await this.subject.search({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-05T13:34:56+00:00', subject: 'world' })
+      expect(trail).to.be.object()
+      expect(parseInt(trail.count)).to.equal(1)
+      expect(trail.data
         .map(r => r.id)).to.equal([ids[4]])
 
-      expect((await this.subject.search({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-05T13:34:56+00:00', what: 'world' }))
+      trail = await this.subject.search({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-05T13:34:56+00:00', what: 'world' })
+      expect(trail).to.be.object()
+      expect(parseInt(trail.count)).to.equal(0)
+      expect(trail.data
         .map(r => r.id)).to.equal([])
 
-      expect((await this.subject.search({ from: '2018-01-01T00:00:00+00:00', to: '2018-01-05T13:34:56+00:00', sort: 'when', page: 2, pageSize: 2 }))
+      trail = await this.subject.search({ from: '2018-01-01T00:00:00+00:00', to: '2018-01-05T13:34:56+00:00', sort: 'when', page: 2, pageSize: 2 })
+      expect(trail).to.be.object()
+      expect(parseInt(trail.count)).to.equal(5)
+      expect(trail.data
         .map(r => r.id)).to.equal([ids[2], ids[3]])
 
       await Promise.all(ids.map(i => this.subject.delete(i)))
@@ -139,13 +157,22 @@ describe('TrailsManager', () => {
 
       const ids = await Promise.all(records.map(r => this.subject.insert(r)))
 
-      expect((await this.subject.search({ from: '2018-01-01T11:00:00+00:00', to: '2018-01-04T13:34:56+00:00', who: 'dog cat fish', sort: 'when', exactMatch: true }))
+      var trail = await this.subject.search({ from: '2018-01-01T11:00:00+00:00', to: '2018-01-04T13:34:56+00:00', who: 'dog cat fish', sort: 'when', exactMatch: true })
+      expect(trail).to.be.object()
+      expect(parseInt(trail.count)).to.equal(1)
+      expect(trail.data
         .map(r => r.id)).to.equal([ids[0]])
 
-      expect((await this.subject.search({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-04T13:34:56+00:00', what: 'evening', sort: 'when', exactMatch: true }))
+      trail = await this.subject.search({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-04T13:34:56+00:00', what: 'evening', sort: 'when', exactMatch: true })
+      expect(trail).to.be.object()
+      expect(parseInt(trail.count)).to.equal(2)
+      expect(trail.data
         .map(r => r.id)).to.equal([ids[1], ids[3]])
 
-      expect((await this.subject.search({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-05T13:34:56+00:00', subject: 'door', sort: 'when', exactMatch: true }))
+      trail = await this.subject.search({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-05T13:34:56+00:00', subject: 'door', sort: 'when', exactMatch: true })
+      expect(trail).to.be.object()
+      expect(parseInt(trail.count)).to.equal(2)
+      expect(trail.data
         .map(r => r.id)).to.equal([ids[2], ids[3]])
 
       await Promise.all(ids.map(i => this.subject.delete(i)))
@@ -181,16 +208,28 @@ describe('TrailsManager', () => {
 
       const ids = await Promise.all(records.map(r => this.subject.insert(r)))
 
-      expect((await this.subject.search({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-04T13:34:56+00:00', subject: 'DOOr', sort: 'when', exactMatch: true, caseInsensitive: true }))
+      var trail = await this.subject.search({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-04T13:34:56+00:00', subject: 'DOOr', sort: 'when', exactMatch: true, caseInsensitive: true })
+      expect(trail).to.be.object()
+      expect(parseInt(trail.count)).to.equal(2)
+      expect(trail.data
         .map(r => r.id)).to.equal([ids[2], ids[3]])
 
-      expect((await this.subject.search({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-04T13:34:56+00:00', subject: 'DOOr', sort: 'when', exactMatch: true }))
+      trail = await this.subject.search({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-04T13:34:56+00:00', subject: 'DOOr', sort: 'when', exactMatch: true })
+      expect(trail).to.be.object()
+      expect(parseInt(trail.count)).to.equal(1)
+      expect(trail.data
         .map(r => r.id)).to.equal([ids[3]])
 
-      expect((await this.subject.search({ from: '2018-01-01T12:00:00+00:00', to: '2018-01-05T13:34:56+00:00', what: 'MORNing', sort: 'when', caseInsensitive: true }))
+      trail = await this.subject.search({ from: '2018-01-01T12:00:00+00:00', to: '2018-01-05T13:34:56+00:00', what: 'MORNing', sort: 'when', caseInsensitive: true })
+      expect(trail).to.be.object()
+      expect(parseInt(trail.count)).to.equal(2)
+      expect(trail.data
         .map(r => r.id)).to.equal([ids[0], ids[2]])
 
-      expect((await this.subject.search({ from: '2018-01-01T12:00:00+00:00', to: '2018-01-05T13:34:56+00:00', what: 'MORNing', sort: 'when' }))
+      trail = await this.subject.search({ from: '2018-01-01T12:00:00+00:00', to: '2018-01-05T13:34:56+00:00', what: 'MORNing', sort: 'when' })
+      expect(trail).to.be.object()
+      expect(parseInt(trail.count)).to.equal(1)
+      expect(trail.data
         .map(r => r.id)).to.equal([ids[0]])
 
       await Promise.all(ids.map(i => this.subject.delete(i)))
@@ -203,78 +242,18 @@ describe('TrailsManager', () => {
       expect(spy.getCall(0).args[0].text).to.include('LIMIT 25 OFFSET 275')
 
       await this.subject.search({ from: DateTime.local(), to: DateTime.local(), pageSize: 12 })
-      expect(spy.getCall(1).args[0].text).to.include('LIMIT 12 OFFSET 0')
+      expect(spy.getCall(2).args[0].text).to.include('LIMIT 12 OFFSET 0')
 
       await this.subject.search({ from: DateTime.local(), to: DateTime.local(), page: 3, pageSize: 12 })
-      expect(spy.getCall(2).args[0].text).to.include('LIMIT 12 OFFSET 24')
+      expect(spy.getCall(4).args[0].text).to.include('LIMIT 12 OFFSET 24')
 
       await this.subject.search({ from: DateTime.local(), to: DateTime.local(), page: '12', pageSize: NaN })
-      expect(spy.getCall(3).args[0].text).to.include('LIMIT 25 OFFSET 275')
+      expect(spy.getCall(6).args[0].text).to.include('LIMIT 25 OFFSET 275')
 
       await this.subject.search({ from: DateTime.local(), to: DateTime.local(), page: NaN, pageSize: 2 })
-      expect(spy.getCall(4).args[0].text).to.include('LIMIT 2 OFFSET 0')
+      expect(spy.getCall(8).args[0].text).to.include('LIMIT 2 OFFSET 0')
 
       spy.restore()
-    })
-  })
-  describe('.searchCount', () => {
-    test('should return the right record counts', async () => {
-      await this.subject.performDatabaseOperations(client => client.query('TRUNCATE trails'))
-
-      const records = [
-        { when: '2018-01-01T12:34:56+00:00', who: 'dog cat fish', what: 'open morning', subject: 'window' },
-        { when: '2018-01-02T12:34:56+00:00', who: 'dog cat shark', what: 'open evening', subject: 'window' },
-        { when: '2018-01-03T12:34:56+00:00', who: 'wolf cat whale', what: 'open morning', subject: 'door' },
-        { when: '2018-01-04T12:34:56+00:00', who: 'hyena lion fish', what: 'close evening', subject: 'door' },
-        { when: '2018-01-05T12:34:56+00:00', who: 'hyena tiger whal', what: 'close night', subject: 'world' }
-      ]
-
-      const ids = await Promise.all(records.map(r => this.subject.insert(r)))
-
-      expect(parseInt(await this.subject.searchCount({ from: '2018-01-01T11:00:00+00:00', to: '2018-01-04T13:34:56+00:00', who: 'dog', sort: 'when' })))
-        .to.equal(2)
-
-      expect(parseInt(await this.subject.searchCount({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-04T13:34:56+00:00', what: 'evening', sort: 'id' })))
-        .to.equal(2)
-
-      expect(parseInt(await this.subject.searchCount({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-04T13:34:56+00:00', what: 'evening', sort: '-subject' })))
-        .to.equal(2)
-
-      expect(parseInt(await this.subject.searchCount({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-05T13:34:56+00:00', subject: 'world' })))
-        .to.equal(1)
-
-      expect(parseInt(await this.subject.searchCount({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-05T13:34:56+00:00', what: 'world' })))
-        .to.equal(0)
-
-      await Promise.all(ids.map(i => this.subject.delete(i)))
-    })
-
-    test('should return the record counts with case insensitiveness', async () => {
-      await this.subject.performDatabaseOperations(client => client.query('TRUNCATE trails'))
-
-      const records = [
-        { when: '2018-01-01T12:34:56+00:00', who: 'dog cat fish', what: 'open MORNing', subject: 'window' },
-        { when: '2018-01-02T12:34:56+00:00', who: 'dog cat shark', what: 'evening', subject: 'window' },
-        { when: '2018-01-03T12:34:56+00:00', who: 'wolf cat whale', what: 'open morning', subject: 'door' },
-        { when: '2018-01-04T12:34:56+00:00', who: 'hyena lion fish', what: 'evening', subject: 'DOOr' },
-        { when: '2018-01-05T12:34:56+00:00', who: 'hyena tiger whal', what: 'close night', subject: 'world' }
-      ]
-
-      const ids = await Promise.all(records.map(r => this.subject.insert(r)))
-
-      expect(parseInt(await this.subject.searchCount({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-04T13:34:56+00:00', subject: 'DOOr', sort: 'when', exactMatch: true, caseInsensitive: true })))
-        .to.equal(2)
-
-      expect(parseInt(await this.subject.searchCount({ from: '2018-01-01T15:00:00+00:00', to: '2018-01-04T13:34:56+00:00', subject: 'DOOr', sort: 'when', exactMatch: true })))
-        .to.equal(1)
-
-      expect(parseInt(await this.subject.searchCount({ from: '2018-01-01T12:00:00+00:00', to: '2018-01-05T13:34:56+00:00', what: 'MORNing', sort: 'when', caseInsensitive: true })))
-        .to.equal(2)
-
-      expect(parseInt(await this.subject.searchCount({ from: '2018-01-01T12:00:00+00:00', to: '2018-01-05T13:34:56+00:00', what: 'MORNing', sort: 'when' })))
-        .to.equal(1)
-
-      await Promise.all(ids.map(i => this.subject.delete(i)))
     })
   })
 

@@ -87,31 +87,8 @@ class TrailsManager {
           ("when" >= ${from.toISO()} AND "when" <= ${to.toISO()})
     `
 
-    const op = caseInsensitive ? 'ILIKE' : 'LIKE'
-    if (who) sql.append(SQL([` AND who_id ${op} `])).append(SQL`${exactMatch ? who : '%' + who + '%'}`)
-    if (what) sql.append(SQL([` AND what_id ${op} `])).append(SQL`${exactMatch ? what : '%' + what + '%'}`)
-    if (subject) sql.append(SQL([` AND subject_id ${op} `])).append(SQL`${exactMatch ? subject : '%' + subject + '%'}`)
-
-    const footer = ` ORDER BY ${sortKey} ${sortAsc ? 'ASC' : 'DESC'} LIMIT ${pageSize} OFFSET ${(page - 1) * pageSize}`
-    sql.append(SQL([footer]))
-
-    const res = await this.performDatabaseOperations(sql)
-    return res.rows.map(convertToTrail)
-  }
-
-  async searchCount ({ from, to, who, what, subject, page, pageSize, sort, exactMatch = false, caseInsensitive = false } = {}) {
-    // Validate parameters
-    if (!from) throw new Error('You must specify a starting date ("from" attribute) when querying trails.')
-    if (!to) throw new Error('You must specify a ending date ("to" attribute) when querying trails.')
-    if (who && typeof who !== 'string') throw new TypeError('Only strings are supporting for searching in the id of the "who" field.')
-    if (what && typeof what !== 'string') throw new TypeError('Only strings are supporting for searching in the id of the "what" field.')
-    if (subject && typeof subject !== 'string') throw new TypeError('Only strings are supporting for searching in the id of the "subject" field.')
-
-    from = parseDate(from)
-    to = parseDate(to)
-
-    // Perform the query
-    const sql = SQL`
+    // Prepare the query to get Count
+    const sqlCount = SQL`
       SELECT
           count(*)
         FROM trails
@@ -120,12 +97,28 @@ class TrailsManager {
     `
 
     const op = caseInsensitive ? 'ILIKE' : 'LIKE'
-    if (who) sql.append(SQL([` AND who_id ${op} `])).append(SQL`${exactMatch ? who : '%' + who + '%'}`)
-    if (what) sql.append(SQL([` AND what_id ${op} `])).append(SQL`${exactMatch ? what : '%' + what + '%'}`)
-    if (subject) sql.append(SQL([` AND subject_id ${op} `])).append(SQL`${exactMatch ? subject : '%' + subject + '%'}`)
+    if (who) {
+      sql.append(SQL([` AND who_id ${op} `])).append(SQL`${exactMatch ? who : '%' + who + '%'}`)
+      sqlCount.append(SQL([` AND who_id ${op} `])).append(SQL`${exactMatch ? who : '%' + who + '%'}`)
+    }
+    if (what) {
+      sql.append(SQL([` AND what_id ${op} `])).append(SQL`${exactMatch ? what : '%' + what + '%'}`)
+      sqlCount.append(SQL([` AND what_id ${op} `])).append(SQL`${exactMatch ? what : '%' + what + '%'}`)
+    }
+    if (subject) {
+      sql.append(SQL([` AND subject_id ${op} `])).append(SQL`${exactMatch ? subject : '%' + subject + '%'}`)
+      sqlCount.append(SQL([` AND subject_id ${op} `])).append(SQL`${exactMatch ? subject : '%' + subject + '%'}`)
+    }
+
+    const footer = ` ORDER BY ${sortKey} ${sortAsc ? 'ASC' : 'DESC'} LIMIT ${pageSize} OFFSET ${(page - 1) * pageSize}`
+    sql.append(SQL([footer]))
 
     const res = await this.performDatabaseOperations(sql)
-    return res.rows[0].count
+
+    // Get record count if the flag is set to true
+    const resCount = await this.performDatabaseOperations(sqlCount)
+
+    return { count: resCount.rows[0].count, data: res.rows.map(convertToTrail) }
   }
 
   async enumerate ({ from, to, type, page, pageSize, desc } = {}) {
