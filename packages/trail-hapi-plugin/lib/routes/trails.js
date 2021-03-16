@@ -49,9 +49,14 @@ module.exports = {
         },
         response: {
           status: {
-            200: Joi.array()
-              .description('The search results.')
-              .items(trailSchema.response),
+            200: Joi.object()
+              .keys({
+                count: Joi.number()
+                  .description('Count of trail records matching filters'),
+                data: Joi.array()
+                .description('The search results.')
+                .items(trailSchema.response)
+              }),
             422: errorsSchemas['422'],
             500: errorsSchemas['500']
           }

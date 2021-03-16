@@ -59,7 +59,8 @@ describe('Trails REST operations', () => {
       expect(response.statusCode).to.equal(200)
       const trails = JSON.parse(response.payload)
 
-      expect(trails[0]).to.include({
+      expect(parseInt(trails.count)).to.equals(1)
+      expect(trails.data[0]).to.include({
         id: id,
         when: DateTime.fromISO('2016-01-02T15:04:05.123', { zone: 'utc' }).toISO(),
         who: {
@@ -100,7 +101,8 @@ describe('Trails REST operations', () => {
       expect(response.statusCode).to.equal(200)
       const trails = JSON.parse(response.payload)
 
-      expect(trails).to.equal([])
+      expect(parseInt(trails.count)).to.equals(0)
+      expect(trails.data).to.equal([])
 
       await server.trailCore.delete(id)
     })
