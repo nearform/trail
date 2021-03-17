@@ -123,7 +123,7 @@ const typeDefs = `
       sort: SortOrder
       exactMatch: Boolean
       caseInsensitive: Boolean
-    ): Trails
+    ): Trails!
 
     enumerateTrails(
       from: Date!
