@@ -3,7 +3,7 @@
 const fp = require('fastify-plugin')
 const { TrailsManager } = require('@nearform/trail-core')
 const { get } = require('lodash')
-const Ajv = require('ajv')
+const Ajv = require('ajv').default
 
 const { errorsMessages } = require('./schemas/errors')
 
