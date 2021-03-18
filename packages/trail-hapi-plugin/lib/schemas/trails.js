@@ -39,6 +39,30 @@ const dateTime = Joi.string()
   .example('2018-01-02T03:04:05.123Z')
   .isoDate()
 
+const responseObject = Joi.object()
+  .description('A audit trail')
+  .meta({ className: 'trail/response' })
+  .keys({
+    id: Joi.number()
+      .description('Trail id')
+      .example(12345),
+    when: Joi.any()
+      .description('Trail UTC timestamp in ISO 8601 format')
+      .tag('datetime')
+      .example('2018-01-02T03:04:05.123Z')
+      .required(),
+    who: namedObject('Trail actor').required(),
+    what: namedObject('Trail subject').required(),
+    subject: namedObject('Trail target').required(),
+    where: Joi.object()
+      .description('Trail where'),
+    why: Joi.object()
+      .description('Trail reason'),
+    meta: Joi.object()
+      .description('Trail meta')
+  })
+  .unknown(false)
+
 const trailSchema = {
   params: Joi.object()
     .meta({ className: 'trail/params' })
@@ -125,29 +149,15 @@ const trailSchema = {
         .description('Trail meta')
     })
     .unknown(false),
-  response: Joi.object()
-    .description('A audit trail')
-    .meta({ className: 'trail/response' })
+  response: responseObject,
+  searchResponse: Joi.object()
     .keys({
-      id: Joi.number()
-        .description('Trail id')
-        .example(12345),
-      when: Joi.any()
-        .description('Trail UTC timestamp in ISO 8601 format')
-        .tag('datetime')
-        .example('2018-01-02T03:04:05.123Z')
-        .required(),
-      who: namedObject('Trail actor').required(),
-      what: namedObject('Trail subject').required(),
-      subject: namedObject('Trail target').required(),
-      where: Joi.object()
-        .description('Trail where'),
-      why: Joi.object()
-        .description('Trail reason'),
-      meta: Joi.object()
-        .description('Trail meta')
+      count: Joi.number()
+        .description('The total count of search results.'),
+      data: Joi.array()
+        .description('The search results.')
+        .items(responseObject)
     })
-    .unknown(false)
 }
 
 const components = [

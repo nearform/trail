@@ -40,14 +40,7 @@ module.exports = async function (fastify, options) {
     schema: {
       query: trailSchema.search,
       response: {
-        200: S.object()
-          .prop('count', S.number()
-            .description('The search result count')
-          )
-          .prop('data', S.array()
-            .description('The search results.')
-            .items(trailSchema.response)
-          ),
+        200: trailSchema.searchResponse,
         422: errorsSchemas['422'],
         500: errorsSchemas['500']
       }

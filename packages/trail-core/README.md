@@ -114,7 +114,7 @@ The `page` and `pageSize` attributes can be used to control pagination. They mus
 To sort results, use the `sort` attribute. It supports sorting by the `id`, `when`, `who`, `what` and `subject` attributes.
 The default sort direction is ascending, but it can be reversed by prepending a dash. (i.e: `-who`). The default value is `-when`.
 
-Returns an array of found trail objects.
+Returns an object with the result count and array of found trail objects.
 
 ### `async TrailsManager.enumerate({from, to, type, page, pageSize, desc})`
 

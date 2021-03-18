@@ -35,24 +35,27 @@ The Swagger API documentation can be accessed from Trail itself: `http://localho
 > 200 Response
 
 ```json
-[
-  {
-    "id": 12345,
-    "when": "2018-01-02T03:04:05.123Z",
-    "who": {
-      "id": "Trail actor"
-    },
-    "what": {
-      "id": "Trail subject"
-    },
-    "subject": {
-      "id": "Trail target"
-    },
-    "where": {},
-    "why": {},
-    "meta": {}
-  }
-]
+{  
+  "count": 1,
+  "data": [
+    {
+      "id": 12345,
+      "when": "2018-01-02T03:04:05.123Z",
+      "who": {
+        "id": "Trail actor"
+      },
+      "what": {
+        "id": "Trail subject"
+      },
+      "subject": {
+        "id": "Trail target"
+      },
+      "where": {},
+      "why": {},
+      "meta": {}
+    }
+  ]
+}
 ```
 
 #### Create a new audit trail

@@ -12,7 +12,7 @@
 
 ##### String values
 
-Some trail record fields support attributed string values (indicated by the `StringWithAttrs` type) when inserting or updating. 
+Some trail record fields support attributed string values (indicated by the `StringWithAttrs` type) when inserting or updating.
 
 When writing fields of this type, the value can be specified either as an object with an `id` property (specifying the string value) and additional properties which specify the string's attributes; or as a simple string value when no additional attributes are needed:
 
@@ -38,11 +38,14 @@ When writing fields of this type, the value can be specified either as an object
 ```graphql
 {
     trails(from: "2018-01-01T12:34:56.000Z", to: "2018-01-05T12:34:56.000Z") {
+      count
+      data {
         id
         when
         who
         what
         subject
+      }
     }
 }
 ```

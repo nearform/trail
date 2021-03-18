@@ -3,6 +3,7 @@
 const SQL = require('@nearform/sql')
 const pino = require('pino')
 const { Pool } = require('pg')
+require('pg').defaults.parseInt8 = true
 
 const defaultPageSize = 25
 const { parseDate, convertToTrail } = require('./trail')
@@ -97,28 +98,25 @@ class TrailsManager {
     `
 
     const op = caseInsensitive ? 'ILIKE' : 'LIKE'
-    if (who) {
-      sql.append(SQL([` AND who_id ${op} `])).append(SQL`${exactMatch ? who : '%' + who + '%'}`)
-      sqlCount.append(SQL([` AND who_id ${op} `])).append(SQL`${exactMatch ? who : '%' + who + '%'}`)
-    }
-    if (what) {
-      sql.append(SQL([` AND what_id ${op} `])).append(SQL`${exactMatch ? what : '%' + what + '%'}`)
-      sqlCount.append(SQL([` AND what_id ${op} `])).append(SQL`${exactMatch ? what : '%' + what + '%'}`)
-    }
-    if (subject) {
-      sql.append(SQL([` AND subject_id ${op} `])).append(SQL`${exactMatch ? subject : '%' + subject + '%'}`)
-      sqlCount.append(SQL([` AND subject_id ${op} `])).append(SQL`${exactMatch ? subject : '%' + subject + '%'}`)
-    }
+    const filterClause = SQL``
+
+    if (who) filterClause.append(SQL([` AND who_id ${op} `]).append(SQL`${exactMatch ? who : '%' + who + '%'}`))
+    if (what) filterClause.append(SQL([` AND what_id ${op} `]).append(SQL`${exactMatch ? what : '%' + what + '%'}`))
+    if (subject) filterClause.append(SQL([` AND subject_id ${op} `]).append(SQL`${exactMatch ? subject : '%' + subject + '%'}`))
+
+    sql.append(filterClause)
+    sqlCount.append(filterClause)
 
     const footer = ` ORDER BY ${sortKey} ${sortAsc ? 'ASC' : 'DESC'} LIMIT ${pageSize} OFFSET ${(page - 1) * pageSize}`
     sql.append(SQL([footer]))
 
-    const res = await this.performDatabaseOperations(sql)
+    const result = await this.performDatabaseOperations(async client => {
+      const count = await client.query(sqlCount)
+      const results = await client.query(sql)
+      return { count: count.rows[0].count, data: results.rows.map(convertToTrail) }
+    })
 
-    // Get record count if the flag is set to true
-    const resCount = await this.performDatabaseOperations(sqlCount)
-
-    return { count: resCount.rows[0].count, data: res.rows.map(convertToTrail) }
+    return result
   }
 
   async enumerate ({ from, to, type, page, pageSize, desc } = {}) {
