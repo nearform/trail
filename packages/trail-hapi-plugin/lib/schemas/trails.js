@@ -151,6 +151,7 @@ const trailSchema = {
     .unknown(false),
   response: responseObject,
   searchResponse: Joi.object()
+    .description('List of audit trails matching the search criteria.')
     .keys({
       count: Joi.number()
         .description('The total count of search results.'),

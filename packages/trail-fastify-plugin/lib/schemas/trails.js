@@ -123,6 +123,7 @@ const trailSchema = {
     .prop('meta', S.object().description('Trail meta')),
   response: responseObject,
   searchResponse: S.object()
+    .description('List of audit trails matching the search criteria.')
     .prop('count', S.number()
       .description('The total count of search results.')
     )
