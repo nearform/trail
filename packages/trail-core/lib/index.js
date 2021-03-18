@@ -84,8 +84,6 @@ class TrailsManager {
           who_data as who, what_data as what, subject_data as subject,
           "where", why, meta
         FROM trails
-        WHERE
-          ("when" >= ${from.toISO()} AND "when" <= ${to.toISO()})
     `
 
     // Prepare the query to get Count
@@ -93,12 +91,11 @@ class TrailsManager {
       SELECT
           count(*)
         FROM trails
-        WHERE
-          ("when" >= ${from.toISO()} AND "when" <= ${to.toISO()})
     `
 
     const op = caseInsensitive ? 'ILIKE' : 'LIKE'
-    const filterClause = SQL``
+    const filterClause = SQL` WHERE
+      ("when" >= ${from.toISO()} AND "when" <= ${to.toISO()})`
 
     if (who) filterClause.append(SQL([` AND who_id ${op} `]).append(SQL`${exactMatch ? who : '%' + who + '%'}`))
     if (what) filterClause.append(SQL([` AND what_id ${op} `]).append(SQL`${exactMatch ? what : '%' + what + '%'}`))
@@ -110,7 +107,7 @@ class TrailsManager {
     const footer = ` ORDER BY ${sortKey} ${sortAsc ? 'ASC' : 'DESC'} LIMIT ${pageSize} OFFSET ${(page - 1) * pageSize}`
     sql.append(SQL([footer]))
 
-    const res = await this.performDatabaseOperations(async client => {
+    const res = await this.performDatabaseOperations(client => {
       return Promise.all([
         client.query(sqlCount),
         client.query(sql)
