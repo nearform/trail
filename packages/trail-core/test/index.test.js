@@ -235,26 +235,34 @@ describe('TrailsManager', () => {
       await Promise.all(ids.map(i => this.subject.delete(i)))
     })
 
-    // test('should sanitize pagination parameters', async () => {
-    //   const spy = sinon.spy(this.subject, 'performDatabaseOperations')
-    //
-    //   await this.subject.search({ from: DateTime.local(), to: DateTime.local(), page: 12 })
-    //   expect(spy.getCall(0).args[0].text).to.include('LIMIT 25 OFFSET 275')
-    //
-    //   await this.subject.search({ from: DateTime.local(), to: DateTime.local(), pageSize: 12 })
-    //   expect(spy.getCall(2).args[0].text).to.include('LIMIT 12 OFFSET 0')
-    //
-    //   await this.subject.search({ from: DateTime.local(), to: DateTime.local(), page: 3, pageSize: 12 })
-    //   expect(spy.getCall(4).args[0].text).to.include('LIMIT 12 OFFSET 24')
-    //
-    //   await this.subject.search({ from: DateTime.local(), to: DateTime.local(), page: '12', pageSize: NaN })
-    //   expect(spy.getCall(6).args[0].text).to.include('LIMIT 25 OFFSET 275')
-    //
-    //   await this.subject.search({ from: DateTime.local(), to: DateTime.local(), page: NaN, pageSize: 2 })
-    //   expect(spy.getCall(8).args[0].text).to.include('LIMIT 2 OFFSET 0')
-    //
-    //   spy.restore()
-    // })
+    test('should sanitize pagination parameters', async () => {
+      const client = {
+        query () { }
+      }
+      const stub = sinon.stub(this.subject, 'performDatabaseOperations').callsFake(function fakeFn (operations, useTransaction = true) {
+        operations(client)
+        return [{ rows: [{ count: 0 }] }, { rows: [] }]
+      })
+      const spy = sinon.spy(client, 'query')
+
+      await this.subject.search({ from: DateTime.local(), to: DateTime.local(), page: 12 })
+      expect(spy.getCall(1).args[0].text).to.include('LIMIT 25 OFFSET 275')
+
+      await this.subject.search({ from: DateTime.local(), to: DateTime.local(), pageSize: 12 })
+      expect(spy.getCall(3).args[0].text).to.include('LIMIT 12 OFFSET 0')
+
+      await this.subject.search({ from: DateTime.local(), to: DateTime.local(), page: 3, pageSize: 12 })
+      expect(spy.getCall(5).args[0].text).to.include('LIMIT 12 OFFSET 24')
+
+      await this.subject.search({ from: DateTime.local(), to: DateTime.local(), page: '12', pageSize: NaN })
+      expect(spy.getCall(7).args[0].text).to.include('LIMIT 25 OFFSET 275')
+
+      await this.subject.search({ from: DateTime.local(), to: DateTime.local(), page: NaN, pageSize: 2 })
+      expect(spy.getCall(9).args[0].text).to.include('LIMIT 2 OFFSET 0')
+
+      spy.restore()
+      stub.restore()
+    })
   })
 
   describe('.enumerate', () => {

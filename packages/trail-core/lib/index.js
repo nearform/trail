@@ -110,13 +110,14 @@ class TrailsManager {
     const footer = ` ORDER BY ${sortKey} ${sortAsc ? 'ASC' : 'DESC'} LIMIT ${pageSize} OFFSET ${(page - 1) * pageSize}`
     sql.append(SQL([footer]))
 
-    const result = await this.performDatabaseOperations(async client => {
-      const count = await client.query(sqlCount)
-      const results = await client.query(sql)
-      return { count: count.rows[0].count, data: results.rows.map(convertToTrail) }
+    const res = await this.performDatabaseOperations(async client => {
+      return Promise.all([
+        client.query(sqlCount),
+        client.query(sql)
+      ])
     })
 
-    return result
+    return { count: res[0].rows[0].count, data: res[1].rows.map(convertToTrail) }
   }
 
   async enumerate ({ from, to, type, page, pageSize, desc } = {}) {
