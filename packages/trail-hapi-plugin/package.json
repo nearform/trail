@@ -51,7 +51,7 @@
   "devDependencies": {
     "@hapi/code": "^8.0.2",
     "@hapi/lab": "^23.0.0",
-    "sinon": "^9.0.3"
+    "sinon": "^10.0.0"
   },
   "snyk": true
 }

@@ -45,6 +45,6 @@
   "devDependencies": {
     "@hapi/lab": "^22.0.5",
     "code": "^5.2.0",
-    "sinon": "^9.2.4"
+    "sinon": "^10.0.0"
   }
 }
