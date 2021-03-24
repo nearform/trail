@@ -2,13 +2,8 @@
 
 // Leak detection errors reported are caused by graphql-tools in graphql-compiler.js
 
-const { expect } = require('@hapi/code')
-const Lab = require('@hapi/lab')
-
-module.exports.lab = Lab.script()
-const { describe, it: test, before, after } = module.exports.lab
-
 const { TrailsManager } = require('@nearform/trail-core')
+
 const { makeQueryExecutor } = require('./graphql-compiler')
 
 const convertToStringWithAttrs = val => {
@@ -53,13 +48,13 @@ const getTrail = async (test, id) => {
 }
 
 describe('GraphQL', () => {
-  before(() => {
+  beforeAll(() => {
     const trailsManager = new TrailsManager({ db: { database: 'trails_test' } })
     const execQuery = makeQueryExecutor({ trailsManager })
     this.subject = { trailsManager, execQuery }
   })
 
-  after(async () => {
+  afterAll(async () => {
     const { trailsManager } = this.subject
     await trailsManager.performDatabaseOperations(client => client.query('TRUNCATE trails'))
     await trailsManager.close()

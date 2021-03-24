@@ -1,11 +1,6 @@
 'use strict'
 
-const { expect } = require('code')
-const Lab = require('@hapi/lab')
 const sinon = require('sinon')
-
-module.exports.lab = Lab.script()
-const { describe, it: test, before, after } = module.exports.lab
 
 const { DateTime } = require('luxon')
 const { errorsMessages } = require('../../lib/schemas/errors')
@@ -14,11 +9,11 @@ const testServer = require('../test-server')
 describe('Trails REST operations', () => {
   let server = null
 
-  before(async () => {
+  beforeAll(async () => {
     server = await testServer.buildDefault()
   })
 
-  after(async () => {
+  afterAll(async () => {
     return testServer.stopAll()
   })
 

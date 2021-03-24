@@ -31,10 +31,10 @@
   },
   "main": "lib/index.js",
   "scripts": {
-    "coverage": "lab -c test",
-    "coverage:watch": "jest -i --coverage --watch",
+    "coverage": "jest -i --coverage",
+    "coverage:watch": "npm run coverage -- --watch",
+    "test": "jest",
     "depcheck": "npx depcheck --ignores=config",
-    "test": "lab test",
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect"
   },
@@ -49,8 +49,7 @@
     "snyk": "^1.391.1"
   },
   "devDependencies": {
-    "@hapi/code": "^8.0.2",
-    "@hapi/lab": "^23.0.0",
+    "jest": "^26.6.3",
     "sinon": "^10.0.0"
   },
   "snyk": true

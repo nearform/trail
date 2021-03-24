@@ -1,12 +1,6 @@
 'use strict'
 
-const { expect } = require('code')
-const Lab = require('@hapi/lab')
 const sinon = require('sinon')
-
-module.exports.lab = Lab.script()
-const { describe, it: test, before, after } = module.exports.lab
-
 const SQL = require('@nearform/sql')
 const { DateTime } = require('luxon')
 
@@ -25,11 +19,11 @@ const makeTrailsManager = opts => new TrailsManager({
 })
 
 describe('TrailsManager', () => {
-  before(() => {
+  beforeAll(() => {
     this.subject = makeTrailsManager()
   })
 
-  after(async () => {
+  afterAll(async () => {
     await this.subject.performDatabaseOperations(client => client.query('TRUNCATE trails'))
     await this.subject.close()
   })

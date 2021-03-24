@@ -1,11 +1,6 @@
 'use strict'
 
-const { expect } = require('code')
-const Lab = require('@hapi/lab')
 const sinon = require('sinon')
-
-module.exports.lab = Lab.script()
-const { describe, it: test, before, after } = module.exports.lab
 
 const testServer = require('./test-server')
 
@@ -13,7 +8,7 @@ describe('Server', () => {
   let server = null
   const stubs = []
 
-  before(async () => {
+  beforeAll(async () => {
     stubs.push(sinon.stub(process, 'exit').callsFake(code => {
       throw new Error(`EXITED - ${code}`)
     }))
@@ -23,7 +18,7 @@ describe('Server', () => {
     server = await testServer.buildDefault()
   })
 
-  after(async () => {
+  afterAll(async () => {
     stubs.map(c => c.restore())
   })
 

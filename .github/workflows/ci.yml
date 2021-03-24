@@ -53,9 +53,6 @@ jobs:
 
     - name: Install deps
       run: npm install
-    
-    - name: Run lerna bootstrap
-      run: npx lerna bootstrap
 
     - name: Preparing database
       run: npm run pg:travis:init
@@ -68,6 +65,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: fastify/github-action-merge-dependabot@v2.0.0
-        if: ${{ github.actor == 'dependabot[bot]' && github.event_name == 'pull_request' }}
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}

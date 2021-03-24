@@ -30,10 +30,10 @@
   },
   "main": "lib/index.js",
   "scripts": {
-    "coverage": "todo -c test",
-    "coverage:watch": "jest -i --coverage --watch",
-    "depcheck": "npx depcheck --ignores=config",
-    "test": "lab test --globals __createBinding,__extends,__assign,__rest,__decorate,__param,__metadata,__awaiter,__generator,__exportStar,__values,__read,__spread,__spreadArrays,__await,__asyncGenerator,__asyncDelegator,__asyncValues,__makeTemplateObject,__importStar,__importDefault,__classPrivateFieldGet,__classPrivateFieldSet"
+    "coverage": "jest -i --coverage",
+    "coverage:watch": "npm run coverage -- --watch",
+    "test": "jest",
+    "depcheck": "npx depcheck --ignores=config"
   },
   "dependencies": {
     "@nearform/trail-core": "^5.0.0",
@@ -47,7 +47,6 @@
     "luxon": "^1.25.0"
   },
   "devDependencies": {
-    "@hapi/code": "^8.0.2",
-    "@hapi/lab": "^22.0.5"
+    "jest": "^26.6.3"
   }
 }

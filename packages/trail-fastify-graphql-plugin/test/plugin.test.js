@@ -1,12 +1,7 @@
 'use strict'
 
-const { expect } = require('@hapi/code')
-const Lab = require('@hapi/lab')
-
-module.exports.lab = Lab.script()
-const { describe, it: test, before, after } = module.exports.lab
-
 const { DateTime } = require('luxon')
+
 const testServer = require('./test-server')
 
 const encodeQuery = q => encodeURIComponent(q.replace(/\s+/g, ' '))
@@ -14,11 +9,11 @@ const encodeQuery = q => encodeURIComponent(q.replace(/\s+/g, ' '))
 describe('Trails graphql HTTP operations', () => {
   let server = null
 
-  before(async () => {
+  beforeAll(async () => {
     server = await testServer.buildDefault()
   })
 
-  after(async () => {
+  afterAll(async () => {
     return testServer.stopAll()
   })
 
@@ -301,11 +296,11 @@ describe('Trails graphql HTTP operations with prefix path', () => {
   let server = null
   const prefix = '/prefix'
 
-  before(async () => {
+  beforeAll(async () => {
     server = await testServer.build({ prefix })
   })
 
-  after(async () => {
+  afterAll(async () => {
     return testServer.stopAll()
   })
 
