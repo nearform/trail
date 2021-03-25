@@ -84,7 +84,7 @@ describe('GraphQL', () => {
       }`)
 
       const expected = convertToTrail({ id, ...record })
-      expect(trail).to.equal(expected)
+      expect(trail).toEqual(expected)
     })
 
     test('get trails', async () => {
@@ -117,7 +117,7 @@ describe('GraphQL', () => {
         })
         .reverse()
 
-      expect(trails).to.equal(expected)
+      expect(trails).toEqual(expected)
     })
 
     test('enumerate', async () => {
@@ -140,7 +140,7 @@ describe('GraphQL', () => {
 
       const expected = records.map(r => r.who).sort().filter((w, i, a) => w !== a[i - 1])
 
-      expect(enumerateTrails).to.equal(expected)
+      expect(enumerateTrails).toEqual(expected)
     })
 
     test('get trails multiple concurrent', async () => {
@@ -160,7 +160,7 @@ describe('GraphQL', () => {
 
       ids.forEach((id, idx) => {
         const { when, who, what, subject } = convertToTrail(records[idx])
-        expect(data[`_${id}`]).to.equal({ when, who, what, subject })
+        expect(data[`_${id}`]).toEqual({ when, who, what, subject })
       })
     })
   })
@@ -187,11 +187,11 @@ describe('GraphQL', () => {
 
       const { id } = trail
 
-      expect(id).to.be.a.number()
+      expect(id).toEqual(expect.any(Number))
 
       const expected = convertToTrail({ id, when, who, what, subject })
 
-      expect(trail).to.equal(expected)
+      expect(trail).toEqual(expected)
     })
 
     test('insert with args and attributes', async () => {
@@ -220,11 +220,11 @@ describe('GraphQL', () => {
 
       const { id } = trail
 
-      expect(id).to.be.a.number()
+      expect(id).toEqual(expect.any(Number))
 
       const expected = convertToTrail({ id, when, who, what, subject })
 
-      expect(trail).to.equal(expected)
+      expect(trail).toEqual(expected)
     })
 
     test('insert invalid', async () => {
@@ -233,7 +233,7 @@ describe('GraphQL', () => {
           insertTrail(when: "")
         }`)
       } catch (e) {
-        expect(e.message).to.equal('Query compilation error: Argument "who" of required type "StringWithAttrs!" was not provided.')
+        expect(e.message).toEqual('Query compilation error: Argument "who" of required type "StringWithAttrs!" was not provided.')
       }
     })
 
@@ -261,7 +261,7 @@ describe('GraphQL', () => {
 
       const { id } = trail
 
-      expect(id).to.be.a.number()
+      expect(id).toEqual(expect.any(Number))
 
       const expected = convertToTrail({
         id,
@@ -274,7 +274,7 @@ describe('GraphQL', () => {
         meta: { meta0: 0, meta1: 'one', meta2: [2] }
       })
 
-      expect(trail).to.equal(expected)
+      expect(trail).toEqual(expected)
     })
 
     test('update', async () => {
@@ -291,9 +291,9 @@ describe('GraphQL', () => {
         }
       }`)
 
-      // expect(ok).to.be.true()
+      // expect(ok).toBe(true)
       // const trail = await getTrail(this, id)
-      expect(trail.what.id).to.equal(newWhat)
+      expect(trail.what.id).toEqual(newWhat)
     })
 
     test('update partial', async () => {
@@ -312,10 +312,10 @@ describe('GraphQL', () => {
         }
       }`)
 
-      // expect(ok).to.be.true()
+      // expect(ok).toBe(true)
       // const trail = await getTrail(this, id)
-      expect(trail.what.id).to.equal(newWhat)
-      expect(trail.subject.id).to.equal(newSubject)
+      expect(trail.what.id).toEqual(newWhat)
+      expect(trail.subject.id).toEqual(newSubject)
     })
 
     test('update with args and attributes', async () => {
@@ -338,9 +338,9 @@ describe('GraphQL', () => {
         }
       }`, { id, when, who, what: newWhat, subject })
 
-      // expect(ok).to.be.true()
+      // expect(ok).toBe(true)
       // const trail = await getTrail(this, id)
-      expect(trail.what.id).to.equal(newWhat)
+      expect(trail.what.id).toEqual(newWhat)
     })
 
     test('update invalid', async () => {
@@ -355,7 +355,7 @@ describe('GraphQL', () => {
           updateTrail(id: ${id}, when: "")
         }`)
       } catch (e) {
-        expect(e.message).to.equal('Query compilation error: Argument "who" of required type "StringWithAttrs!" was not provided.')
+        expect(e.message).toEqual('Query compilation error: Argument "who" of required type "StringWithAttrs!" was not provided.')
       }
     })
 
@@ -367,16 +367,16 @@ describe('GraphQL', () => {
         ok: deleteTrail(id: ${id})
       }`)
 
-      expect(ok).to.be.true()
+      expect(ok).toBe(true)
       const trail = await getTrail(this, id)
-      expect(trail).to.be.null()
+      expect(trail).toBeNull()
     })
 
     test('delete nonexisting', async () => {
       const { data: { ok } } = await this.subject.execQuery(`mutation {
         ok: deleteTrail(id: 1)
       }`)
-      expect(ok).to.be.false()
+      expect(ok).toBe(false)
     })
 
     test('multiple concurrent', async () => {
@@ -402,10 +402,10 @@ describe('GraphQL', () => {
       const expected = convertToTrail({ id, ...newTrail })
 
       const trail = await getTrail(this, id)
-      expect(trail).to.equal(expected)
+      expect(trail).toEqual(expected)
 
-      expect(data.update.id).to.equal(ids[0])
-      expect(data.remove).to.equal(true)
+      expect(data.update.id).toEqual(ids[0])
+      expect(data.remove).toEqual(true)
     })
   })
 })

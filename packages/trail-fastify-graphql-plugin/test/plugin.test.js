@@ -49,10 +49,10 @@ describe('Trails graphql HTTP operations', () => {
         url: `/graphql?query=${query}`
       })
 
-      expect(response.statusCode).to.equal(200)
+      expect(response.statusCode).toEqual(200)
       const { data: { trails } } = JSON.parse(response.payload)
 
-      expect(trails[0]).to.include({
+      expect(trails[0]).toMatchObject({
         id: id,
         when: DateTime.fromISO('2016-01-02T15:04:05.123Z', { zone: 'utc' }).toISO(),
         who: {
@@ -90,8 +90,8 @@ describe('Trails graphql HTTP operations', () => {
         url: `/graphql?query=${query}`
       })
 
-      expect(response.statusCode).to.equal(400)
-      expect(JSON.parse(response.payload)).to.include({
+      expect(response.statusCode).toEqual(400)
+      expect(JSON.parse(response.payload)).toMatchObject({
         errors: [
           {
             message: 'Syntax Error: Expected Name, found <EOF>.',
@@ -118,8 +118,8 @@ describe('Trails graphql HTTP operations', () => {
         url: `/graphql?query=${query}`
       })
 
-      expect(response.statusCode).to.equal(400)
-      expect(JSON.parse(response.payload)).to.include({
+      expect(response.statusCode).toEqual(400)
+      expect(JSON.parse(response.payload)).toMatchObject({
         errors: [
           {
             message: 'Syntax Error: Expected Name, found <EOF>.',
@@ -158,10 +158,10 @@ describe('Trails graphql HTTP operations', () => {
         }`
       })
 
-      expect(response.statusCode).to.equal(200)
+      expect(response.statusCode).toEqual(200)
       const { data: { trail } } = JSON.parse(response.payload)
 
-      expect(trail).to.include({
+      expect(trail).toMatchObject({
         when: DateTime.fromISO(when, { zone: 'utc' }).toISO(),
         who: {
           id: who,
@@ -212,11 +212,11 @@ describe('Trails graphql HTTP operations', () => {
         })
       })
 
-      expect(response.statusCode).to.equal(200)
+      expect(response.statusCode).toEqual(200)
 
       const { data: { trail } } = JSON.parse(response.payload)
 
-      expect(trail).to.include({
+      expect(trail).toMatchObject({
         when: DateTime.fromISO(when, { zone: 'utc' }).toISO(),
         who: {
           id: who,
@@ -267,11 +267,11 @@ describe('Trails graphql HTTP operations', () => {
         })
       })
 
-      expect(response.statusCode).to.equal(200)
+      expect(response.statusCode).toEqual(200)
 
       const { data: { trail } } = JSON.parse(response.payload)
 
-      expect(trail).to.include({ id, meta })
+      expect(trail).toMatchObject({ id, meta })
 
       await server.trailCore.delete(trail.id)
     })
@@ -286,8 +286,8 @@ describe('Trails graphql HTTP operations', () => {
         payload: '{"a":1'
       })
 
-      expect(response.statusCode).to.equal(400)
-      expect(JSON.parse(response.payload)).to.include({ errors: [{ message: 'Unexpected end of JSON input' }], data: null })
+      expect(response.statusCode).toEqual(400)
+      expect(JSON.parse(response.payload)).toMatchObject({ errors: [{ message: 'Unexpected end of JSON input' }], data: null })
     })
   })
 })
@@ -336,10 +336,10 @@ describe('Trails graphql HTTP operations with prefix path', () => {
         url: `${prefix}/graphql?query=${query}`
       })
 
-      expect(response.statusCode).to.equal(200)
+      expect(response.statusCode).toEqual(200)
       const { data: { trails } } = JSON.parse(response.payload)
 
-      expect(trails[0]).to.include({
+      expect(trails[0]).toMatchObject({
         id: id,
         when: DateTime.fromISO('2016-01-02T15:04:05.123Z', { zone: 'utc' }).toISO(),
         who: {
@@ -390,10 +390,10 @@ describe('Trails graphql HTTP operations with prefix path', () => {
         }`
       })
 
-      expect(response.statusCode).to.equal(200)
+      expect(response.statusCode).toEqual(200)
       const { data: { trail } } = JSON.parse(response.payload)
 
-      expect(trail).to.include({
+      expect(trail).toMatchObject({
         when: DateTime.fromISO(when, { zone: 'utc' }).toISO(),
         who: {
           id: who,

@@ -25,10 +25,10 @@ describe('Trails REST operations', () => {
           url
         })
 
-        expect(response.statusCode).to.equal(200)
+        expect(response.statusCode).toEqual(200)
         const payload = JSON.parse(response.payload)
 
-        expect(payload).include({
+        expect(payload).toMatchObject({
           openapi: '3.0.1'
         })
       })
@@ -51,10 +51,10 @@ describe('Trails REST operations', () => {
         url: `/trails?from=${encodeURIComponent('2014-01-02T18:04:05.123+03:00')}&to=${encodeURIComponent('2018-01-02T18:04:05.123+03:00')}`
       })
 
-      expect(response.statusCode).to.equal(200)
+      expect(response.statusCode).toEqual(200)
       const trails = JSON.parse(response.payload)
 
-      expect(trails[0]).to.include({
+      expect(trails[0]).toMatchObject({
         id: id,
         when: DateTime.fromISO('2016-01-02T15:04:05.123', { zone: 'utc' }).toISO(),
         who: {
@@ -92,10 +92,10 @@ describe('Trails REST operations', () => {
         url: `/trails?from=${encodeURIComponent('2014-01-02T18:04:05.123+03:00')}&to=${encodeURIComponent('2018-01-02T18:04:05.123+03:00')}&who=foo`
       })
 
-      expect(response.statusCode).to.equal(200)
+      expect(response.statusCode).toEqual(200)
       const trails = JSON.parse(response.payload)
 
-      expect(trails).to.equal([])
+      expect(trails).toEqual([])
 
       await server.trailCore.delete(id)
     })
@@ -106,8 +106,8 @@ describe('Trails REST operations', () => {
         url: '/trails?from=bar&where=foo'
       })
 
-      expect(response.statusCode).to.equal(422)
-      expect(JSON.parse(response.payload)).to.include({
+      expect(response.statusCode).toEqual(422)
+      expect(JSON.parse(response.payload)).toMatchObject({
         statusCode: 422,
         error: 'Unprocessable Entity',
         message: 'Invalid input data.',
@@ -136,10 +136,10 @@ describe('Trails REST operations', () => {
         url: `/trails/enumerate?from=${encodeURIComponent('2014-01-02T18:04:05.123+03:00')}&to=${encodeURIComponent('2018-01-02T18:04:05.123+03:00')}&type=who`
       })
 
-      expect(response.statusCode).to.equal(200)
+      expect(response.statusCode).toEqual(200)
       const enumeration = JSON.parse(response.payload)
 
-      expect(enumeration).to.equal(['1'])
+      expect(enumeration).toEqual(['1'])
 
       await server.trailCore.delete(id)
     })
@@ -159,10 +159,10 @@ describe('Trails REST operations', () => {
         url: `/trails/enumerate?from=${encodeURIComponent('2014-01-02T18:04:05.123+03:00')}&to=${encodeURIComponent('2015-01-02T18:04:05.123+03:00')}&type=who`
       })
 
-      expect(response.statusCode).to.equal(200)
+      expect(response.statusCode).toEqual(200)
       const enumeration = JSON.parse(response.payload)
 
-      expect(enumeration).to.equal([])
+      expect(enumeration).toEqual([])
 
       await server.trailCore.delete(id)
     })
@@ -173,8 +173,8 @@ describe('Trails REST operations', () => {
         url: '/trails/enumerate?from=bar'
       })
 
-      expect(response.statusCode).to.equal(422)
-      expect(JSON.parse(response.payload)).to.equal({
+      expect(response.statusCode).toEqual(422)
+      expect(JSON.parse(response.payload)).toEqual({
         statusCode: 422,
         error: 'Unprocessable Entity',
         message: 'Invalid input data.',
@@ -200,10 +200,10 @@ describe('Trails REST operations', () => {
         }
       })
 
-      expect(response.statusCode).to.equal(201)
+      expect(response.statusCode).toEqual(201)
       const trail = JSON.parse(response.payload)
 
-      expect(trail).to.include({
+      expect(trail).toMatchObject({
         when: DateTime.fromISO('2016-01-02T15:04:05.123', { zone: 'utc' }).toISO(),
         who: {
           id: 'me',
@@ -237,8 +237,8 @@ describe('Trails REST operations', () => {
         payload: 'abc'
       })
 
-      expect(response.statusCode).to.equal(400)
-      expect(JSON.parse(response.payload)).to.include({ statusCode: 400, error: 'Bad Request', message: errorsMessages['json.contentType'] })
+      expect(response.statusCode).toEqual(400)
+      expect(JSON.parse(response.payload)).toMatchObject({ statusCode: 400, error: 'Bad Request', message: errorsMessages['json.contentType'] })
     })
 
     test('it should return 400 in case of invalid JSON payload', async () => {
@@ -248,8 +248,8 @@ describe('Trails REST operations', () => {
         payload: '{"a":1'
       })
 
-      expect(response.statusCode).to.equal(400)
-      expect(JSON.parse(response.payload)).to.include({ statusCode: 400, error: 'Bad Request', message: errorsMessages['json.format'] })
+      expect(response.statusCode).toEqual(400)
+      expect(JSON.parse(response.payload)).toMatchObject({ statusCode: 400, error: 'Bad Request', message: errorsMessages['json.format'] })
     })
 
     test('it should return 422 in case of validation errors', async () => {
@@ -264,8 +264,8 @@ describe('Trails REST operations', () => {
         }
       })
 
-      expect(response.statusCode).to.equal(422)
-      expect(JSON.parse(response.payload)).to.include({
+      expect(response.statusCode).toEqual(422)
+      expect(JSON.parse(response.payload)).toMatchObject({
         statusCode: 422,
         error: 'Unprocessable Entity',
         message: 'Invalid input data.',
@@ -294,10 +294,10 @@ describe('Trails REST operations', () => {
         url: `/trails/${id}`
       })
 
-      expect(response.statusCode).to.equal(200)
+      expect(response.statusCode).toEqual(200)
       const trail = JSON.parse(response.payload)
 
-      expect(trail).to.include({
+      expect(trail).toMatchObject({
         when: DateTime.fromISO('2016-01-02T15:04:05.123', { zone: 'utc' }).toISO(),
         who: {
           id: 'me',
@@ -327,8 +327,8 @@ describe('Trails REST operations', () => {
         url: '/trails/0'
       })
 
-      expect(response.statusCode).to.equal(404)
-      expect(JSON.parse(response.payload)).to.include({
+      expect(response.statusCode).toEqual(404)
+      expect(JSON.parse(response.payload)).toMatchObject({
         statusCode: 404,
         error: 'Not Found',
         message: 'Trail with id 0 not found.'
@@ -345,16 +345,16 @@ describe('Trails REST operations', () => {
         url: '/trails/123'
       })
 
-      expect(response.statusCode).to.equal(500)
+      expect(response.statusCode).toEqual(500)
 
       const parsed = JSON.parse(response.payload)
-      expect(parsed).to.include({
+      expect(parsed).toMatchObject({
         statusCode: 500,
         error: 'Internal Server Error',
         message: '[Error] FOO'
       })
 
-      expect(parsed.stack).to.be.array()
+      expect(parsed.stack).toEqual(expect.any(Array))
 
       spy.restore()
     })
@@ -372,16 +372,16 @@ describe('Trails REST operations', () => {
         url: '/trails/123'
       })
 
-      expect(response.statusCode).to.equal(500)
+      expect(response.statusCode).toEqual(500)
 
       const parsed = JSON.parse(response.payload)
-      expect(parsed).to.include({
+      expect(parsed).toMatchObject({
         statusCode: 500,
         error: 'Internal Server Error',
         message: '[CODE] FOO'
       })
 
-      expect(parsed.stack).to.be.array()
+      expect(parsed.stack).toEqual(expect.any(Array))
 
       spy.restore()
     })
@@ -396,7 +396,7 @@ describe('Trails REST operations', () => {
         subject: '3'
       })
 
-      expect((await server.trailCore.get(id)).who).to.include({ id: '1' })
+      expect((await server.trailCore.get(id)).who).toMatchObject({ id: '1' })
 
       const response = await server.inject({
         method: 'PUT',
@@ -409,10 +409,10 @@ describe('Trails REST operations', () => {
         }
       })
 
-      expect(response.statusCode).to.equal(202)
+      expect(response.statusCode).toEqual(202)
       const trail = JSON.parse(response.payload)
 
-      expect(trail).to.include({
+      expect(trail).toMatchObject({
         when: DateTime.fromISO('2016-01-02T15:04:05.123', { zone: 'utc' }).toISO(),
         who: {
           id: 'me',
@@ -433,7 +433,7 @@ describe('Trails REST operations', () => {
         meta: {}
       })
 
-      expect((await server.trailCore.get(id)).who).to.include({ id: 'me' })
+      expect((await server.trailCore.get(id)).who).toMatchObject({ id: 'me' })
 
       await server.trailCore.delete(id)
     })
@@ -450,8 +450,8 @@ describe('Trails REST operations', () => {
         }
       })
 
-      expect(response.statusCode).to.equal(404)
-      expect(JSON.parse(response.payload)).to.include({
+      expect(response.statusCode).toEqual(404)
+      expect(JSON.parse(response.payload)).toMatchObject({
         statusCode: 404,
         error: 'Not Found',
         message: 'Trail with id 0 not found.'
@@ -468,17 +468,17 @@ describe('Trails REST operations', () => {
         subject: '3'
       })
 
-      expect(await server.trailCore.get(id)).to.be.object()
+      expect(await server.trailCore.get(id)).toEqual(expect.any(Object))
 
       const response = await server.inject({
         method: 'DELETE',
         url: `/trails/${id}`
       })
 
-      expect(response.statusCode).to.equal(204)
-      expect(response.payload).to.equal('')
+      expect(response.statusCode).toEqual(204)
+      expect(response.payload).toEqual('')
 
-      expect(await server.trailCore.get(id)).to.be.null()
+      expect(await server.trailCore.get(id)).toBeNull()
 
       await server.trailCore.delete(id)
     })
@@ -489,8 +489,8 @@ describe('Trails REST operations', () => {
         url: '/trails/0'
       })
 
-      expect(response.statusCode).to.equal(404)
-      expect(JSON.parse(response.payload)).to.include({
+      expect(response.statusCode).toEqual(404)
+      expect(JSON.parse(response.payload)).toMatchObject({
         statusCode: 404,
         error: 'Not Found',
         message: 'Trail with id 0 not found.'

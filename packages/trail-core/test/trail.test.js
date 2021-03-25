@@ -17,21 +17,21 @@ describe('createTrail and createTrailFromObject', () => {
       meta: { c: 3 }
     })
 
-    expect(subject.when).to.equal(DateTime.fromISO('2018-01-01T12:34:56', { zone: 'utc' }))
-    expect(subject.who.id).to.equal('who')
-    expect(subject.what.id).to.equal('what')
-    expect(subject.subject.id).to.equal('subject')
-    expect(subject.where).to.equal({ a: 1 })
-    expect(subject.why).to.equal({ b: 2 })
-    expect(subject.meta).to.equal({ c: 3 })
+    expect(subject.when).toEqual(DateTime.fromISO('2018-01-01T12:34:56', { zone: 'utc' }))
+    expect(subject.who.id).toEqual('who')
+    expect(subject.what.id).toEqual('what')
+    expect(subject.subject.id).toEqual('subject')
+    expect(subject.where).toEqual({ a: 1 })
+    expect(subject.why).toEqual({ b: 2 })
+    expect(subject.meta).toEqual({ c: 3 })
   })
 
   test('should allow objects as arguments', () => {
     const subject = convertToTrail({ id: 0, when: new Date(2018, 1, 1, 12, 34, 56), who: { id: 'who' }, what: { id: 'what' }, subject: { id: 'subject' } })
 
-    expect(subject.who.id).to.equal('who')
-    expect(subject.what.id).to.equal('what')
-    expect(subject.subject.id).to.equal('subject')
+    expect(subject.who.id).toEqual('who')
+    expect(subject.what.id).toEqual('what')
+    expect(subject.subject.id).toEqual('subject')
   })
 
   test('should raise an error if attribute "id" is not null or a string', () => {
@@ -55,17 +55,17 @@ describe('createTrail and createTrailFromObject', () => {
   test('should create a field from a string', () => {
     const subject = convertToTrail({ id: 0, when: '2018-01-01T12:34:56', who: 'who', what: 'what', subject: 'subject' })
 
-    expect(subject.who.id).to.equal('who')
-    expect(subject.who.attributes).to.equal({})
+    expect(subject.who.id).toEqual('who')
+    expect(subject.who.attributes).toEqual({})
   })
 
   test('should create a field from a object, excluding the id from the attributes', () => {
     const who = { id: '1', a: 2, b: 3 }
     const subject = convertToTrail({ id: 0, when: '2018-01-01T12:34:56', who, what: 'WHAT', subject: 'SUBJECT' })
 
-    expect(who).to.equal({ id: '1', a: 2, b: 3 })
-    expect(subject.who.id).to.equal('1')
-    expect(subject.who.attributes).to.equal({ a: 2, b: 3 })
+    expect(who).toEqual({ id: '1', a: 2, b: 3 })
+    expect(subject.who.id).toEqual('1')
+    expect(subject.who.attributes).toEqual({ a: 2, b: 3 })
   })
 
   test('should require the id property of a component to be defined', () => {

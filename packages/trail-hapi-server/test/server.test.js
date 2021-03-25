@@ -25,8 +25,8 @@ describe('Server', () => {
   describe('generic', () => {
     test('should log in case of listen errors', async () => {
       process.send = console.log
-      await expect(testServer.build()).to.reject(Error, 'EXITED - 1')
-      expect(stubs[1].called).to.be.true()
+      await expect(testServer.build()).rejects.toThrow('EXITED - 1')
+      expect(stubs[1].called).toBe(true)
     })
 
     describe('GET /ping', async () => {
@@ -36,10 +36,10 @@ describe('Server', () => {
           url: '/ping'
         })
 
-        expect(response.statusCode).to.equal(200)
+        expect(response.statusCode).toEqual(200)
         const payload = JSON.parse(response.payload)
 
-        expect(payload.uptime).to.match(/^(\d+.\d{3} s)$/)
+        expect(payload.uptime).toMatch(/^(\d+.\d{3} s)$/)
       })
     })
   })
@@ -52,8 +52,8 @@ describe('Server', () => {
           url: '/documentation/'
         })
 
-        expect(response.statusCode).to.equal(200)
-        expect(response.payload).to.include('url: "/trails/openapi.json"')
+        expect(response.statusCode).toEqual(200)
+        expect(response.payload).toMatch('url: "/trails/openapi.json"')
       })
 
       test('it should correctly serve other files', async () => {
@@ -62,8 +62,8 @@ describe('Server', () => {
           url: '/documentation/swagger-ui-standalone-preset.js'
         })
 
-        expect(response.statusCode).to.equal(200)
-        expect(response.headers['content-type']).to.include('application/javascript')
+        expect(response.statusCode).toEqual(200)
+        expect(response.headers['content-type']).toMatch('application/javascript')
       })
     })
   })
