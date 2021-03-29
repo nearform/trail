@@ -35,7 +35,7 @@
   "dependencies": {
     "@hapi/boom": "^9.0.0",
     "@nearform/trail-core": "^5.0.0",
-    "ajv": "^7.2.1",
+    "ajv": "^8.0.1",
     "fastify": "^3.3.0",
     "fastify-plugin": "^3.0.0",
     "fluent-schema": "^1.1.0",
