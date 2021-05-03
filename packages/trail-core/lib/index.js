@@ -3,6 +3,7 @@
 const SQL = require('@nearform/sql')
 const pino = require('pino')
 const { Pool } = require('pg')
+require('pg').defaults.parseInt8 = true
 
 const defaultPageSize = 25
 const { parseDate, convertToTrail } = require('./trail')
@@ -83,20 +84,37 @@ class TrailsManager {
           who_data as who, what_data as what, subject_data as subject,
           "where", why, meta
         FROM trails
-        WHERE
-          ("when" >= ${from.toISO()} AND "when" <= ${to.toISO()})
+    `
+
+    // Prepare the query to get Count
+    const sqlCount = SQL`
+      SELECT
+          count(*)
+        FROM trails
     `
 
     const op = caseInsensitive ? 'ILIKE' : 'LIKE'
-    if (who) sql.append(SQL([` AND who_id ${op} `])).append(SQL`${exactMatch ? who : '%' + who + '%'}`)
-    if (what) sql.append(SQL([` AND what_id ${op} `])).append(SQL`${exactMatch ? what : '%' + what + '%'}`)
-    if (subject) sql.append(SQL([` AND subject_id ${op} `])).append(SQL`${exactMatch ? subject : '%' + subject + '%'}`)
+    const filterClause = SQL` WHERE
+      ("when" >= ${from.toISO()} AND "when" <= ${to.toISO()})`
+
+    if (who) filterClause.append(SQL([` AND who_id ${op} `]).append(SQL`${exactMatch ? who : '%' + who + '%'}`))
+    if (what) filterClause.append(SQL([` AND what_id ${op} `]).append(SQL`${exactMatch ? what : '%' + what + '%'}`))
+    if (subject) filterClause.append(SQL([` AND subject_id ${op} `]).append(SQL`${exactMatch ? subject : '%' + subject + '%'}`))
+
+    sql.append(filterClause)
+    sqlCount.append(filterClause)
 
     const footer = ` ORDER BY ${sortKey} ${sortAsc ? 'ASC' : 'DESC'} LIMIT ${pageSize} OFFSET ${(page - 1) * pageSize}`
     sql.append(SQL([footer]))
 
-    const res = await this.performDatabaseOperations(sql)
-    return res.rows.map(convertToTrail)
+    const res = await this.performDatabaseOperations(client => {
+      return Promise.all([
+        client.query(sqlCount),
+        client.query(sql)
+      ])
+    })
+
+    return { count: res[0].rows[0].count, data: res[1].rows.map(convertToTrail) }
   }
 
   async enumerate ({ from, to, type, page, pageSize, desc } = {}) {

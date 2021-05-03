@@ -49,9 +49,7 @@ module.exports = {
         },
         response: {
           status: {
-            200: Joi.array()
-              .description('The search results.')
-              .items(trailSchema.response),
+            200: trailSchema.searchResponse,
             422: errorsSchemas['422'],
             500: errorsSchemas['500']
           }
