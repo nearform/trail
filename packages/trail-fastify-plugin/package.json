@@ -1,6 +1,6 @@
 {
   "name": "@nearform/trail-fastify-plugin",
-  "version": "5.1.0",
+  "version": "6.0.0",
   "description": "Fastify plugin for the audit trail logging service",
   "license": "MIT",
   "author": "nearForm Ltd",
@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "@hapi/boom": "^9.0.0",
-    "@nearform/trail-core": "^5.1.0",
+    "@nearform/trail-core": "^6.0.0",
     "ajv": "^8.0.2",
     "fastify": "^3.3.0",
     "fastify-plugin": "^3.0.0",
