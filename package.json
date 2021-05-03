@@ -1,6 +1,5 @@
 {
   "name": "@nearform/trail",
-  "version": "3.0.0",
   "description": "Audit trail logging service",
   "license": "MIT",
   "author": "nearForm Ltd",
@@ -33,13 +32,16 @@
     "sanity": "npm run sanity:environment && npm run test",
     "start": "cd packages/trail-hapi-server && npm run start",
     "test": "lerna run test",
-    "clean": "lerna clean"
+    "clean": "lerna clean",
+    "prepare": "husky install"
   },
   "devDependencies": {
+    "@commitlint/cli": "^12.1.1",
+    "@commitlint/config-conventional": "^12.1.1",
     "@hapi/lab": "^22.0.5",
     "code": "^5.2.0",
     "depcheck": "^1.4.0",
-    "husky": "^4.2.5",
+    "husky": "^6.0.0",
     "lerna": "^4.0.0",
     "lodash": "^4.17.20",
     "sinon": "^10.0.0",
@@ -50,11 +52,6 @@
     "ignore": [
       "docs/*"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-push": "npm run sanity"
-    }
   },
   "workspaces": [
     "packages/*"

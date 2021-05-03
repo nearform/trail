@@ -9,7 +9,8 @@
       "concurrency": 1
     },
     "version": {
-      "allowBranch": "master"
+      "allowBranch": "master",
+      "conventionalCommits": true
     }
   }
 }
