@@ -37,8 +37,8 @@
     "coverage": "lab -c test",
     "depcheck": "npx depcheck --ignores=config",
     "pg:init": "node ./database/init.js && npm run pg:migrate",
-    "pg:test:init": "TRAIL_DB_NAME=trails_test node ./database/init.js && TRAIL_DB_NAME=trails_test npm run pg:migrate",
-    "pg:travis:init": "TRAIL_DB_NAME=trails_test TRAIL_DB_PASSWORD=postgres node ./database/init.js && TRAIL_DB_NAME=trails_test TRAIL_DB_PASSWORD=postgres npm run pg:migrate",
+    "pg:test:init": "cross-env TRAIL_DB_NAME=trails_test node ./database/init.js && cross-env TRAIL_DB_NAME=trails_test npm run pg:migrate",
+    "pg:travis:init": "cross-env TRAIL_DB_NAME=trails_test TRAIL_DB_PASSWORD=postgres node ./database/init.js && cross-env TRAIL_DB_NAME=trails_test TRAIL_DB_PASSWORD=postgres npm run pg:migrate",
     "pg:migrate": "node ./database/migrate.js --version=max",
     "test": "lab test"
   },
@@ -54,6 +54,7 @@
   "devDependencies": {
     "@hapi/lab": "^23.0.0",
     "code": "^5.2.0",
+    "cross-env": "^7.0.3",
     "sinon": "^11.0.0"
   }
 }
