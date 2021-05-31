@@ -38,7 +38,7 @@
     "coverage": "lab -l -c test",
     "depcheck": "npx depcheck --ignores=config",
     "start": "node start.js",
-    "test": "lab test --globals __core-js_shared__,CSS,regeneratorRuntime,__createBinding,__extends,__assign,__rest,__decorate,__param,__metadata,__awaiter,__generator,__exportStar,__values,__read,__spread,__spreadArrays,__await,__asyncGenerator,__asyncDelegator,__asyncValues,__makeTemplateObject,__importStar,__importDefault,__classPrivateFieldGet,__classPrivateFieldSet"
+    "test": "lab test --globals __core-js_shared__,CSS,regeneratorRuntime,__createBinding,__extends,__assign,__rest,__decorate,__param,__metadata,__awaiter,__generator,__exportStar,__values,__read,__spread,__spreadArrays,__await,__asyncGenerator,__asyncDelegator,__asyncValues,__makeTemplateObject,__importStar,__importDefault,__classPrivateFieldGet,__classPrivateFieldSet,__spreadArray"
   },
   "dependencies": {
     "@nearform/trail-fastify-graphql-plugin": "^6.0.0",
