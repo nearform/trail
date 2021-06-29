@@ -17,11 +17,11 @@ module.exports = async function (options) {
     const startTime = process.hrtime()
 
     const server = fastify()
-    server.register(require('fastify-static'), {
-      root: require('swagger-ui-dist').getAbsoluteFSPath()
-    })
-    server.register(require('./swagger'))
     if (settings.use.restAPI) {
+      server.register(require('fastify-static'), {
+        root: require('swagger-ui-dist').getAbsoluteFSPath()
+      })
+      server.register(require('./swagger'))
       server.register(require('@nearform/trail-fastify-plugin'), { db: settings.db })
     }
     if (settings.use.graphQL) {
