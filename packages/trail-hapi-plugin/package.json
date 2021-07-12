@@ -45,7 +45,7 @@
     "joi": "^17.1.0",
     "joi-to-swagger": "^5.0.1",
     "lodash": "^4.17.20",
-    "luxon": "^1.25.0",
+    "luxon": "^2.0.1",
     "snyk": "^1.391.1"
   },
   "devDependencies": {
