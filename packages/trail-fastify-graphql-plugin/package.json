@@ -48,6 +48,6 @@
   },
   "devDependencies": {
     "@hapi/code": "^8.0.2",
-    "@hapi/lab": "^22.0.5"
+    "@hapi/lab": "^24.3.1"
   }
 }
