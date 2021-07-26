@@ -36,7 +36,7 @@
     "prepare": "husky install"
   },
   "devDependencies": {
-    "@commitlint/cli": "^12.1.1",
+    "@commitlint/cli": "^13.1.0",
     "@commitlint/config-conventional": "^12.1.1",
     "@hapi/lab": "^22.0.5",
     "code": "^5.2.0",
