@@ -44,7 +44,7 @@
     "graphql": "^15.3.0",
     "graphql-jit": "0.5.2",
     "graphql-tools": "8.0.0",
-    "luxon": "^1.25.0"
+    "luxon": "^2.0.1"
   },
   "devDependencies": {
     "@hapi/code": "^8.0.2",
