@@ -3,6 +3,7 @@
   "version": "6.0.0",
   "description": "Fastify plugin for the audit trail logging service",
   "license": "MIT",
+  "types": "./types/index.d.ts",
   "author": "nearForm Ltd",
   "homepage": "https://github.com/nearform/trail#readme",
   "keywords": [
@@ -30,7 +31,8 @@
     "coverage": "todo -c test",
     "coverage:watch": "jest -i --coverage --watch",
     "depcheck": "npx depcheck --ignores=config",
-    "test": "lab test"
+    "test": "lab test", 
+    "tsd": "tsd"
   },
   "dependencies": {
     "@hapi/boom": "^9.0.0",
@@ -45,6 +47,7 @@
   "devDependencies": {
     "@hapi/lab": "^22.0.5",
     "code": "^5.2.0",
-    "sinon": "^11.0.0"
+    "sinon": "^11.0.0",
+    "tsd": "^0.17.0"
   }
 }

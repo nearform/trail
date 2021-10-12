@@ -29,6 +29,7 @@
     "access": "public"
   },
   "main": "lib/index.js",
+  "types": "types/index.d.ts",
   "bin": {
     "trail-database-init": "./database/init.js",
     "trail-database-migrate": "./database/migrate.js"
@@ -40,7 +41,8 @@
     "pg:test:init": "cross-env TRAIL_DB_NAME=trails_test node ./database/init.js && cross-env TRAIL_DB_NAME=trails_test npm run pg:migrate",
     "pg:travis:init": "cross-env TRAIL_DB_NAME=trails_test TRAIL_DB_PASSWORD=postgres node ./database/init.js && cross-env TRAIL_DB_NAME=trails_test TRAIL_DB_PASSWORD=postgres npm run pg:migrate",
     "pg:migrate": "node ./database/migrate.js --version=max",
-    "test": "lab test"
+    "test": "lab test",
+    "tsd": "tsd"
   },
   "dependencies": {
     "@nearform/sql": "^1.0.1",
@@ -55,6 +57,7 @@
     "@hapi/lab": "^23.0.0",
     "code": "^5.2.0",
     "cross-env": "^7.0.3",
-    "sinon": "^11.0.0"
+    "sinon": "^11.0.0",
+    "tsd": "^0.17.0"
   }
 }
