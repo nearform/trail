@@ -31,6 +31,7 @@
     "access": "public"
   },
   "main": "lib/index.js",
+  "types": "types/index.d.ts",
   "bin": {
     "trail-fastify-server": "start.js"
   },
@@ -38,13 +39,13 @@
     "coverage": "lab -l -c test",
     "depcheck": "npx depcheck --ignores=config",
     "start": "node start.js",
+    "tsd": "tsd",
     "test": "lab test --globals __core-js_shared__,CSS,regeneratorRuntime,__createBinding,__extends,__assign,__rest,__decorate,__param,__metadata,__awaiter,__generator,__exportStar,__values,__read,__spread,__spreadArrays,__await,__asyncGenerator,__asyncDelegator,__asyncValues,__makeTemplateObject,__importStar,__importDefault,__classPrivateFieldGet,__classPrivateFieldSet,__spreadArray"
   },
   "dependencies": {
     "@nearform/trail-fastify-graphql-plugin": "^6.0.0",
     "@nearform/trail-fastify-plugin": "^6.0.0",
     "dotenv": "^10.0.0",
-    "fastify": "^3.3.0",
     "fastify-cors": "^6.0.0",
     "fastify-static": "^4.0.1",
     "fluent-schema": "^1.1.0",
@@ -54,6 +55,8 @@
   "devDependencies": {
     "@hapi/lab": "^22.0.5",
     "code": "^5.2.0",
-    "sinon": "^11.0.0"
+    "fastify": "^3.22.0",
+    "sinon": "^11.0.0",
+    "tsd": "^0.17.0"
   }
 }
