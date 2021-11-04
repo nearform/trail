@@ -50,7 +50,7 @@
     "fastify-static": "^4.0.1",
     "fluent-schema": "^1.1.0",
     "minimist": "^1.2.5",
-    "swagger-ui-dist": "^3.32.5"
+    "swagger-ui-dist": "^4.0.0"
   },
   "devDependencies": {
     "@hapi/lab": "^22.0.5",
