@@ -15,22 +15,22 @@ async function run () {
   const client = new Client({
     host,
     port,
-    database: "postgres",
+    database: 'postgres',
     user: username,
     password,
-    idleTimeoutMillis,
+    idleTimeoutMillis
   })
 
   const postgrator = new Postgrator({
-    driver: "pg",
+    driver: 'pg',
     migrationDirectory,
-    schemaTable: "schemaversion",
+    schemaTable: 'schemaversion',
     host,
     port,
     database,
     username,
     password,
-    execQuery: (query) => client.query(query),
+    execQuery: (query) => client.query(query)
   })
 
   await postgrator.migrate(version)
