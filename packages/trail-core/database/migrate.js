@@ -9,7 +9,7 @@ const path = require('path')
 
 async function run () {
   const { version, host, port, database, username, password, idleTimeoutMillis } = loadSettings()
-  const migrationPattern =  path.join(__dirname, '/migrations/*.sql')
+  const migrationPattern = path.join(__dirname, '/migrations/*.sql')
   if (!version) throw new Error('Please provide the version to migrate to')
 
   const client = new Client({
