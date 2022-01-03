@@ -54,7 +54,7 @@
     "postgrator": "^5.0.0"
   },
   "devDependencies": {
-    "@hapi/lab": "^23.0.0",
+    "@hapi/lab": "^24.5.0",
     "code": "^5.2.0",
     "cross-env": "^7.0.3",
     "sinon": "^12.0.0",
