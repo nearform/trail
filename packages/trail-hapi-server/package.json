@@ -45,7 +45,7 @@
     "@hapi/inert": "^6.0.2",
     "@nearform/trail-core": "^6.0.0",
     "@nearform/trail-hapi-plugin": "^6.0.0",
-    "dotenv": "^10.0.0",
+    "dotenv": "^11.0.0",
     "hapi-pino": "^9.0.0",
     "joi": "^17.1.0",
     "minimist": "^1.2.5",
