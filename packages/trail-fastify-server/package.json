@@ -45,7 +45,7 @@
   "dependencies": {
     "@nearform/trail-fastify-graphql-plugin": "^6.0.0",
     "@nearform/trail-fastify-plugin": "^6.0.0",
-    "dotenv": "^15.0.0",
+    "dotenv": "^16.0.0",
     "fastify-cors": "^6.0.0",
     "fastify-static": "^4.0.1",
     "fluent-schema": "^1.1.0",
