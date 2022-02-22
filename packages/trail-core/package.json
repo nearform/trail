@@ -51,7 +51,7 @@
     "minimist": "^1.2.5",
     "pg": "^8.3.3",
     "pino": "^7.0.1",
-    "postgrator": "^5.0.0"
+    "postgrator": "^6.0.0"
   },
   "devDependencies": {
     "@hapi/lab": "^23.0.0",
