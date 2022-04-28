@@ -52,7 +52,7 @@
     "swagger-ui-dist": "^4.0.0"
   },
   "devDependencies": {
-    "@hapi/lab": "^23.0.0",
+    "@hapi/lab": "^24.6.0",
     "code": "^5.2.0",
     "sinon": "^13.0.0"
   }
