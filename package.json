@@ -38,7 +38,7 @@
   "devDependencies": {
     "@commitlint/cli": "^16.0.0",
     "@commitlint/config-conventional": "^16.0.0",
-    "@hapi/lab": "^22.0.5",
+    "@hapi/lab": "^23.0.0",
     "code": "^5.2.0",
     "depcheck": "^1.4.0",
     "husky": "^7.0.0",
