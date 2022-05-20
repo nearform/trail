@@ -45,7 +45,7 @@
     "fastify-plugin": "^3.0.0",
     "graphql": "^15.3.0",
     "graphql-jit": "0.7.3",
-    "graphql-tools": "8.2.9",
+    "graphql-tools": "8.2.10",
     "luxon": "^2.0.1"
   },
   "devDependencies": {
