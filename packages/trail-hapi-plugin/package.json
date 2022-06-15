@@ -49,7 +49,7 @@
     "snyk": "^1.391.1"
   },
   "devDependencies": {
-    "@hapi/code": "^8.0.2",
+    "@hapi/code": "^9.0.1",
     "@hapi/lab": "^23.0.0",
     "sinon": "^14.0.0"
   },
