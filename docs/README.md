@@ -11,7 +11,7 @@ Trail is a modular and flexible **audit trail log service**.
 
 ## Requirements
 
--   Node.js 12.0.0+
+-   Node.js 14+
 -   Postgres 9.5+
 -   The Hapi plugin and server packages require Hapi 19+
 
