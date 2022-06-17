@@ -25,7 +25,7 @@
     "url": "https://github.com/nearform/trail/issues"
   },
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=14"
   },
   "publishConfig": {
     "access": "public"
@@ -55,7 +55,7 @@
   "devDependencies": {
     "@hapi/lab": "^23.0.0",
     "code": "^5.2.0",
-    "fastify": "^3.22.0",
+    "fastify": "^4.0.3",
     "sinon": "^14.0.0",
     "tsd": "^0.20.0"
   }
